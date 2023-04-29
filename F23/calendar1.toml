@@ -1,12 +1,12 @@
 # Configure a course calendar
 # Used for title of web page
-courseTitle = "Greek 102, section 2, S'23"
+courseTitle = "Classics 199, F'23"
 # YYYY-MM-DD
-firstDay = "2023-01-25"
-lastDay = "2023-05-15"
+firstDay = "2023-08-30"
+lastDay = "2023-12-12"
 
 # Pattern of class meetings: "mwf", "tt" or "wf"
-schedule = "mwf"
+schedule = "tth"
 
 # Number of weeks the calendar should run for
 totalWeeks =  14

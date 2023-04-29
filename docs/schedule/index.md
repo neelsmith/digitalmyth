@@ -7,32 +7,52 @@ has_children: true
 
 ## Daily schedule
 
+Deadlines to note:
+
+- 📓 Lab notebook due
 
 
-## Welcome back!
-
-| Dates | Tuesday | Thursday | Notes |
-| ---: | :--- | :--- | :--- |
-| *Aug 29*, *Aug 31* | *no classes* | [Welcome back!](../assignments/welcomeback/)  |  |
-| *Sep 5*, *Sep 7* | ✏️ 🔬 [Review](../assignments/review1/) of substantantives, introduction to CBL | Review: [principal parts](../assignments/verbs/) of verbs |  |
-| *Sep 12*, *Sep 14* |  Comparative and superlative [degrees](../assignments/degrees/): practice vocab assessment on [11 common verbs](https://neelsmith.github.io/latin102/review/verbs1/) | 🔬 Practice with the [comparative](../assignments/comparative/): vocab assessment on [11 common verbs](https://neelsmith.github.io/latin102/review/verbs1/) |  |
-
-## Relative clauses
+## Introduction to course
 
 | Dates | Tuesday | Thursday | Notes |
 | ---: | :--- | :--- | :--- |
-| *Sep 19*, *Sep 21* | [Relative clauses](../assignments/relative/) | 🔬 class: in-class assessment: comparative and superlative forms |  |
-| *Sep 26*, *Sep 28* | [Relative clauses, 2](../assignments/relative2/) | class canceled |  |
-| *Oct 3*, *Oct 5* | ✏️ [Relative clauses, 3](../assignments/relative3/) | Review indirect statement, and the future participle |  |
+| *Aug 29*, *Aug 31* | Introduction to course | Introduction to technologies |  |
 
-## Participles
+## The "who" of myths: named entities
 
 | Dates | Tuesday | Thursday | Notes |
 | ---: | :--- | :--- | :--- |
-| *Oct 10*, *Oct 12* | [Participles](../assignments/participles1/) | [The present participle](../assignments/presentparticiple/) |  |
-| *Oct 17*, *Oct 19* | 🔬 Review forms | Workshop: [translation](../assignments/translation1/) and analysis |  |
-| *Oct 24*, *Oct 26* | Workshop: [composition](../assignments/composition1/) | *No class* |  |
-| *Oct 31*, *Nov 2* | ***spring break*** | ***spring break*** |  |
-| *Nov 7*, *Nov 9* | ***spring break*** | Review [composition](../assignments/composition1/) |  |
-| *Nov 14*, *Nov 16* | The [imperative](../assignments/imperative/) | Life of [St. Patrick](../assignments/patrick/) |  |
-| *Nov 21*, *Nov 23* | Course review | *Study period* |  |
+| *Sep 5*, *Sep 7* | class | 📓 class  |  |
+
+## Networks of relations (or, how far from Kevin Bacon to Achilles?)
+
+| Dates | Tuesday | Thursday | Notes |
+| ---: | :--- | :--- | :--- |
+| *Sep 12*, *Sep 14* | class | class |  |
+| *Sep 19*, *Sep 21* | class | 📓 class |  |
+
+## What happens? language and thematic patterns
+
+| Dates | Tuesday | Thursday | Notes |
+| ---: | :--- | :--- | :--- |
+| *Sep 26*, *Sep 28* | class | class |  |
+| *Oct 3*, *Oct 5* | class | 📓 class | **Thu**: *Last class before fall break.* |
+| *Oct 10*, *Oct 12* | ***Fall break*** | ***Fall break*** |  |
+
+## Narrative patterns
+
+| Dates | Tuesday | Thursday | Notes |
+| ---: | :--- | :--- | :--- |
+| *Oct 17*, *Oct 19* | class | class | **Tue**: *Class resumes.* |
+| *Oct 24*, *Oct 26* | class | 📓 class |  |
+
+## Writing with digital evidence
+
+| Dates | Tuesday | Thursday | Notes |
+| ---: | :--- | :--- | :--- |
+| *Oct 31*, *Nov 2* | class | class |  |
+| *Nov 7*, *Nov 9* | class | class 📓  |  |
+| *Nov 14*, *Nov 16* | class | class |  |
+| *Nov 21*, *Nov 23* | class | ***Thanksgiving*** | **Tue**: *Last class before Thanksgiving break.* |
+| *Nov 28*, *Nov 30* | class | class | **Tue**: *Class resumes.* |
+| *Dec 5*, *Dec 7* | class | class | **Thu**: *Last class.* |

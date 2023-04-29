@@ -18,6 +18,9 @@ has_children: true
 
 ## Daily schedule
 
+Deadlines to note:
+
+- 📓 Lab notebook due
 
 """
 

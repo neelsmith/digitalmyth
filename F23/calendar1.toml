@@ -9,16 +9,15 @@ lastDay = "2023-12-12"
 schedule = "tth"
 
 # Number of weeks the calendar should run for
-totalWeeks =  14
+totalWeeks =  15
 
 fixedDates = [
-  ["2023-01-23", "No classes."],
-  ["2023-03-03",  "No class on March 3."],
-  ["2023-03-13",  "Classes resume."],
-  ["2023-04-05",  "Last class before Easter break."],
-  ["2023-04-11",  "Classes resume."],
-  ["2023-04-26",  "Academic conference."],
-  ["2023-05-08",  "Last day of classes."],
-  ["2023-05-09",  "Study period begins."],
-  ["2023-05-11",  "Final examinations begin."]
+
+  
+  ["2023-10-05",  "Last class before fall break."],
+  ["2023-10-17",  "Class resumes."],
+  ["2023-11-21",  "Last class before Thanksgiving break."],
+  ["2023-11-28",  "Class resumes."],
+  ["2023-12-07",  "Last class."]
+  
 ]

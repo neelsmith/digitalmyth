@@ -51,7 +51,7 @@ Deadlines to note:
 | Dates | Tuesday | Thursday | Notes |
 | ---: | :--- | :--- | :--- |
 | *Oct 31*, *Nov 2* | class | class |  |
-| *Nov 7*, *Nov 9* | class | class 📓  |  |
+| *Nov 7*, *Nov 9* | class | 📓 class |  |
 | *Nov 14*, *Nov 16* | class | class |  |
 | *Nov 21*, *Nov 23* | class | ***Thanksgiving*** | **Tue**: *Last class before Thanksgiving break.* |
 | *Nov 28*, *Nov 30* | class | class | **Tue**: *Class resumes.* |

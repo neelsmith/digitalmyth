@@ -11,12 +11,7 @@ nav_order: 10
 
 ## Class attendance
 
-Active participation in class is one of the most effective ways to learn ancient Greek.  My expectations for your class attendance follow the college policies posted at [https://catalog.holycross.edu/requirements-policies/academic-policies/#coursepoliciestext](https://catalog.holycross.edu/requirements-policies/academic-policies/#coursepoliciestext).
-
-If at some point in the semester you are unable to complete the required preparation for a single class, please come anyway: staying away only compounds the difficulty of catching up.  If you let me know that you're not prepared, I will not call on you in class.
-
-
-If you are experiencing symptoms of a communicable disease, please let me know and do *not* come to class.  If you are are unable to attend class for whatever reason, for a shorter or longer period of time, please get in touch with me so we can work out a plan to get you caught up.
+...
 
 
 

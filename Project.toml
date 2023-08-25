@@ -1,2 +1,6 @@
 [deps]
 CourseCalendar = "ae603835-8fca-49e7-adf3-8bd54d23a0ba"
+UnifyJustTheDocs = "11bfd71e-bedf-46a1-8e5b-178579ef73ee"
+
+[compat]
+UnifyJustTheDocs = "0.3"

@@ -9,7 +9,7 @@ has_children: true
 
 Deadlines to note:
 
-- 📓 Lab notebook due
+- 📓 Lab notebook or other assignment due
 
 
 ## Introduction to course
@@ -51,8 +51,8 @@ Deadlines to note:
 | Dates | Tuesday | Thursday | Notes |
 | ---: | :--- | :--- | :--- |
 | *Oct 31*, *Nov 2* | class | class |  |
-| *Nov 7*, *Nov 9* | class | class 📓  |  |
-| *Nov 14*, *Nov 16* | class | class |  |
+| *Nov 7*, *Nov 9* | class | class |  |
+| *Nov 14*, *Nov 16* | class | 📓  Presentations with external respondent |  |
 | *Nov 21*, *Nov 23* | class | ***Thanksgiving*** | **Tue**: *Last class before Thanksgiving break.* |
 | *Nov 28*, *Nov 30* | class | class | **Tue**: *Class resumes.* |
 | *Dec 5*, *Dec 7* | class | class | **Thu**: *Last class.* |

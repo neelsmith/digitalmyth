@@ -20,7 +20,7 @@ has_children: true
 
 Deadlines to note:
 
-- 📓 Lab notebook due
+- 📓 Lab notebook or other assignment due
 
 """
 

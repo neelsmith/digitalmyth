@@ -8,4 +8,7 @@ has_children: true
 
 # Digital Mythology: home page
 
-Course website for F23 forthcoming.
+Welcome to the course web site for Classics 199, *Digital Mythology*!
+
+All course material will be made available here during the first week of classes.
+

@@ -3,12 +3,12 @@
 ## Introduction to course
 
 Introduction to course
-Introduction to technologies
+[Myth and code](../classes/content+tech1/)
 
 
 ## The "who" of myths: named entities
 
-Defining myths
+Using Julia in the REPL  (Jim Cahill available in class)
 Workshop: recognizing named entities
 
 
@@ -51,7 +51,7 @@ class
 class
 
 
-class
+Workshop draft code
 📓  Presentations with external respondent
 
 class

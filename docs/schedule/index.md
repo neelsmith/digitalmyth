@@ -16,13 +16,13 @@ Deadlines to note:
 
 | Dates | Tuesday | Thursday | Notes |
 | ---: | :--- | :--- | :--- |
-| *Aug 29*, *Aug 31* | Introduction to course | Introduction to technologies |  |
+| *Aug 29*, *Aug 31* | Introduction to course | [Myth and code](../classes/content+tech1/) |  |
 
 ## The "who" of myths: named entities
 
 | Dates | Tuesday | Thursday | Notes |
 | ---: | :--- | :--- | :--- |
-| *Sep 5*, *Sep 7* | Defining myths | Workshop: recognizing named entities |  |
+| *Sep 5*, *Sep 7* | Using Julia in the REPL  (Jim Cahill available in class) | Workshop: recognizing named entities |  |
 
 ## Networks of relations (or, how far from Kevin Bacon to Achilles?)
 
@@ -52,7 +52,7 @@ Deadlines to note:
 | ---: | :--- | :--- | :--- |
 | *Oct 31*, *Nov 2* | class | class |  |
 | *Nov 7*, *Nov 9* | class | class | **Thu**: *First draft of project code due.* |
-| *Nov 14*, *Nov 16* | class | 📓  Presentations with external respondent |  |
+| *Nov 14*, *Nov 16* | Workshop draft code | 📓  Presentations with external respondent |  |
 | *Nov 21*, *Nov 23* | class | ***Thanksgiving*** | **Tue**: *Last class before Thanksgiving break.* |
 | *Nov 28*, *Nov 30* | class | Project fair, 1 | **Tue**: *Class resumes.* |
 | *Dec 5*, *Dec 7* | Project fair, 2 | Mythology and digital reading | **Thu**: *Last class.* **Thu**: *Complete project submission due.* |

@@ -2,7 +2,7 @@
 title: "Contact information"
 layout: page
 parent:  Syllabus
-nav_order: 1
+nav_order: 0
 ---
 
 # Contact information

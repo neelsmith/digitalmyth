@@ -9,6 +9,14 @@ nav_order: 4
 
 ....
 
+in class work key
+
+some days workshops
+
+indiviudal and group work
+
+
+
 
 ## Technologies and mechanics of submitting assignments
 

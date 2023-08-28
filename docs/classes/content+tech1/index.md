@@ -15,10 +15,11 @@ nav_order: 2
 
 - From chapter 1 of Walter Burkert, *Structure and History in Greek Mythology and Ritual*, read section 6 "The Tale Applied" and section 7 "The Historical Dimension" (pp. 22-29). (PDF available in the course Google Drive's `reading-pdfs` folder, or if you're signed in to Google possibly from [this link](https://drive.google.com/file/d/15jlLgFLbOyP0rteFwB_N0m0YP3fMf6Iu/view).)
 
+What makes a myth different from any other kind of traditional story, in Burkert's view?
 
 Can you think of any stories from movies, series or novels that you're familiar with that fit Burkert's definition of a myth?  If stories you especially enjoy or find meaningful *don't* qualify as myths in Burkert's view, what distinguishes them from myth?
 
-Do stories that fit Burkert's definition of myth have particular features that we could identify algorithmically?
+Do stories that fit Burkert's definition of myth have particular features that we might be able to identify algorithmically?
 
 ### 2. Preparing to write code
 

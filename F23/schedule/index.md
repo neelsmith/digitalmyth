@@ -22,7 +22,7 @@ Deadlines to note:
 
 | Dates | Tuesday | Thursday | Notes |
 | ---: | :--- | :--- | :--- |
-| *Sep 5*, *Sep 7* | Using Julia in the REPL  (Jim Cahill available in class) | Workshop: recognizing named entities |  |
+| *Sep 5*, *Sep 7* | Using [Julia in the REPL](../classes/repl1/)  (Jim Cahill available in class) | Workshop: recognizing [named entities](../classes/named-entities/) |  |
 
 ## Networks of relations (or, how far from Kevin Bacon to Achilles?)
 

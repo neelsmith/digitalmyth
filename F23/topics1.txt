@@ -3,28 +3,28 @@
 ## Introduction to course
 
 Introduction to course
-Introduction to technologies
+[Myth and code](../classes/content+tech1/)
 
 
 ## The "who" of myths: named entities
 
-class
-📓 class 
+Using [Julia in the REPL](../classes/repl1/)  (Jim Cahill available in class)
+Workshop: recognizing [named entities](../classes/named-entities/)
 
 
 ## Networks of relations (or, how far from Kevin Bacon to Achilles?)
 
-class
-class
+Graphs and networks
+📓  Applications
 
 class
-📓 class
+class
 
 
 ## What happens? language and thematic patterns
 
 class
-class
+📓  class
 
 class
 📓 class
@@ -39,7 +39,7 @@ class
 
 
 class
-📓 class
+📓 Project proposal due
 
 ## Writing with digital evidence
 
@@ -51,7 +51,7 @@ class
 class
 
 
-class
+Workshop draft code
 📓  Presentations with external respondent
 
 class
@@ -60,9 +60,10 @@ class
 
 
 class
-class
+Project fair, 1
 
 
-class
-class
+Project fair, 2
+Mythology and digital reading
+
 

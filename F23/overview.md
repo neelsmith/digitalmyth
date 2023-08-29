@@ -40,6 +40,9 @@ Assignments:
 - multi-stage project
 
 
+
+
+
 ## Projects or assignments
 
 - Social network of Greek myth in different sources
@@ -49,10 +52,6 @@ Assignments:
 - Narrative structures? (See what John Laudun is doing...)
 
 
-## People
-
-Invite Scott Smith?  
-Invite John Laudun?
 
 
 ## Repeat this daily

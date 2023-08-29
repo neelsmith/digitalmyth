@@ -14,10 +14,21 @@ totalWeeks =  15
 fixedDates = [
 
   
-  ["2023-10-05",  "Last class before fall break."],
+  ["2023-10-05",  "Last class before fall break. Notebook due"],
   ["2023-10-17",  "Class resumes."],
   ["2023-11-21",  "Last class before Thanksgiving break."],
   ["2023-11-28",  "Class resumes."],
-  ["2023-12-07",  "Last class."]
+  ["2023-12-07",  "Last class."],
+
+
+
+    ["2023-09-14",  "NB 1 due."],
+    ["2023-09-28",  "NB 2 due."],
+    ["2023-10-05",  "NB 3 due."],
+
+
+    ["2023-10-26",  "Project proposal due."],
+    ["2023-11-09",  "First draft of project code due."],
+    ["2023-12-07",  "Complete project submission due."],
   
 ]

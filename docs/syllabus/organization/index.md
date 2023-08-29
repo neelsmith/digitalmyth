@@ -20,6 +20,9 @@ indiviudal and group work
 
 ## Technologies and mechanics of submitting assignments
 
-- Google drive with [individual folders for submitting assignments](https://drive.google.com/drive/u/0/folders/16AqmgQKUxF0Rx-1DEO5KVcVYedKjzXiH)
-- Julia language: refer to isntructions for REPL 1 class
+
+
+We will use a course Google drive to share reading material, and to submit assignments.  You submit an assignment by dropping a file into your [individual folder](https://drive.google.com/drive/u/0/folders/16AqmgQKUxF0Rx-1DEO5KVcVYedKjzXiH). (Other students do not have access to your individual folder.)
+
+- Julia language: refer to isntructions for [REPL 1 class](../../classes/content+tech1/)
 - JuliaHub to [draft code using ChatGPT](https://juliahub.com/ui/AskAI) (login with HC google ID)

@@ -5,6 +5,10 @@ parent:  Syllabus
 nav_order: 0
 ---
 
+
+Course web site with all information and course material:  `https://neelsmith.github.io/digitalmyth/`
+
+
 # Contact information
 
 **Instructor**: Neel Smith.  **Email**: at `holycross.edu`, user name `nsmith`

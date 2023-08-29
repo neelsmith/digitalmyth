@@ -19,6 +19,7 @@ You determine your own course grade by satisfactorily completing a number of ass
 
 All assignments will be graded satisfactory/unsatisfactory according to an explicit specification of requirements: if you complete all requirements, the assignment is satisfactory.
 
+For in-class assignments, lab notebooks, and for each step of a five-step course project, you earn two points. The first point is for a *complete*, on-time submission.  If your work also satisfies all the requirements for a *satisfactory* submission, you earn a second point.  If your work is complete and on time, but some part of it is not satisfactory, you will have an unlimited number of opportunities to revise the submission by a given deadline.  For example, for short, in-class assignments, if you complete the work and earn the first point for the assignment, but have an error, you would typically have about a week to resubmit the work with corrections.  To resubmit an assignment, bring the revised work to office hours, or make an appointment to go over the revised work with Prof. Smith.
 
 
 ## Attendance points

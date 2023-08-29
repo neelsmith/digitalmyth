@@ -19,5 +19,12 @@ Welcome to the course web site for Classics 199, *Digital Mythology*! Both subti
 
 ## Week of Aug. 29, 31
 
+## What we'll cover
+
+- defining myth
+- interactively using the Julia language
+
+## Assignments
+
 - Tuesday: introduction to course.  No preparation required.
 - Thursday: [what is myth and what does have it to do with code](./classes/content+tech1/)?

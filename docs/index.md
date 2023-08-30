@@ -38,8 +38,3 @@ Welcome to the course web site for Classics 199, *Digital Mythology*! Both subti
 - Using Julia in the REPL and in Pluto notebooks
 - The "who" of myths: finding named entities in texts: 
 
-### Assignments
-
-
-- Tuesday: 
-- Thursday: 

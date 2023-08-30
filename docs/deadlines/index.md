@@ -18,3 +18,10 @@ has_children: true
 
 
 
+## Multi-step project
+
+- Initial project proposal: Oct. 24
+- First draft of project code: Nov. 7
+- Oral presentation of work in progress: Nov. 16
+- Complete draft of project: Nov. 28
+- Final draft of project: Dec 8

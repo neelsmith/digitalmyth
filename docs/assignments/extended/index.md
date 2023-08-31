@@ -6,7 +6,7 @@ nav_order: 5
 has_children: true
 ---
 
-# Individual work to extend an assignment
+# Individual work to extend a collaborative assignment
 
 You will develop a 5-10 minute presentation in which you introduce our class to something you have done with a digital text. This does not need to be a major project: it's fine if it simply takes one of our assigned group projects and develops it in some way a step beyond the minimum requirements for the assignment.
 

@@ -15,7 +15,7 @@ has_children: true
 - Pluto notebook 3: isolating themes in text. Due at end of class, Thursday, Oct. 5.
 
 
-## Extending an assignment
+## Extending a collaborative assignment
 
 - [developing a class presentation](./extended/)
 

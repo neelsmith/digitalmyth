@@ -10,9 +10,6 @@ has_children: true
 
 > ***Reading Greek mythology using data science*** *and/or* ***A first encounter with data science through Greek mythology***
 
-Welcome to the course web site for Classics 199, *Digital Mythology*! Both subtitles apply: choose the one that fits you better. 
-
-
 ## Announcements
 
 - See a summary of [important dates and deadlines](./deadlines/).
@@ -36,5 +33,10 @@ Welcome to the course web site for Classics 199, *Digital Mythology*! Both subti
 ### What we'll cover
 
 - Using Julia in the REPL and in Pluto notebooks
-- The "who" of myths: finding named entities in texts: 
+- The "who" and "where" of myths: finding named entities in texts: 
 
+
+### Assignments
+
+- Tuesday: [Exploring texts with the Julia REPL](./classes/repl1/)
+- Thursday: Workshop: recognizing named entities. Assignment TBA.

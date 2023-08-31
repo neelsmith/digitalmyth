@@ -10,3 +10,8 @@ nav_order: 6
 
 - Pluto nbs
 - named entities
+
+
+## CLASS PREP : REVIEW FROM TUES
+
+TO BE POSTED HERRE RRIGHT AFTER TUES CLASS

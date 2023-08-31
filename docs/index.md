@@ -10,9 +10,6 @@ has_children: true
 
 > ***Reading Greek mythology using data science*** *and/or* ***A first encounter with data science through Greek mythology***
 
-Welcome to the course web site for Classics 199, *Digital Mythology*! Both subtitles apply: choose the one that fits you better. 
-
-
 ## Announcements
 
 - See a summary of [important dates and deadlines](./deadlines/).

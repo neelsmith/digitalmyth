@@ -42,4 +42,4 @@ Welcome to the course web site for Classics 199, *Digital Mythology*! Both subti
 ### Assignments
 
 - Tuesday: [Exploring texts with the Julia REPL](./classes/repl1/)
-- Thursday: [Recognizing named entities](./classes/named-entities/)
+- Thursday: Workshop: recognizing named entities: 

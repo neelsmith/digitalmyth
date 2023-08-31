@@ -12,6 +12,7 @@ has_children: true
 
 ## Announcements
 
+- Please complete [this Google form](https://forms.gle/MQR2iGSxoD3VAKWX7) by noon, Monday, Sept. 4.
 - See a summary of [important dates and deadlines](./deadlines/).
 
 

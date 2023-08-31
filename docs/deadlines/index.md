@@ -8,6 +8,13 @@ has_children: true
 
 # Important dates and deadines
 
+
+## Informational form
+
+- [Google form](https://forms.gle/MQR2iGSxoD3VAKWX7) to complete by **noon, Monday, Sept. 5**.
+
+
+
 ## Collaborative assignments
 
 - Pluto notebook 1: [identifying named entities](../assignments/nb1/). Due at end of class, Thursday, Sept. 14

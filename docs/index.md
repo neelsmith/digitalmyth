@@ -16,6 +16,8 @@ has_children: true
 - See a summary of [important dates and deadlines](./deadlines/).
 
 
+## Module 1: using named entities to explore myths
+
 ## Week of Aug. 29, 31
 
 ### What we'll cover
@@ -41,3 +43,33 @@ has_children: true
 
 - Tuesday: [Exploring texts with the Julia REPL](./classes/repl1/)
 - Thursday: Workshop: recognizing named entities. Assignment TBA.
+
+
+
+## Module 2: understanding social networks
+
+
+## Week of Sept. 12, 14
+
+### What we'll cover
+
+- introduction to social networks (graphs)
+- reading and writing formatted text
+
+### Assignments
+
+
+- Tuesday: introduction to [social network analysis](./classes/socnet/)
+- Thursday: reading and writing formatted text
+
+## Week of Sept. 19, 21
+
+### What we'll cover
+
+- visualizing networks
+- applying network metrics to interpret networks
+
+### Assignments
+
+- Tuesday: using Gephi to visualize graphs
+- Thursday: using graph metrics to interpret social networks

@@ -11,7 +11,7 @@ has_children: true
 
 ## Informational form
 
-- [Google form](https://forms.gle/MQR2iGSxoD3VAKWX7) to complete by **noon, Monday, Sept. 5**.
+- [Google form](https://forms.gle/MQR2iGSxoD3VAKWX7) to complete by **noon, Monday, Sept. 4**.
 
 
 

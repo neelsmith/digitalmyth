@@ -16,6 +16,8 @@ has_children: true
 - See a summary of [important dates and deadlines](./deadlines/).
 
 
+## Module 1: using named entities to explore myths
+
 ## Week of Aug. 29, 31
 
 ### What we'll cover

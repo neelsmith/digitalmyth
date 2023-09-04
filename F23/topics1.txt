@@ -14,8 +14,8 @@ Workshop: recognizing [named entities](../classes/named-entities/)
 
 ## Networks of relations (or, how far from Kevin Bacon to Achilles?)
 
-Graphs and networks
-📓  Applications
+[Graphs and networks](../classes/socnet/)
+📓  Workshop: text IO
 
 class
 class

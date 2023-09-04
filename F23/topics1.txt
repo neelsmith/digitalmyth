@@ -18,7 +18,7 @@ Workshop: recognizing [named entities](../classes/named-entities/)
 📓  Workshop: text IO
 
 class
-class
+📓 class
 
 
 ## What happens? language and thematic patterns

@@ -17,8 +17,8 @@ Workshop: recognizing [named entities](../classes/named-entities/)
 [Graphs and networks](../classes/socnet/)
 📓  Workshop: text IO
 
-class
-📓 class
+Visualizing graphs with Gephi
+📓 Graph metrics
 
 
 ## What happens? language and thematic patterns

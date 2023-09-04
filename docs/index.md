@@ -46,6 +46,7 @@ has_children: true
 
 
 
+## Module 2: understanding social networks
 
 
 ## Week of Sept. 12, 14
@@ -55,10 +56,20 @@ has_children: true
 - introduction to social networks (graphs)
 - reading and writing formatted text
 
-
-
 ### Assignments
 
 
 - Tuesday: introduction to [social network analysis](./classes/socnet/)
 - Thursday: reading and writing formatted text
+
+## Week of Sept. 19, 21
+
+### What we'll cover
+
+- visualizing networks
+- applying network metrics to interpret networks
+
+### Assignments
+
+- Tuesday: using Gephi to visualize graphs
+- Thursday: using graph metrics to interpret social networks

@@ -1,7 +1,7 @@
 ---
 title: "Syllabus"
 layout: page
-nav_order: 1
+nav_order: 100
 has_children: true
 ---
 

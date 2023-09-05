@@ -389,7 +389,7 @@ In the final cell above, our `wordlist` function produced a type we have not see
 wordlist("I have miles to go before I sleep.") |> typeof
 
 # ╔═╡ 86034c4d-0a34-4580-a3d5-737eba514d1b
-md"""Much of your scholarly work will involve working with lists like Vectors.  The Pluto [notebook for session 1b](https://neelsmith.github.io/why_we_code/notebooks/session1/session1bnb.html) will take introduce you to the basics of working with collections of data in Julia.
+md"""Much of your scholarly work will involve working with lists like Vectors.  The course web site includes a Pluto notebook introducing you to the basics of working with collections of data in Julia.
 
 
 """
@@ -678,7 +678,7 @@ version = "17.4.0+0"
 # ╠═288cf4a9-6f87-4c10-884f-7c44d8d73e27
 # ╟─08c2184b-631b-4aa4-9c43-cc7f0446a709
 # ╠═61f6a990-31ab-4e38-bb91-372a60dbe5e4
-# ╠═aae31cae-a87c-4479-a7fc-b942d2d7dff2
+# ╟─aae31cae-a87c-4479-a7fc-b942d2d7dff2
 # ╟─8d437fee-bbb5-437c-9bb2-08edd35c5afc
 # ╠═3fdcf2d8-8ace-41dc-bb30-54306fe1d8d0
 # ╟─72ec26e1-7c46-4cac-9fb1-a541ac2604d0

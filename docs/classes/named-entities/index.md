@@ -10,7 +10,16 @@ nav_order: 6
 
 In today's class, we'll introduce in more detail ways to work with collections of data in Julia.  We'll group together in your first project teams, and get a start on finding named entities in a text.
 
-## Class preparation
+## Review
+
+From Tuesday's reading, please review the questions about Apollodorus and Hyginus. Be sure you know who Apollodorus and Hyginus are. What text(s) did each person write? What is the language of the original text? What is the approximate date of each text? Who might have been the intended audience for each text?
+
+
+## Class preparation: collaboration
+
+In Tuesday's class, you'll meet your team members.  Your group will agree to a compact for collaborative work which all of you will sign and return to me by 4:00 pm on Friday.  The compact that you will complete is available on the course Google Drive.
+
+## Class preparation: technology
 
 Before you come to class, make sure that you can start a Pluto notebook server.
 
@@ -29,3 +38,4 @@ Use the "Edit or run" link at the top right of the page to save the file to your
 ![](../../imgs/edit-or-run.png) 
 
 Follow the instructions it will display to download it, and open it in Pluto.
+

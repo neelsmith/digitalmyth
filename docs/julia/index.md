@@ -7,4 +7,5 @@ has_children: true
 
 # Julia notes and review
 
-- a Pluto notebook reviewing the "[nouns and verbs](./julia-nouns-verbs.html)" of the Julia language
+1. a Pluto notebook reviewing the "[nouns and verbs](./julia-nouns-verbs.html)" of the Julia language
+2. a Pluto notebook reviewing collections of data

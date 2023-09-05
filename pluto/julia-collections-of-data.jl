@@ -33,7 +33,7 @@ Let's review the function `wordlist` that we wrote in the previous notebook intr
 """
 
 # ╔═╡ 8987603f-7a1f-411d-a1d8-28ab2fe10d23
-"Break up `s` into a list of words, and sort the list."
+"Break up a String `s` into a list of words, and sort the list."
 function wordlist(s)
 	words = split(s) |> unique
 	sort(words)
@@ -84,7 +84,7 @@ md"""That looks more like what we want!
 
 Note that we have easily strung three basic functions together and gone from a URL to a String value with the contents of the remote file.  That's great -- but again, a common enough task for us that we may as well *encapsulate* the idea of reading String data from a URL in a new function of our own. Organizing your work in logical units in this way makes it more readily intelligible to a human reader.
 
-The following creates a function named `string_dl` (for "string download").
+The cell following creates a function named `string_dl` (for "string download").
 
 """
 
@@ -126,10 +126,20 @@ md"""The second alphabetized word is just `vocablist[2]`, and so forth.  Julia i
 # ╔═╡ 788a2138-1569-4933-871e-5d68159b8dd5
 vocablist[end]
 
+# ╔═╡ d5e028fd-f978-4c84-8a10-bc75aeb1ef0d
+md"""That's a weird looking word.  To get some idea of what's going on, let's peek at the last few words in the word list. We can put a range of numeric indexes between square brackets by separating two numbers with a colon.  If the *last* number is `end`, then let's use `end-5` (that is, 5 before `end` as the first number in the range):
+"""
+
+# ╔═╡ 13a5ed3f-fbad-4964-b662-057b19bb06a0
+vocablist[end-5:end]
+
+# ╔═╡ f344f230-8a99-485b-961c-834040279c06
+md"""Why do you think `-` is the last "word" in the list alphabetically?"""
+
 # ╔═╡ 5a7d0145-267f-4f7d-9956-0489be8ce6fd
 md"""### Testing conditions
 
-One question we'll consider in our next session is whether word length helps us define stylistic habits.  In simplest terms: does an author use big words?
+When we look at vocabulary, we might want to know how long words are.  Are named entities usually very long words, for example?
 
 We answer that question for a particular word by asking if a word is longer than some threshhold or cutoff point.  In Julia, we can express that with the `>` function.
 
@@ -139,12 +149,15 @@ We answer that question for a particular word by asking if a word is longer than
 threshhold = 9
 
 # ╔═╡ 7c8a9cf3-9892-4734-8aae-5e48199fff46
->(length(vocablist[1]), threshhold)
+>(length(vocablist[10]), threshhold)
+
+# ╔═╡ 9fd4faef-0edc-4f28-ad75-4936e93a198c
+vocablist[10] |> length
 
 # ╔═╡ 31943c2b-ae63-4a9c-8387-52a21dba2414
-md"""Recall that `vocablist[1]` is `"But"` -- way shorter than 9 characters!
+md"""Recall that `vocablist[10]` is `"(Memory)"` -- only 8 characters, so shorter than our threshhold.
 
-But again the parentheses may make this function awkward to read.  Let's take advantage of another Julia formatting option:  when a function has *two* parameters, say 'A' and 'B', we can invoke as `A function B`.  This is exactly equivalent to `function(A,B)`, as you can see in the more readable following cell:
+But again the parentheses may make this function awkward to read.  Let's take advantage of another Julia formatting option:  when a function has *two* parameters, say 'A' and 'B', we can invoke it as `A function B`.  This is exactly equivalent to `function(A,B)`, as you can see in the more readable following cell:
 """
 
 # ╔═╡ 0a53480b-35f7-41f8-9e23-799d623ac474
@@ -171,7 +184,7 @@ for VARIABLE_NAME in COLLECTION
 end
 ```
 
-The `for` loop cycles through every item in your collection, and assigns it to the variable name you supply.  Let's see how we can use a `for` to find the length of the *longest* word in our vocabulary list from the Gettysburg Address.
+The `for` loop cycles through every item in your collection, and assigns it to the variable name you supply.  Let's see how we can use a `for` to find the length of the *longest* word in our vocabulary list from the Apollodorus.
 
 """
 
@@ -233,17 +246,17 @@ Recall that we can think of a String value as a collection of characters.   We c
 md"""
 !!! warning "? Strings and characters"
 	
-    If you're unsure how a String could also be a Vector of characters, try this:  look at a value by indexing directly into it.  What happens if you try `gburg[1]`?
+    If you're unsure how a String could also be a Vector of characters, try this:  look at a value by indexing directly into it.  What happens if you try `apollodorus[1]`?
 """
 
 # ╔═╡ 370bafec-e9cb-41b1-8d0f-1dc9f0ac7fd6
 md"""
 
-Let's start by getting a text of the Gettysburg Address using the `string_dl` function we just wrote.
+Let's start by getting a text of the the *Library* using the `string_dl` function we just wrote.
 """
 
 # ╔═╡ 64769358-4854-4161-b4a0-d17877c91181
-gburg = string_dl(url)
+apollodorus = string_dl(url)
 
 # ╔═╡ f15840e1-d68f-4525-9c35-9855946fba2d
 md"""#### Filtering out punctuation characters
@@ -260,7 +273,7 @@ Julia has built-in function `ispunct` that returns `true` if a character is defi
 """
 
 # ╔═╡ 7308ed18-1283-489a-ba9c-b89ff3f3e838
-gburg_filtered = filter(c -> ! ispunct(c), gburg)
+apollodorus_filtered = filter(c -> ! ispunct(c), apollodorus)
 
 # ╔═╡ 5698e814-13b8-4c63-9f20-67ea46b82770
 md"""
@@ -278,17 +291,17 @@ function notpunct(c)
 end
 
 # ╔═╡ 6991a5d0-5e32-4abc-a598-eb2924c320a5
-filter(notpunct, gburg)
+filter(notpunct, apollodorus)
 
 # ╔═╡ e6e9a229-42cb-43ed-b6b4-5636d3a468ff
 md"""If we look at the length of the resulting string, we can see that we have indeed filtered some characters out.
 """
 
 # ╔═╡ 7584a170-a405-41b3-8a69-159b1ba91322
-length(gburg)
+length(apollodorus)
 
 # ╔═╡ 35c3959d-74d0-4646-b3d2-4d41f03435ff
-length(gburg_filtered)
+length(apollodorus_filtered)
 
 # ╔═╡ 0a5359f3-6efa-415d-901e-83f740581b3e
 md"""#### Transforming characters to lower case form
@@ -297,7 +310,7 @@ We can now map our filtered text to all lower case form.  `gburg_filtered` will 
 """
 
 # ╔═╡ 0b711b5d-fccb-4e19-9e3d-4fe06dada8d1
-gburg_lc = map(lowercase, gburg_filtered)
+apollodorus_lc = map(lowercase, apollodorus_filtered)
 
 # ╔═╡ a976b05c-587b-4ac5-b1d0-837271379d43
 md"""Filtering creates a new list containing anywhere from 0 elements to all the elements in the original list; all the elements in the new list have values drawn from the original list.
@@ -306,8 +319,7 @@ Mapping creates a new list with exactly the same number of elements as the origi
 """
 
 # ╔═╡ 6d462a7d-67fd-40ea-972d-3fc25c5ff1c9
-
-length(gburg_lc) == length(gburg_filtered)
+length(apollodorus_lc) == length(apollodorus_filtered)
 
 # ╔═╡ 476823ad-b7eb-412b-919e-5471e2d6127c
 md"""
@@ -315,7 +327,7 @@ If we want to see the range of vocabulary in the Gettysburg Address, our new lis
 """
 
 # ╔═╡ 1f8b636c-3c57-46f8-802a-30de44b7ee37
-wordlist(gburg_lc)
+wordlist(apollodorus_lc)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -599,9 +611,13 @@ version = "17.4.0+0"
 # ╠═7ea880b7-fdaa-4009-b9d7-704203b1bac3
 # ╟─82812e47-8f3b-4f91-a874-dac2154574ed
 # ╠═788a2138-1569-4933-871e-5d68159b8dd5
+# ╟─d5e028fd-f978-4c84-8a10-bc75aeb1ef0d
+# ╠═13a5ed3f-fbad-4964-b662-057b19bb06a0
+# ╟─f344f230-8a99-485b-961c-834040279c06
 # ╟─5a7d0145-267f-4f7d-9956-0489be8ce6fd
 # ╠═ea8ab664-2fe2-4cdf-a1d9-6d8d77fe7c61
 # ╠═7c8a9cf3-9892-4734-8aae-5e48199fff46
+# ╠═9fd4faef-0edc-4f28-ad75-4936e93a198c
 # ╟─31943c2b-ae63-4a9c-8387-52a21dba2414
 # ╠═0a53480b-35f7-41f8-9e23-799d623ac474
 # ╟─f81bd4bf-4b08-4390-a228-bdc1b81aec22

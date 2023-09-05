@@ -22,3 +22,8 @@ has_children: true
 
 ## Class schedule
 
+
+### Week of Aug. 29, 31
+
+- Tuesday: introduction to course.  No preparation required.
+- Thursday: [what is myth and what does have it to do with code](../../classes/content+tech1/)?

@@ -10,18 +10,18 @@ begin
 	using PlutoTeachingTools
 end
 
-# ╔═╡ 3c2dbe8c-363c-4ad8-a862-6a74c45808e0
+# ╔═╡ 5a23607b-74dd-4f4e-b82e-f81dda00877a
 md"""
-> Workshop **session 1a** of [*Why we code*](https://neelsmith.github.io/why_we_code/)
+*Notebook last updated: **Sept. 5**, 2023*
 """
 
 # ╔═╡ 777185cc-b116-11ec-218d-453c13034275
-md"""# Basics for humanities research: the nouns and verbs of the Julia language
+md"""# The nouns and verbs of the Julia language
 
 
-In our first session, we'll introduce some essential ideas for computational study in the humanities.  Working in the Julia REPL (Julia's interactive Read-Evaluate-Print Loop), we'll start by getting familiar with the expressing ideas in Julia using the "nouns and verbs" of the Julia language, *objects* and *functions*.
+This notebook introduces some essential ideas for computational study of texts.  You'll start by getting familiar with expressing ideas in Julia using the "nouns and verbs" of the Julia language, *objects* and *functions*.
 
-Using the interactive REPL is one of the best ways to get familiar with Julia, and we'll do that in our workshop, but you can use this  Pluto notebook to review, and to experiment with some self-correcting examples.
+Using the interactive REPL is one of the best ways to get familiar with Julia, and we'll do that in class, but you can use this  Pluto notebook to review, and to experiment with some self-correcting examples.
 
 !!! note "Summary of content in this notebook"
 
@@ -652,7 +652,7 @@ version = "17.4.0+0"
 
 # ╔═╡ Cell order:
 # ╟─a2cb957f-c8eb-4e0f-a1e5-3e37f2b7bd27
-# ╟─3c2dbe8c-363c-4ad8-a862-6a74c45808e0
+# ╟─5a23607b-74dd-4f4e-b82e-f81dda00877a
 # ╟─777185cc-b116-11ec-218d-453c13034275
 # ╟─7f8af184-9753-47de-8660-f07990f247d9
 # ╠═efe0e3ed-0c14-48d3-a0fd-d65dba74ee2f

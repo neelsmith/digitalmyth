@@ -24,4 +24,8 @@ At the `>julia` prompt, enter `Pluto.run()`.  This will start a Pluto notebook s
 
 Read through the review material on [nouns and verbs of the Julia language](http://localhost:4000/julia/julia-nouns-verbs.html).
 
-Use the "Edit or run" link to save the file to your computer. Follow the instructions to download it, and open it in Pluto.
+Use the "Edit or run" link at the top right of the page to save the file to your computer. 
+
+![](../../imgs/edit-or-run.png) 
+
+Follow the instructions it will display to download it, and open it in Pluto.

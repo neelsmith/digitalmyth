@@ -12,23 +12,9 @@ has_children: true
 
 ## Announcements
 
+- Material from previous weeks available on new page: [Main sections of course](./modules/)
+- New section: [Julia notes and review](./julia/)
 - Please complete [this Google form](https://forms.gle/MQR2iGSxoD3VAKWX7) by noon, Monday, Sept. 4.
-- See a summary of [important dates and deadlines](./deadlines/).
-
-
-## Module 1: using named entities to explore myths
-
-## Week of Aug. 29, 31
-
-### What we'll cover
-
-- defining myth
-- interactively using the Julia language
-
-### Assignments
-
-- Tuesday: introduction to course.  No preparation required.
-- Thursday: [what is myth and what does have it to do with code](./classes/content+tech1/)?
 
 
 ## Week of Sept. 5, 7
@@ -46,7 +32,7 @@ has_children: true
 
 
 
-## Module 2: understanding social networks
+## Coming up... social network analysis
 
 
 ## Week of Sept. 12, 14

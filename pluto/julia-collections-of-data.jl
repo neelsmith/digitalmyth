@@ -104,20 +104,20 @@ vocablist = string_dl(url) |> wordlist
 # ╔═╡ 6ce0474d-4240-4294-8bc2-50376dfd76d9
 md""" ### Looking at items in a collection
 
-We might like to know how many any items are in our collection.  The `length` function that you have already encountered works with any kind of list.  (That's actually why it works with strings:  under the hood, a String is just a list of characters!) 
+We might like to know how many any items are in our collection.  The `length` function that you have already encountered to find the length of a string works with any kind of list.  (That's actually *why* it works with strings:  under the hood, a String is just a list of characters!) 
 """
 
 # ╔═╡ 255e94bc-4dd5-4168-8296-3c9f9cecdee6
 length(vocablist)
 
 # ╔═╡ ea830b21-c035-4b4a-92d9-c987c0617697
-md"""We have just answered the question, "How big is Apollodorus' vocabulary?"  -- a meaningful question for us to think.
+md"""We have just answered the question, "How big is Apollodorus' vocabulary?"  -- a meaningful question for us to think about.
 
-You can refer to individual items in a list using a numeric index value between square brackets.  The next cell, for example, first the alphabetically first word in the text:
+You can refer to individual items in a list using a numeric index value between square brackets.  The next cell, for example, first the tenth word in the alphabetically sorted list:
 """
 
 # ╔═╡ 7ea880b7-fdaa-4009-b9d7-704203b1bac3
-vocablist[1]
+vocablist[10]
 
 # ╔═╡ 82812e47-8f3b-4f91-a874-dac2154574ed
 md"""The second alphabetized word is just `vocablist[2]`, and so forth.  Julia includes a handy short-hand for referring to the last item in a list.

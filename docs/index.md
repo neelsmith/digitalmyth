@@ -28,7 +28,7 @@ has_children: true
 ### Assignments
 
 - Tuesday: [Exploring texts with the Julia REPL](./classes/repl1/)
-- Thursday: Workshop: recognizing named entities. Assignment TBA.
+- Thursday: Workshop: recognizing [named entities](./classes/named-entities/).
 
 
 

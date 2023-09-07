@@ -16,15 +16,160 @@ end
 
 # ╔═╡ f6bc3e32-4b5a-11ee-06ae-0fbebdca7dfd
 begin
-	using Downloads
 	using PlutoUI
 	using PlutoTeachingTools
 end
+
+# ╔═╡ 9978b453-2abb-40d7-8152-37e0919b353e
+using Downloads
+
+# ╔═╡ 6bf51ab9-dee0-4563-9a88-94fb70f14c2e
+TableOfContents()
 
 # ╔═╡ c35a93b3-cccd-49aa-8ebe-a0ec27fdea52
 md"""
 # Pluto notebook 1: identifying named entities
 """
+
+# ╔═╡ 565bd719-468b-4d1b-bfbb-2411e3cab06f
+md""" ## Before your start: authors
+"""
+
+# ╔═╡ 6f2fb7a1-da48-4099-867e-7f0cf8fe43e6
+team = ""
+
+# ╔═╡ 52c1724d-1c53-4ba1-bde6-c3eca9825703
+if isempty(team)
+	still_nothing(md"Assign to the variable `team` a single string with a list of all members of your group.")
+end
+
+# ╔═╡ cc5deeee-42ff-401c-acb5-5458eb4b9fe2
+md"""
+> ## Overview of assignment
+>
+> This Pluto notebook will guide you through identifying named entities in English translations of Apollodorus or Hyginus. (See [assignment on course web site](https://neelsmith.github.io/digitalmyth/assignments/nb1/)).
+>
+> You will:
+>
+> 1. select a text to analyze
+> 2. read the contents of the text from a URL
+> 3. tokenize the file
+> 4. filter the list of tokens to include only named entities
+> 5. alphabetically sort the resulting list of named entities
+>
+> When your team has completed the notebook, you should:
+>
+> 1. save it to your computer
+> 2. all team members should then add a copy of the notebook to their folder in the course Google drive
+> 
+
+
+"""
+
+# ╔═╡ a9f68169-d603-499a-b36d-1e445a7e360f
+md"""## Selecting a text
+
+
+"""
+
+# ╔═╡ a2d34e4a-d7e0-4ca8-9b6c-a4c67cac337e
+md"""
+> **Instructions**:  The first task, selecting a text to analyze from a menu, has been provided for you!  The following cell uses a widget that gives users a menu of choices, and returns a value.  In this case, the value that the user chooses is assigned to a variable named `text_url`.  Try different selections from the menu, and observe in the following cell what happens to the value of the `text_url` variable.
+"""
+
+# ╔═╡ 0c187725-1b0d-4b2f-97f6-6839c73bad03
+md"""`isempty` is a Julia function that takes one parameter (or argument): a string value.  Observe how its result changes when you make different choices from the menu and change the value of the `text_url` variable.
+"""
+
+# ╔═╡ 9ae5f7f5-9099-4e47-a47c-854cbf68b555
+md"""## Read the contents of the text from a URL"""
+
+# ╔═╡ a0215564-e763-43ce-ad67-f24296dd0976
+md"""
+> **Instructions**: Our next text is to download a text from the internet, and read its contents.
+>
+> In [these class notes](https://neelsmith.github.io/digitalmyth/julia/julia-collections-of-data.html), review the section labelled "Downloading from the internet", and complete the next section of this notebook.
+"""
+
+# ╔═╡ 98e28be6-27af-4b50-951e-8cf6ccce8e1a
+md"""Recall that we'll need to use the built-in `Downloads` package."""
+
+# ╔═╡ 43be0af1-ca53-4fa9-a99c-b15a62b901a8
+md"""We're next going write a function that takes one parameter (or argument): a string value giving the URL of a file to download.  We want the function to:
+
+- download the file to your computer
+- read the downloaded contents with Julia's `read` function
+- convert the content you read into a single String
+
+"""
+
+# ╔═╡ e3807564-23d4-4a7b-9cda-8c28bb23200b
+md"""Before you begin writing, however, we should define a test: how can we be sure our function works?
+
+I've manually created a test file that has exactly 18 characters in it. You can use it to see if your function reads the data correctly. The result should:
+
+1. be a String type of object
+2. be 18 characters long
+
+Here's the URL for the test file:
+"""
+
+# ╔═╡ d63f35fe-a318-4100-8544-ec699fec3a49
+testurl = "https://raw.githubusercontent.com/neelsmith/digitalmyth/main/texts/test_dl.txt"
+
+# ╔═╡ 07e10060-0c17-4470-a56f-667b8f14b8e1
+md"""The next 2 cells define our tests."""
+
+# ╔═╡ f17add47-ca31-4a8e-9e71-ace4c1166760
+"""Download the contents of `url` and read it as a string value."""
+function read_url(url)
+	# Make this function do something!
+	nothing
+end
+
+# ╔═╡ 87ccb60d-a7fa-4537-8fc3-62706e426b98
+read_url(testurl) isa String
+
+# ╔═╡ 77d85986-5e0e-4b0d-a833-a602ea6a1c91
+if read_url(testurl) isa String
+	length(read_url(testurl))
+else
+	md"Wait! I didn't get a String value from `read_url`!"
+end
+
+# ╔═╡ 4be85ad4-51f3-4933-8534-90d2c3c9e7cc
+begin
+
+	teststringreading = read_url(testurl)
+
+	if isnothing(teststringreading)
+		# go ahead, do it!
+	elseif length(teststringreading) == 18
+		# ok
+	else
+		# nope
+	end
+end
+
+# ╔═╡ 777c86d6-0194-4037-824a-f5c38ac5f62f
+md"""## Tokenizing the file"""
+
+# ╔═╡ f514901d-5f69-464f-9e5a-eafbd8b3ecce
+md"""## Find named entities in a string"""
+
+# ╔═╡ d61f1a42-2fcc-46fe-9df7-40aeffa1373d
+md"""## Compile a sorted list of named entities in a file"""
+
+# ╔═╡ 25b9a85f-3af4-4c90-a504-fc0432a89d3d
+html"""
+<br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
+<hr/>
+"""
+
+# ╔═╡ e6b9acf9-1894-4aa6-842f-5cccad765e42
+md"""> #### *Stuff you don't need to look at to complete this assignment*"""
 
 # ╔═╡ b175a852-bd9a-4e93-b125-51a439b54425
 hyginus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.txt"
@@ -41,52 +186,8 @@ menu = ["" => "Choose a text", hyginus_url => "Hyginus", apollodorus_url => "Apo
 # ╔═╡ dba98e0d-b8f9-4ef2-b41e-beda5aacf83c
 text_url
 
-# ╔═╡ 9ae5f7f5-9099-4e47-a47c-854cbf68b555
-md"""### Download and read the contents of a URL"""
-
-# ╔═╡ f17add47-ca31-4a8e-9e71-ace4c1166760
-function read_url(url)
-	# Make this function do something!
-end
-
-# ╔═╡ 4edb0177-46ee-49dc-a824-f7ace76197da
-
-
-# ╔═╡ 4be85ad4-51f3-4933-8534-90d2c3c9e7cc
-begin
-
-		
-	testurl = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/test_dl.txt"
-	teststring = read_url(testurl)
-
-	if isnothing(teststring)
-		# go ahead, do it!
-	elseif length(teststring) == 18
-		# ok
-	else
-		# nope
-	end
-end
-
-# ╔═╡ 777c86d6-0194-4037-824a-f5c38ac5f62f
-md"""### Tokenize the file"""
-
-# ╔═╡ f514901d-5f69-464f-9e5a-eafbd8b3ecce
-md"""### Find named entities in a string"""
-
-# ╔═╡ d61f1a42-2fcc-46fe-9df7-40aeffa1373d
-md"""### Compile a sorted list of named entities in a file"""
-
-# ╔═╡ 25b9a85f-3af4-4c90-a504-fc0432a89d3d
-html"""
-<br/><br/><br/><br/><br/><br/>
-<br/><br/><br/><br/><br/><br/>
-<br/><br/><br/><br/><br/><br/>
-<hr/>
-"""
-
-# ╔═╡ e6b9acf9-1894-4aa6-842f-5cccad765e42
-md"""> #### *Stuff you don't need to look at to complete this assignment*"""
+# ╔═╡ 5e8909f6-511d-4fe6-9cd3-32c8d124f2d8
+isempty(text_url)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -451,21 +552,38 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═f6bc3e32-4b5a-11ee-06ae-0fbebdca7dfd
+# ╟─f6bc3e32-4b5a-11ee-06ae-0fbebdca7dfd
+# ╟─6bf51ab9-dee0-4563-9a88-94fb70f14c2e
 # ╟─c35a93b3-cccd-49aa-8ebe-a0ec27fdea52
-# ╟─b175a852-bd9a-4e93-b125-51a439b54425
-# ╟─13f1e279-d31f-4b97-81aa-4f0df6c77e0a
-# ╠═bb4b58ea-d5db-4d93-9630-f7ff613c2c50
-# ╠═30dc0643-c8d2-417a-a285-b7510929c444
+# ╟─565bd719-468b-4d1b-bfbb-2411e3cab06f
+# ╠═6f2fb7a1-da48-4099-867e-7f0cf8fe43e6
+# ╟─52c1724d-1c53-4ba1-bde6-c3eca9825703
+# ╟─cc5deeee-42ff-401c-acb5-5458eb4b9fe2
+# ╟─a9f68169-d603-499a-b36d-1e445a7e360f
+# ╟─a2d34e4a-d7e0-4ca8-9b6c-a4c67cac337e
+# ╟─30dc0643-c8d2-417a-a285-b7510929c444
 # ╠═dba98e0d-b8f9-4ef2-b41e-beda5aacf83c
-# ╠═9ae5f7f5-9099-4e47-a47c-854cbf68b555
+# ╟─0c187725-1b0d-4b2f-97f6-6839c73bad03
+# ╠═5e8909f6-511d-4fe6-9cd3-32c8d124f2d8
+# ╟─9ae5f7f5-9099-4e47-a47c-854cbf68b555
+# ╟─a0215564-e763-43ce-ad67-f24296dd0976
+# ╟─98e28be6-27af-4b50-951e-8cf6ccce8e1a
+# ╠═9978b453-2abb-40d7-8152-37e0919b353e
+# ╟─43be0af1-ca53-4fa9-a99c-b15a62b901a8
+# ╟─e3807564-23d4-4a7b-9cda-8c28bb23200b
+# ╟─d63f35fe-a318-4100-8544-ec699fec3a49
+# ╟─07e10060-0c17-4470-a56f-667b8f14b8e1
+# ╠═87ccb60d-a7fa-4537-8fc3-62706e426b98
+# ╠═77d85986-5e0e-4b0d-a833-a602ea6a1c91
 # ╠═f17add47-ca31-4a8e-9e71-ace4c1166760
-# ╠═4edb0177-46ee-49dc-a824-f7ace76197da
 # ╠═4be85ad4-51f3-4933-8534-90d2c3c9e7cc
-# ╠═777c86d6-0194-4037-824a-f5c38ac5f62f
-# ╠═f514901d-5f69-464f-9e5a-eafbd8b3ecce
-# ╠═d61f1a42-2fcc-46fe-9df7-40aeffa1373d
+# ╟─777c86d6-0194-4037-824a-f5c38ac5f62f
+# ╟─f514901d-5f69-464f-9e5a-eafbd8b3ecce
+# ╟─d61f1a42-2fcc-46fe-9df7-40aeffa1373d
 # ╟─25b9a85f-3af4-4c90-a504-fc0432a89d3d
 # ╟─e6b9acf9-1894-4aa6-842f-5cccad765e42
+# ╟─b175a852-bd9a-4e93-b125-51a439b54425
+# ╟─13f1e279-d31f-4b97-81aa-4f0df6c77e0a
+# ╟─bb4b58ea-d5db-4d93-9630-f7ff613c2c50
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

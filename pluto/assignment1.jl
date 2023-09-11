@@ -16,15 +16,308 @@ end
 
 # ╔═╡ f6bc3e32-4b5a-11ee-06ae-0fbebdca7dfd
 begin
-	using Downloads
 	using PlutoUI
 	using PlutoTeachingTools
 end
+
+# ╔═╡ 9978b453-2abb-40d7-8152-37e0919b353e
+using Downloads
+
+# ╔═╡ 6bf51ab9-dee0-4563-9a88-94fb70f14c2e
+TableOfContents()
 
 # ╔═╡ c35a93b3-cccd-49aa-8ebe-a0ec27fdea52
 md"""
 # Pluto notebook 1: identifying named entities
 """
+
+# ╔═╡ 565bd719-468b-4d1b-bfbb-2411e3cab06f
+md""" ## Before you start: authors
+"""
+
+# ╔═╡ 6f2fb7a1-da48-4099-867e-7f0cf8fe43e6
+team = ""
+
+# ╔═╡ 52c1724d-1c53-4ba1-bde6-c3eca9825703
+if isempty(team)
+	still_nothing(md"Assign to the variable `team` a single string with a list of all members of your group.")
+end
+
+# ╔═╡ cc5deeee-42ff-401c-acb5-5458eb4b9fe2
+md"""
+> ## Overview of assignment
+>
+> This Pluto notebook will guide you through identifying named entities in English translations of Apollodorus or Hyginus. (See [assignment on course web site](https://neelsmith.github.io/digitalmyth/assignments/nb1/)).
+>
+> You will:
+>
+> 1. select a text to analyze
+> 2. read the contents of the text from a URL
+> 3. tokenize the file
+> 4. filter the list of tokens to include only named entities
+> 5. write the results to a file on your computer
+>
+> When your team has completed the notebook, you should:
+>
+> 1. save the notebook to your computer
+> 2. all team members should then add a copy of the notebook to their folder in the course Google drive
+> 
+
+
+"""
+
+# ╔═╡ a9f68169-d603-499a-b36d-1e445a7e360f
+md"""## Selecting a text
+
+
+"""
+
+# ╔═╡ a2d34e4a-d7e0-4ca8-9b6c-a4c67cac337e
+md"""
+> **Instructions**:  The first task, selecting a text to analyze from a menu, has been provided for you!  The following cell uses a widget that gives users a menu of choices, and returns a value.  In this case, the value that the user chooses is assigned to a variable named `text_url`.  Try different selections from the menu, and observe in the following cell what happens to the value of the `text_url` variable.
+"""
+
+# ╔═╡ 0c187725-1b0d-4b2f-97f6-6839c73bad03
+md"""`isempty` is a Julia function that takes one parameter (or argument): a string value.  Observe how its result changes when you make different choices from the menu and change the value of the `text_url` variable.
+"""
+
+# ╔═╡ 9ae5f7f5-9099-4e47-a47c-854cbf68b555
+md"""## Read the contents of the text from a URL"""
+
+# ╔═╡ a0215564-e763-43ce-ad67-f24296dd0976
+md"""
+> **Instructions**: Our next text is to download a text from the internet, and read its contents.
+>
+> In [these class notes](https://neelsmith.github.io/digitalmyth/julia/julia-collections-of-data.html), review the section labelled "Downloading from the internet", and complete the next section of this notebook.
+"""
+
+# ╔═╡ 98e28be6-27af-4b50-951e-8cf6ccce8e1a
+md"""Recall that we'll need to use the built-in `Downloads` package."""
+
+# ╔═╡ 43be0af1-ca53-4fa9-a99c-b15a62b901a8
+md"""We're next going write a function that takes one parameter (or argument): a string value giving the URL of a file to download.  We want the function to:
+
+- download the file to your computer
+- read the downloaded contents with Julia's `read` function
+- convert the content you read into a single String
+
+"""
+
+# ╔═╡ e3807564-23d4-4a7b-9cda-8c28bb23200b
+md"""Before you begin writing, however, we should define a test: how can we be sure our function works?
+
+I've manually created a test file that has exactly 18 characters in it. You can use it to see if your function reads the data correctly. The result should:
+
+1. be a String type of object
+2. be 18 characters long
+
+Here's the URL for the test file:
+"""
+
+# ╔═╡ d63f35fe-a318-4100-8544-ec699fec3a49
+testurl = "https://raw.githubusercontent.com/neelsmith/digitalmyth/main/texts/test_dl.txt"
+
+# ╔═╡ 07e10060-0c17-4470-a56f-667b8f14b8e1
+md"""The next 2 cells define our tests."""
+
+# ╔═╡ f17add47-ca31-4a8e-9e71-ace4c1166760
+"""Download the contents of `url` and read it as a string value."""
+function read_url(url)
+	# Make this function do something!
+	nothing
+end
+
+# ╔═╡ 87ccb60d-a7fa-4537-8fc3-62706e426b98
+read_url(testurl) isa String
+
+# ╔═╡ 77d85986-5e0e-4b0d-a833-a602ea6a1c91
+if read_url(testurl) isa String
+	length(read_url(testurl))
+else
+	md"Wait! I didn't get a String value from `read_url`!"
+end
+
+# ╔═╡ 4be85ad4-51f3-4933-8534-90d2c3c9e7cc
+begin
+
+	teststringreading = read_url(testurl)
+
+	if isnothing(teststringreading)
+		still_missing(md"Make the `read_url` function return some value.")
+	elseif ! (teststringreading isa String)
+		keep_working(md"The value you return from `read_url` should be a string, not $(typeof(teststringreading)).")
+			
+	elseif length(teststringreading) != 18
+		keep_working(md"Something's not right. Instead of reading 18 characters from the test document, your function read $(length(teststringreading)).")
+		
+	else
+		correct(md"Great! Your function read the test document correctly!")
+	end
+end
+
+# ╔═╡ 21c61c62-9598-4753-83cb-7059dff13cb8
+md"""Let's go ahead and use our function with the URL the user selects from the menu.  We'll read the contents of the URL, and assign it to a variable."""
+
+# ╔═╡ 4cd51841-e072-4976-af88-24dbb7feba69
+tip(md"Notice how the next cell checks for the possibility that the user hasn't selected a text yet. We don't want to try to using an empty string with our `read_url` function.")
+
+# ╔═╡ 777c86d6-0194-4037-824a-f5c38ac5f62f
+md"""## Tokenizing the file"""
+
+# ╔═╡ 0f464472-a457-4385-9c3f-cbe56a3e37ba
+md"""
+> **Instructions**: Now we should have the contents of the text in the variable `text_contents`.  We will write a function `wordlist` that splits a string into a list of words, and sorts the list.
+>
+> First review the notes on ["nouns and verbs" of the Julia language](https://neelsmith.github.io/digitalmyth/julia/julia-nouns-verbs.html), or on [working with collections of data in Julia](https://neelsmith.github.io/digitalmyth/julia/julia-collections-of-data.html) to find a good way to implement this function.
+>
+"""
+
+# ╔═╡ 979c8c8f-aaf3-4ea5-abc7-bba46f89f3aa
+md"""Again, let's define a test. Let's try our function out on a short string where we can easily figure the desired result."""
+
+# ╔═╡ 9ab0b3dd-9bf1-4f3d-8b16-6457e4a6da50
+test_input = "Now is the time."
+
+# ╔═╡ a8cf9868-941d-44bb-97ac-2d5efc7cb5c4
+md"""Does the list here match what you want?"""
+
+# ╔═╡ 94cb21fd-8619-436d-a09a-344bf5cfbdd3
+"Break up a String `s` into a list of words, and sort the list."
+function wordlist(s)
+	nothing
+end
+
+# ╔═╡ 43be1c9c-2a90-4c14-9d33-39a58ecc0beb
+wordlist(test_input)
+
+# ╔═╡ feffe07b-a5da-466c-a288-fe2de72c7c01
+md"""
+Now we can apply your function to the text contents we previously read.
+"""
+
+# ╔═╡ f514901d-5f69-464f-9e5a-eafbd8b3ecce
+md"""## Find named entities in a list"""
+
+# ╔═╡ 9fbbf32e-1672-4061-ad16-899b96892b2b
+md"""
+> **Instructions**: We want to select from the word list *only* the words that are probably named entities. We'll choose words that
+>
+> 1. start with an uppercase character
+> 2. do not appear in the word list in lowercase form
+>
+"""
+
+# ╔═╡ ba2146e6-8e7d-455b-bbc9-0eb101ea2b4e
+md"""We'll need two Julia functions: `isuppercase` is a boolean function that is true when a character is upper case. Remember that we use regular list indexes to refer to characters in a string."""
+
+# ╔═╡ fdd8adbb-0861-4e05-9284-7815ed1a0600
+name = "Zeus"
+
+# ╔═╡ 13dd752c-7eaa-4ccd-9cd5-044383bde9ae
+not_a_name = "father of the gods"
+
+# ╔═╡ 34c080ed-7fd4-4477-bbea-0a8d12834f47
+isuppercase(not_a_name[1])
+
+# ╔═╡ 52eda228-be5b-4825-a22c-4c232829b8b6
+md"""We'll also need the function `lowercase`: this converts a string to all lower-case letters.
+"""
+
+# ╔═╡ cc023f06-030f-4773-8598-4796d4cc1340
+lowercase(name)
+
+# ╔═╡ 35a78d3a-531c-418b-b555-e751692d67b7
+md"""Our function `named_entities` will need first to filter a word list and select only those items that start with an uppercase letter."""
+
+# ╔═╡ 959aef77-147a-4d71-b6db-4a5248b21610
+md"""If you save those results, you can then filter it further by testing to see if we *also* have a lower-case only version of the word in our list.  That's easy to do with Julia's `in` function which is true if an item is in a list. Here's an example:"""
+
+# ╔═╡ 646593a9-30cb-42a5-8a33-ffbbc9b1b5b7
+olympians = ["Apollo", "Athena", "Zeus", "Hera"]
+
+# ╔═╡ 9c64e61a-d2fe-4371-b0a1-06940f48c462
+name in olympians
+
+# ╔═╡ 29296cab-24d9-4146-8343-5b7de8acd002
+function named_entities(wordsvector)
+	nothing
+end
+
+# ╔═╡ 37b05771-0a0e-490b-a0e3-65288fc3c5b2
+begin
+	
+	testnelist = named_entities(["Zeus", "Father", "Gods", "father", "of", "the", "gods"])
+
+	if isnothing(testnelist)
+		still_missing(md"Make the function  `named_entities` return some value.")
+	
+	elseif  isempty(testnelist)
+		keep_working(md"Your function returned an empty list.")
+			
+	elseif testnelist == ["Zeus"]
+		correct(md"Great! Your function selected named entiteis correctly from a test list.")
+	end
+end
+
+# ╔═╡ d61f1a42-2fcc-46fe-9df7-40aeffa1373d
+md"""## Write the list of named entities to a file"""
+
+# ╔═╡ 07ec05a7-d71d-48d5-ade6-dcd90efa27c0
+md"""
+> **Instructions**: Finally, we'll save our results to a file, using the `write` function.  You'll need to define a file name, and convert your list of named entities to a single string.
+>
+"""
+
+# ╔═╡ 8a55750c-6b99-4d37-9b59-8ab9b72a6f8f
+md"""Define a name for the file where you'll write your results."""
+
+# ╔═╡ 15eff456-bb73-4042-bef3-ab17e98fc8b0
+fname = "" # e.g., "Hyginus-named-entities.txt"? "Apollodorus-names.txt" ?
+
+# ╔═╡ 2216e17c-bd94-4f6a-abdb-da4e8e8cc7f7
+md"""You can use Julia's built-in `join` function to make a single string out of a list of objects.  See if you can figure out how it works from these two examples."""
+	
+
+
+# ╔═╡ bf36a60e-9dc0-4fa0-bec0-91f3716acb00
+join(["a","b","c"])
+
+# ╔═╡ 2614a412-6bf8-4e34-8e83-d92e55108e2f
+join(["a","b","c"], ":")
+
+# ╔═╡ 8ee4dc67-1332-4692-99df-2b10b6e845b4
+md"""In the following cell, replace `nothing` with an invocation of the `join` function.  Your first parameter should be your list of named entities.  To format your list one name per line, make the second parameter the new line character, which you can write in Julia as `"\n"`."""
+
+# ╔═╡ fca20741-83fc-4292-94b8-81f7ee78241f
+result_string = nothing # 
+
+# ╔═╡ d43599f5-fcb7-4001-bf86-cde36380ce5f
+md"""When you have your results in one string, uncomment the `write` function in the following cell."""
+
+# ╔═╡ dcb05b4f-3f4a-4355-a610-54cca730da3b
+#open(fname, "w") do io
+	#write(fname, result_string)
+#end
+
+# ╔═╡ 9150ac0b-b71e-40d4-8b5b-4fcd9c4d2228
+md"""## Improvements?"""
+
+# ╔═╡ d93fc631-0fe8-4d5f-9a3c-9a3fed8d82b9
+tip(md"""Reminder that at  some point, everyone will work on an individual extension of or improvement to one of your required assignments.  Can you think of any ways that you could improve this project?
+
+Feel free to speak with me if you have ideas!
+""")
+
+# ╔═╡ 25b9a85f-3af4-4c90-a504-fc0432a89d3d
+html"""
+<br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/><br/>
+<hr/>
+"""
+
+# ╔═╡ e6b9acf9-1894-4aa6-842f-5cccad765e42
+md"""> #### *Stuff you don't need to look at to complete this assignment*"""
 
 # ╔═╡ b175a852-bd9a-4e93-b125-51a439b54425
 hyginus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.txt"
@@ -41,52 +334,21 @@ menu = ["" => "Choose a text", hyginus_url => "Hyginus", apollodorus_url => "Apo
 # ╔═╡ dba98e0d-b8f9-4ef2-b41e-beda5aacf83c
 text_url
 
-# ╔═╡ 9ae5f7f5-9099-4e47-a47c-854cbf68b555
-md"""### Download and read the contents of a URL"""
+# ╔═╡ 5e8909f6-511d-4fe6-9cd3-32c8d124f2d8
+isempty(text_url)
 
-# ╔═╡ f17add47-ca31-4a8e-9e71-ace4c1166760
-function read_url(url)
-	# Make this function do something!
+# ╔═╡ 9b64de87-8fc0-4a19-bba6-563ad818d89e
+text_contents = if isempty(text_url)
+	""
+else
+	read_url(text_url)
 end
 
-# ╔═╡ 4edb0177-46ee-49dc-a824-f7ace76197da
+# ╔═╡ a8d8012b-16d2-48e2-9e3e-44d0523b96cb
+words = wordlist(text_contents)
 
-
-# ╔═╡ 4be85ad4-51f3-4933-8534-90d2c3c9e7cc
-begin
-
-		
-	testurl = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/test_dl.txt"
-	teststring = read_url(testurl)
-
-	if isnothing(teststring)
-		# go ahead, do it!
-	elseif length(teststring) == 18
-		# ok
-	else
-		# nope
-	end
-end
-
-# ╔═╡ 777c86d6-0194-4037-824a-f5c38ac5f62f
-md"""### Tokenize the file"""
-
-# ╔═╡ f514901d-5f69-464f-9e5a-eafbd8b3ecce
-md"""### Find named entities in a string"""
-
-# ╔═╡ d61f1a42-2fcc-46fe-9df7-40aeffa1373d
-md"""### Compile a sorted list of named entities in a file"""
-
-# ╔═╡ 25b9a85f-3af4-4c90-a504-fc0432a89d3d
-html"""
-<br/><br/><br/><br/><br/><br/>
-<br/><br/><br/><br/><br/><br/>
-<br/><br/><br/><br/><br/><br/>
-<hr/>
-"""
-
-# ╔═╡ e6b9acf9-1894-4aa6-842f-5cccad765e42
-md"""> #### *Stuff you don't need to look at to complete this assignment*"""
+# ╔═╡ 948a4c0f-9e90-4b30-b613-e03a71037119
+result_list = named_entities(words)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -451,21 +713,75 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═f6bc3e32-4b5a-11ee-06ae-0fbebdca7dfd
+# ╟─f6bc3e32-4b5a-11ee-06ae-0fbebdca7dfd
+# ╟─6bf51ab9-dee0-4563-9a88-94fb70f14c2e
 # ╟─c35a93b3-cccd-49aa-8ebe-a0ec27fdea52
-# ╟─b175a852-bd9a-4e93-b125-51a439b54425
-# ╟─13f1e279-d31f-4b97-81aa-4f0df6c77e0a
-# ╠═bb4b58ea-d5db-4d93-9630-f7ff613c2c50
-# ╠═30dc0643-c8d2-417a-a285-b7510929c444
+# ╟─565bd719-468b-4d1b-bfbb-2411e3cab06f
+# ╠═6f2fb7a1-da48-4099-867e-7f0cf8fe43e6
+# ╟─52c1724d-1c53-4ba1-bde6-c3eca9825703
+# ╟─cc5deeee-42ff-401c-acb5-5458eb4b9fe2
+# ╟─a9f68169-d603-499a-b36d-1e445a7e360f
+# ╟─a2d34e4a-d7e0-4ca8-9b6c-a4c67cac337e
+# ╟─30dc0643-c8d2-417a-a285-b7510929c444
 # ╠═dba98e0d-b8f9-4ef2-b41e-beda5aacf83c
-# ╠═9ae5f7f5-9099-4e47-a47c-854cbf68b555
+# ╟─0c187725-1b0d-4b2f-97f6-6839c73bad03
+# ╠═5e8909f6-511d-4fe6-9cd3-32c8d124f2d8
+# ╟─9ae5f7f5-9099-4e47-a47c-854cbf68b555
+# ╟─a0215564-e763-43ce-ad67-f24296dd0976
+# ╟─98e28be6-27af-4b50-951e-8cf6ccce8e1a
+# ╠═9978b453-2abb-40d7-8152-37e0919b353e
+# ╟─43be0af1-ca53-4fa9-a99c-b15a62b901a8
+# ╟─e3807564-23d4-4a7b-9cda-8c28bb23200b
+# ╟─d63f35fe-a318-4100-8544-ec699fec3a49
+# ╟─07e10060-0c17-4470-a56f-667b8f14b8e1
+# ╠═87ccb60d-a7fa-4537-8fc3-62706e426b98
+# ╠═77d85986-5e0e-4b0d-a833-a602ea6a1c91
 # ╠═f17add47-ca31-4a8e-9e71-ace4c1166760
-# ╠═4edb0177-46ee-49dc-a824-f7ace76197da
-# ╠═4be85ad4-51f3-4933-8534-90d2c3c9e7cc
-# ╠═777c86d6-0194-4037-824a-f5c38ac5f62f
-# ╠═f514901d-5f69-464f-9e5a-eafbd8b3ecce
-# ╠═d61f1a42-2fcc-46fe-9df7-40aeffa1373d
+# ╟─4be85ad4-51f3-4933-8534-90d2c3c9e7cc
+# ╟─21c61c62-9598-4753-83cb-7059dff13cb8
+# ╟─4cd51841-e072-4976-af88-24dbb7feba69
+# ╠═9b64de87-8fc0-4a19-bba6-563ad818d89e
+# ╟─777c86d6-0194-4037-824a-f5c38ac5f62f
+# ╟─0f464472-a457-4385-9c3f-cbe56a3e37ba
+# ╟─979c8c8f-aaf3-4ea5-abc7-bba46f89f3aa
+# ╠═9ab0b3dd-9bf1-4f3d-8b16-6457e4a6da50
+# ╟─a8cf9868-941d-44bb-97ac-2d5efc7cb5c4
+# ╠═43be1c9c-2a90-4c14-9d33-39a58ecc0beb
+# ╠═94cb21fd-8619-436d-a09a-344bf5cfbdd3
+# ╟─feffe07b-a5da-466c-a288-fe2de72c7c01
+# ╠═a8d8012b-16d2-48e2-9e3e-44d0523b96cb
+# ╟─f514901d-5f69-464f-9e5a-eafbd8b3ecce
+# ╟─9fbbf32e-1672-4061-ad16-899b96892b2b
+# ╟─ba2146e6-8e7d-455b-bbc9-0eb101ea2b4e
+# ╠═fdd8adbb-0861-4e05-9284-7815ed1a0600
+# ╠═13dd752c-7eaa-4ccd-9cd5-044383bde9ae
+# ╠═34c080ed-7fd4-4477-bbea-0a8d12834f47
+# ╟─52eda228-be5b-4825-a22c-4c232829b8b6
+# ╠═cc023f06-030f-4773-8598-4796d4cc1340
+# ╟─35a78d3a-531c-418b-b555-e751692d67b7
+# ╟─959aef77-147a-4d71-b6db-4a5248b21610
+# ╠═646593a9-30cb-42a5-8a33-ffbbc9b1b5b7
+# ╠═9c64e61a-d2fe-4371-b0a1-06940f48c462
+# ╠═29296cab-24d9-4146-8343-5b7de8acd002
+# ╟─37b05771-0a0e-490b-a0e3-65288fc3c5b2
+# ╠═948a4c0f-9e90-4b30-b613-e03a71037119
+# ╟─d61f1a42-2fcc-46fe-9df7-40aeffa1373d
+# ╟─07ec05a7-d71d-48d5-ade6-dcd90efa27c0
+# ╟─8a55750c-6b99-4d37-9b59-8ab9b72a6f8f
+# ╠═15eff456-bb73-4042-bef3-ab17e98fc8b0
+# ╟─2216e17c-bd94-4f6a-abdb-da4e8e8cc7f7
+# ╠═bf36a60e-9dc0-4fa0-bec0-91f3716acb00
+# ╠═2614a412-6bf8-4e34-8e83-d92e55108e2f
+# ╟─8ee4dc67-1332-4692-99df-2b10b6e845b4
+# ╠═fca20741-83fc-4292-94b8-81f7ee78241f
+# ╟─d43599f5-fcb7-4001-bf86-cde36380ce5f
+# ╠═dcb05b4f-3f4a-4355-a610-54cca730da3b
+# ╟─9150ac0b-b71e-40d4-8b5b-4fcd9c4d2228
+# ╟─d93fc631-0fe8-4d5f-9a3c-9a3fed8d82b9
 # ╟─25b9a85f-3af4-4c90-a504-fc0432a89d3d
 # ╟─e6b9acf9-1894-4aa6-842f-5cccad765e42
+# ╟─b175a852-bd9a-4e93-b125-51a439b54425
+# ╟─13f1e279-d31f-4b97-81aa-4f0df6c77e0a
+# ╟─bb4b58ea-d5db-4d93-9630-f7ff613c2c50
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

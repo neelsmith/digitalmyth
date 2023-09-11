@@ -10,11 +10,12 @@ has_children: true
 
 ## Requirements
 
-You will be given a template Pluto notebook with prompts to guide you. Your group will submit a completed a notebook that does the following:
+You can use [this template Pluto notebook with prompts](./assignment1.html) to guide you. Your group will submit a completed a notebook that does the following:
 
 1. allows users to select from a list of files to analyze
 2. reads the file and tokenizes it
-3. produces an alphabetically sorted list of named entities
+3. identifies named entities in the list
+3. saves the list of named entities to a file on your computer
 
 
 ## Submitting your notebook

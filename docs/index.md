@@ -17,6 +17,9 @@ has_children: true
     - [Collaborative assignment 1](./assignments/nb1/): **Thurs. Sept. 21**.
     - Redesigned collaborative assignment 2 *and* graph visualization assignment: **Thurs. Sept. 28**
     - No change to due date of collaborative assignment 3: **Thurs. Oct. 5**
+- Please [download](https://gephi.org/users/download/) Gephi; use these [install instructions](https://gephi.org/users/install/) to install on your computer.
+
+
 
 ## Week of Sept. 12, 14
 

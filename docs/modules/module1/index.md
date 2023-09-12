@@ -27,3 +27,18 @@ has_children: true
 
 - Tuesday: introduction to course.  No preparation required.
 - Thursday: [what is myth and what does have it to do with code](../../classes/content+tech1/)?
+
+
+
+## Week of Sept. 5, 7
+
+### What we'll cover
+
+- Using Julia in the REPL and in Pluto notebooks
+- The "who" and "where" of myths: finding named entities in texts: 
+
+
+### Assignments
+
+- Tuesday: [Exploring texts with the Julia REPL](../../classes/repl1/)
+- Thursday: Workshop: recognizing [named entities](../../classes/named-entities/).

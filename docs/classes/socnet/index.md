@@ -12,7 +12,7 @@ In your first collaborative excercise, you found named entities in texts.  That'
 
 ## Class preparation
 
-- For an illustrative example of a social network, pllease read the Wikipedia article "[Six Degrees of Kevin Bacon](https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon).
+- For an illustrative example of a social network, pllease read the Wikipedia article "[Six Degrees of Kevin Bacon](https://en.wikipedia.org/wiki/Six_Degrees_of_Kevin_Bacon)".
 - Then read the first part of [this introduction to social network analysis](https://builtin.com/data-science/social-network-analysis), through "Dyads and Cliques". (You don't need to read the further sections beginning with the one labelled "Implemenation").
 
 Be sure you understand the following concepts:

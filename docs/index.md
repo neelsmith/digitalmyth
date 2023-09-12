@@ -13,30 +13,10 @@ has_children: true
 ## Announcements
 
 
-
-- Collaborative assignment 1 will be due **Thurs. Sept. 21**.
-- Material from previous weeks available on new page: [Main sections of course](./modules/)
-- New section: [Julia notes and review](./julia/)
-- Please complete [this Google form](https://forms.gle/MQR2iGSxoD3VAKWX7) by noon, Monday, Sept. 4.
-
-
-## Week of Sept. 5, 7
-
-### What we'll cover
-
-- Using Julia in the REPL and in Pluto notebooks
-- The "who" and "where" of myths: finding named entities in texts: 
-
-
-### Assignments
-
-- Tuesday: [Exploring texts with the Julia REPL](./classes/repl1/)
-- Thursday: Workshop: recognizing [named entities](./classes/named-entities/).
-
-
-
-## Coming up... social network analysis
-
+- Revised [due dates](./deadlines/) for collaborative assignments:
+    - [Collaborative assignment 1](./assignments/nb1/): **Thurs. Sept. 21**.
+    - Redesigned collaborative assignment 2 *and* graph visualization assignment: **Thurs. Sept. 28**
+    - No change to due date of collaborative assignment 3: **Thurs. Oct. 5**
 
 ## Week of Sept. 12, 14
 
@@ -49,7 +29,7 @@ has_children: true
 
 
 - Tuesday: introduction to [social network analysis](./classes/socnet/)
-- Thursday: reading and writing formatted text
+- Thursday: reading and writing [formatted text](./classes/textio/)
 
 ## Week of Sept. 19, 21
 
@@ -62,3 +42,8 @@ has_children: true
 
 - Tuesday: using Gephi to visualize graphs
 - Thursday: using graph metrics to interpret social networks
+
+
+### Due dates to note
+
+- [Collaborative assignment 1](./assignments/nb1/): **Sept. 21**

@@ -14,3 +14,5 @@ Read through all of the [introduction to social network analysis](https://builti
 ## What we'll cover in class
 
 We'll take time in class to look at *plain-text formats for graphs*.
+
+We'll reserve some time to trouble shoot questions about collaborative assignment 1.

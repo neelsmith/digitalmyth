@@ -10,3 +10,7 @@ nav_order: 9
 
 Read through all of the [introduction to social network analysis](https://builtin.com/data-science/social-network-analysis). (You have previously read the first part.)
 
+
+## What we'll cover in class
+
+We'll take time in class to look at *plain-text formats for graphs*.

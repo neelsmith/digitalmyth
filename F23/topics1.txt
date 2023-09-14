@@ -17,8 +17,9 @@ Workshop: recognizing [named entities](../classes/named-entities/)
 [Graphs and networks](../classes/socnet/)
 📓  Workshop: text IO
 
-Visualizing graphs with Gephi
-📓 Graph metrics
+
+Working with collection of data in Julia, and [plain-text formats](../classes/textio/)
+📓 Visualizing graphs with Gephi
 
 
 ## What happens? language and thematic patterns

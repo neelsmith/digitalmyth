@@ -42,3 +42,18 @@ has_children: true
 
 - Tuesday: [Exploring texts with the Julia REPL](../../classes/repl1/)
 - Thursday: Workshop: recognizing [named entities](../../classes/named-entities/).
+
+
+
+## Week of Sept. 12, 14
+
+### What we'll cover
+
+- introduction to social networks (graphs)
+- reading and writing formatted text
+
+### Assignments
+
+
+- Tuesday: introduction to [social network analysis](../classes/socnet/)
+- Thursday: reading and writing [formatted text](../classes/textio/)

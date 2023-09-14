@@ -23,30 +23,17 @@ has_children: true
 
 
 
-## Week of Sept. 12, 14
-
-### What we'll cover
-
-- introduction to social networks (graphs)
-- reading and writing formatted text
-
-### Assignments
-
-
-- Tuesday: introduction to [social network analysis](./classes/socnet/)
-- Thursday: reading and writing [formatted text](./classes/textio/)
-
 ## Week of Sept. 19, 21
 
 ### What we'll cover
 
-- visualizing networks
-- applying network metrics to interpret networks
+- representing data structures in plain-text formats
+- using Gephi to visualize and interpret networks
 
 ### Assignments
 
-- Tuesday: using Gephi to visualize graphs
-- Thursday: using graph metrics to interpret social networks
+- Tuesday: working with [collections of data](./classes/textio/) in Julia
+- Thursday: using [Gephi](./classes/gephi/) to visualize graphs
 
 
 ### Due dates to note

@@ -100,6 +100,12 @@ md"""## Testing the output"""
 # ╔═╡ 593f185a-78ae-4640-b19e-9619d7fac2e5
 g = loadgraph(dotfile, "gods", DOTFormat())
 
+# ╔═╡ f818db50-7301-497e-8350-5098dca8eacb
+md"""> **TRY GTAPHING WITH KARNAK**"""
+
+# ╔═╡ e0a1511c-f18e-480f-8800-4e3e9810f640
+md"""## Further work: graph analysis"""
+
 # ╔═╡ dab48f6e-3cf1-4507-89a3-bc9848de0c4a
 md"""## Better: counting the results"""
 
@@ -635,7 +641,7 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═8bf9dbda-52ea-11ee-06b6-ab78a41a5a32
+# ╟─8bf9dbda-52ea-11ee-06b6-ab78a41a5a32
 # ╠═0bbb8fc0-2f0e-487b-923d-fbe8b83f21cb
 # ╟─a3e27d8e-a70e-4b68-8442-a3e1888f4724
 # ╟─dc7dbc66-383f-4619-8fcf-277a3fb0708e
@@ -648,14 +654,16 @@ version = "17.4.0+0"
 # ╠═c0752034-915d-4d2d-8d46-4211e6e73058
 # ╠═639d0644-e83f-4ed1-91ad-485123e82020
 # ╠═0e388796-3e1a-419b-8eaa-faefa92908df
-# ╠═6b029590-c622-4475-8d7b-b51fd6a03987
+# ╟─6b029590-c622-4475-8d7b-b51fd6a03987
 # ╠═c6424d9c-46e7-4f0a-a247-6a0bb6dc9ec9
 # ╠═9a456be8-8e77-4672-b60b-72d725ef367c
 # ╠═bc49e1a9-1575-4934-a570-cb2e724e8299
 # ╠═2d36247d-494d-4f48-8937-bc0c5525890f
-# ╠═36bb58bd-1c1c-4e74-80ff-234ee5cb71d3
+# ╟─36bb58bd-1c1c-4e74-80ff-234ee5cb71d3
 # ╠═593f185a-78ae-4640-b19e-9619d7fac2e5
-# ╠═dab48f6e-3cf1-4507-89a3-bc9848de0c4a
+# ╠═f818db50-7301-497e-8350-5098dca8eacb
+# ╟─e0a1511c-f18e-480f-8800-4e3e9810f640
+# ╟─dab48f6e-3cf1-4507-89a3-bc9848de0c4a
 # ╠═cb6da1fd-e064-4d77-accf-4cd1a4384363
 # ╠═027345af-2a40-41ff-976e-7e87190a775d
 # ╟─00000000-0000-0000-0000-000000000001

@@ -12,8 +12,10 @@ has_children: true
 
 ## Announcements
 
+- Another URL:
+    - English translation of Apollodorus with passage references: [https://raw.githubusercontent.com/neelsmith/digitalmyth/main/texts/apollodorus-w-ref.txt](https://raw.githubusercontent.com/neelsmith/digitalmyth/main/texts/apollodorus-w-ref.txt) (delimited-text format with columns separated by `|`)
 - Two useful URLs!
-  - English translation of Hyginus: [https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.txt](https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.txt)
+  - English translation of Hyginus: [https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.txt](https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hygi columns separated bynus.txt)
    - English translation of Apollodorus: [https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/apollodorus-topos.txt](https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/apollodorus-topos.txt)
 - Revised [due dates](./deadlines/) for collaborative assignments:
     - [Collaborative assignment 1](./assignments/nb1/): **4:00 pm, Thurs. Sept. 21**.

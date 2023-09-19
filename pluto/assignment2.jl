@@ -50,22 +50,22 @@ end
 # ╔═╡ 59518a6c-a2ac-42d0-999f-db2e50d049db
 md"""> ## Overview of assignment
 >
->This Pluto notebook will guide you through finding co-occurrences of named entities in English translations of Apollodorus and Hyginus.
+>This Pluto notebook will guide you through finding co-occurrences of named entities in English translations of Apollodorus and Hyginus.  We'll read a text that is segmented into canonically citable sections, and for each section, we'll pair up all the named entities we find in that section.
 >
 > You will:
 >
 > 1. select a text to analyze, and read the contents of the text from a URL
 > 2. find *named entities* (proper nouns and adjectives) in the text
 > 3. use the `Combinatorics` package to find *unique pairings* of names
-> 4. compose representation of these pairings as a text string in the DOT format (used to represent graphs in simple text format)
-> 5. write the results to a file, which you can use in the separate assignment to analyze these results with Gephi
+> 4. represent these pairings as a text string in the DOT format, a simple text format  used to represent graph structures 
+> 5. write the results to a file, which you can use in the separate assignment to visualize these results with Gephi
 """
 
 # ╔═╡ dc7dbc66-383f-4619-8fcf-277a3fb0708e
-md"""## Reading text source"""
+md"""## Reading a text source"""
 
 # ╔═╡ 2960e7a8-8130-4b2f-bcb1-06eb0c21de74
-md"""> **Note**: The following cell lets you select from a menu a URL for either a text of Hyginus or a text of Apollodorus, and assigns to a variable named `text_url`.
+md"""> **Note**: The following cell lets you select from a menu a URL for either a text of Hyginus or a text of Apollodorus, and assigns your choice to a variable named `text_url`.
 """
 
 # ╔═╡ c2d98226-4efd-4e2c-8f58-e2debdf0afaf
@@ -144,46 +144,97 @@ begin
 end
 
 # ╔═╡ 7d02f9a4-0af7-42fb-9558-de2fc2238e75
-md"""Now we're ready to put together the data we need: a list of all the upper-case words in each section."""
+md"""Now we're ready to put together the data we need: a list of all the upper-case words in each section.  The `uc_words` function is doing the work for us:  we're just mapping the filtered results for each section's list of words!"""
 
 # ╔═╡ 23290f4c-5289-4bc8-8b38-6bce6a54007b
-uc_wordlist = map(wordlist -> uc_words(wordlist),  wordlists)
+uc_wordlists = map(wordlist -> uc_words(wordlist),  wordlists)
 
 # ╔═╡ 866ee948-290d-463b-a8bf-48079fcf6f4c
 md""" ## Using combinatorics to find unique pairs"""
 
 # ╔═╡ 05c3a217-beb6-4d70-b739-5ec8814dbf9a
 md"""> **Instructions** 
+> 
+> For our social network analysis, we don't just want  a list of the names in each passage: we want to find every *pair* of names in that passage. 
 >
-> Here's a cool package!
+> Mathematicians who work in the field of combinatorics refer to every possible grouping of items in a list as a *combination*. This is not only a well-studied problem: there's a handy Julia package to compute problems in combinatorics. We'll find all possible combinations of named entities in each section of text, then filter the combinations to keep only *pairs*. In our network graph each pairing will be represented as two connected nodes.
 """
+
+# ╔═╡ 12a2b0d5-a753-4b1f-9293-8e8de010ee19
+md"""### Background: `combinations` in Julia"""
+
+# ╔═╡ d18369d0-f561-4086-8d26-08d34b4ef65f
+md"""Unsurprisingly, the Julia package we want to use is called `Combinatorics`, and the function that finds every possible combination of elements in a list is called `combinations`.  Let's look at how it works."""
 
 # ╔═╡ 77f068e5-0373-409b-8e5d-4168aa3065a7
 gods = ["Zeus", "Hera", "Apollo", "Artemis"]
 
+# ╔═╡ 580a294a-c552-4378-9012-7befd3d1076b
+md"""The `combinations` function takes a list, and creates a structure for walking through all possible combinations of the list's elements. (This kind of structure is called an *iterator* in Julia).  We want get a list of those combinations from the iterator with Julia's `collect` function, as in the following cell."""
+
 # ╔═╡ cfd8646f-42b5-4cf9-b080-e23f188fb86c
-godcombos = combinations(gods) |> collect
+godcombos = collect(combinations(gods))
+
+# ╔═╡ 02f308f9-d687-4ebe-b7f4-a87e5cf4d612
+md"""Notice first that the result is once again a Vector of Vectors: a list containing lists of name combinations. 
+
+Notice also that the result shows us *every* possibility: each name individually, all the names together, and every possible grouping of names.  We're only interested in individual-to-individiual pairings, so we can simply filter this list to keep lists with a length of 2.
+
+"""
 
 # ╔═╡ 016593e5-9b21-4e7e-ad26-f275d450266d
 filter(combo -> length(combo) == 2, godcombos)
 
+# ╔═╡ 90172c9f-8cc6-43fe-890a-023521c14d6a
+md"""There are six possible pairings from our list of four names."""
+
+# ╔═╡ 2545eb40-81b7-4ddf-8b39-1fb84777e7db
+md"""### Finding pairs of names"""
+
 # ╔═╡ fa78effe-b1d4-4b99-8668-6e6f640610b5
+md"""For our purposes, it will be useful to combine the two operations we've just looked at, so that, given a list of values, we can find all the possible *pairs* they can form. Yet again, we'll approach that by writing a short function that encapsulates this idea.
 
+Complete the function `pairs`, that takes a single Vector as its only parameter. First, find all the possible combinations of the Vector's contents, then filter those results to include only pairs of elements.
+"""
 
-# ╔═╡ c0752034-915d-4d2d-8d46-4211e6e73058
+# ╔═╡ 3d6559b9-c47a-419a-8d4a-068c98fb1c37
+"""Take a Vector `v`, and find every possible pairing of elements in `v`.
+"""
 function pairs(v)
-	filter(combinations(v) |> collect) do l
-       length(l) == 2
-       end .|> sort
+	nothing
 end
 
+# ╔═╡ efe45794-61df-4c64-a8cb-1271c6aa9f72
+begin
+	
+	testpairs = pairs(gods)
+	if isnothing(testpairs)
+		still_missing(md"Replace `nothing` in the `pairs` function with Julia code to find unique pairs in a  Vector.")
+	elseif ! (testpairs isa Vector)
+		keep_working(md"Your `pairs` function  should produce a new Vector of name pairs, not $(typeof(wordlists)).")
+			
+	elseif length(testpairs) != 6
+		keep_working(md"Something's not right. Your function found $(length(testpairs)) pairs in our test list, but we expected 6 pairs.")
+		
+	else
+		correct(md"Great! Your function worked correctly on our test data!")
+	end
+end
+
+# ╔═╡ ad8c499e-9f63-44d6-9b58-b6d4e8f13f8d
+md"""With our new `pairs` function in hand, we can map each section's upper-case wordslist to pairs of names co-occurring in that section in a single line.
+"""
+
 # ╔═╡ 639d0644-e83f-4ed1-91ad-485123e82020
-pairsbytext = map(namelist -> pairs(namelist), namelists)
+pairspertext = map(namelist -> pairs(namelist), uc_wordlists)
+
+# ╔═╡ eb753120-9949-4944-9575-f0d7ddf8683a
+TODO("Add directions to flatten pairings.")
 
 # ╔═╡ 0e388796-3e1a-419b-8eaa-faefa92908df
 namepairs = begin
 	finallist = []
-	for t in pairsbytext
+	for t in pairspertext
 		for pr in t
 			push!(finallist, pr)
 		end
@@ -193,6 +244,9 @@ end
 
 # ╔═╡ 6b029590-c622-4475-8d7b-b51fd6a03987
 md"""## Writing the results"""
+
+# ╔═╡ adcac2c7-b96a-4af8-8b44-7c6aafc8d790
+TODO("Introduce DOT format.")
 
 # ╔═╡ c6424d9c-46e7-4f0a-a247-6a0bb6dc9ec9
 function dotformat(prlist, label)
@@ -207,28 +261,27 @@ end
 # ╔═╡ 9a456be8-8e77-4672-b60b-72d725ef367c
 dotformat(namepairs, "gods")
 
+# ╔═╡ bc49e1a9-1575-4934-a570-cb2e724e8299
+#open(dotfile, "w") do io
+#	write(io, dotformat(namepairs, "gods"))
+# end
+
 # ╔═╡ 2d36247d-494d-4f48-8937-bc0c5525890f
 dotfile = joinpath(pwd() |> dirname, "test1.dot")
-
-# ╔═╡ bc49e1a9-1575-4934-a570-cb2e724e8299
-open(dotfile, "w") do io
-	write(io, dotformat(namepairs, "gods"))
-end
 
 # ╔═╡ 36bb58bd-1c1c-4e74-80ff-234ee5cb71d3
 md"""## Testing the output"""
 
 # ╔═╡ 593f185a-78ae-4640-b19e-9619d7fac2e5
-g = loadgraph(dotfile, "gods", DOTFormat())
+begin
+	g = isfile(dotfile) ? loadgraph(dotfile, "gods", DOTFormat()) : nothing
+end
 
 # ╔═╡ f818db50-7301-497e-8350-5098dca8eacb
 md"""> **TRY GTAPHING WITH KARNAK**"""
 
 # ╔═╡ e0a1511c-f18e-480f-8800-4e3e9810f640
 md"""## Follow-up assignment: graph visualization with Gephi"""
-
-# ╔═╡ dab48f6e-3cf1-4507-89a3-bc9848de0c4a
-md"""## Better: counting the results"""
 
 # ╔═╡ 7245a668-51ad-4e04-b92a-1e47bd70dd9b
 tip(md"It would be better if we counted results and created weighted graph...")
@@ -261,7 +314,7 @@ begin
 	teststringreading = readlines_url(apollodorus_url)
 
 	if isnothing(teststringreading)
-		still_missing(md"Make the `read_url` function return some value.")
+		still_missing(md"Make the `readlines_url` function return some value.")
 	elseif ! (teststringreading isa Vector{String})
 		keep_working(md"The value you return from `readlines_url` should be a Vector of String values, not $(typeof(teststringreading)).")
 			
@@ -779,7 +832,7 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═8bf9dbda-52ea-11ee-06b6-ab78a41a5a32
+# ╟─8bf9dbda-52ea-11ee-06b6-ab78a41a5a32
 # ╟─0bbb8fc0-2f0e-487b-923d-fbe8b83f21cb
 # ╟─a3e27d8e-a70e-4b68-8442-a3e1888f4724
 # ╟─1dfb4eef-218b-4c42-a680-7a9c72f27a8d
@@ -810,16 +863,26 @@ version = "17.4.0+0"
 # ╟─7d02f9a4-0af7-42fb-9558-de2fc2238e75
 # ╠═23290f4c-5289-4bc8-8b38-6bce6a54007b
 # ╟─866ee948-290d-463b-a8bf-48079fcf6f4c
-# ╠═05c3a217-beb6-4d70-b739-5ec8814dbf9a
+# ╟─05c3a217-beb6-4d70-b739-5ec8814dbf9a
+# ╟─12a2b0d5-a753-4b1f-9293-8e8de010ee19
+# ╟─d18369d0-f561-4086-8d26-08d34b4ef65f
 # ╠═00c7e736-92ef-4233-8940-7c7b671ff3ff
 # ╠═77f068e5-0373-409b-8e5d-4168aa3065a7
+# ╟─580a294a-c552-4378-9012-7befd3d1076b
 # ╠═cfd8646f-42b5-4cf9-b080-e23f188fb86c
+# ╟─02f308f9-d687-4ebe-b7f4-a87e5cf4d612
 # ╠═016593e5-9b21-4e7e-ad26-f275d450266d
-# ╠═fa78effe-b1d4-4b99-8668-6e6f640610b5
-# ╠═c0752034-915d-4d2d-8d46-4211e6e73058
+# ╟─90172c9f-8cc6-43fe-890a-023521c14d6a
+# ╟─2545eb40-81b7-4ddf-8b39-1fb84777e7db
+# ╟─fa78effe-b1d4-4b99-8668-6e6f640610b5
+# ╠═3d6559b9-c47a-419a-8d4a-068c98fb1c37
+# ╟─efe45794-61df-4c64-a8cb-1271c6aa9f72
+# ╟─ad8c499e-9f63-44d6-9b58-b6d4e8f13f8d
 # ╠═639d0644-e83f-4ed1-91ad-485123e82020
+# ╠═eb753120-9949-4944-9575-f0d7ddf8683a
 # ╠═0e388796-3e1a-419b-8eaa-faefa92908df
 # ╟─6b029590-c622-4475-8d7b-b51fd6a03987
+# ╠═adcac2c7-b96a-4af8-8b44-7c6aafc8d790
 # ╠═c6424d9c-46e7-4f0a-a247-6a0bb6dc9ec9
 # ╠═9a456be8-8e77-4672-b60b-72d725ef367c
 # ╠═bc49e1a9-1575-4934-a570-cb2e724e8299
@@ -828,7 +891,6 @@ version = "17.4.0+0"
 # ╠═593f185a-78ae-4640-b19e-9619d7fac2e5
 # ╠═f818db50-7301-497e-8350-5098dca8eacb
 # ╟─e0a1511c-f18e-480f-8800-4e3e9810f640
-# ╟─dab48f6e-3cf1-4507-89a3-bc9848de0c4a
 # ╠═7245a668-51ad-4e04-b92a-1e47bd70dd9b
 # ╠═378f5a44-d6e0-40a0-ab40-bbb8374d522d
 # ╠═cb6da1fd-e064-4d77-accf-4cd1a4384363

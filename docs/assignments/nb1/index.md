@@ -24,4 +24,4 @@ Each member of team should submit a(n identical) copy of your team's notebook.  
 
 ## Due date
 
-Completed notebook due by 11:00 am, Thursday, Sept. 14.
+Completed notebook due by 4:00 pm, Thursday, Sept. 14.

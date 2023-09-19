@@ -9,6 +9,10 @@ begin
 	using PlutoUI, PlutoTeachingTools
 	using Combinatorics
 	using StatsBase
+	using GraphIO
+	using GraphIO.DOT
+	using ParserCombinator
+	using Graphs
 end
 
 # ╔═╡ 0bbb8fc0-2f0e-487b-923d-fbe8b83f21cb
@@ -70,8 +74,8 @@ end
 md"""## Writing the results"""
 
 # ╔═╡ c6424d9c-46e7-4f0a-a247-6a0bb6dc9ec9
-function dotformat(prlist)
-	textlines = ["graph {"]
+function dotformat(prlist, label)
+	textlines = ["graph $(label) {"]
 	for pr in unique(prlist)
 		push!(textlines, string("   ", pr[1], " -- ", pr[2]))
 	end
@@ -80,12 +84,27 @@ function dotformat(prlist)
 end
 
 # ╔═╡ 9a456be8-8e77-4672-b60b-72d725ef367c
-dotformat(namepairs)
+dotformat(namepairs, "gods")
+
+# ╔═╡ 2d36247d-494d-4f48-8937-bc0c5525890f
+dotfile = joinpath(pwd() |> dirname, "test1.dot")
 
 # ╔═╡ bc49e1a9-1575-4934-a570-cb2e724e8299
-open("doit.dot", "w") do io
-	write(io, dotformat(namepairs))
+open(dotfile, "w") do io
+	write(io, dotformat(namepairs, "gods"))
 end
+
+# ╔═╡ 36bb58bd-1c1c-4e74-80ff-234ee5cb71d3
+md"""## Testing the output"""
+
+# ╔═╡ 593f185a-78ae-4640-b19e-9619d7fac2e5
+g = loadgraph(dotfile, "gods", DOTFormat())
+
+# ╔═╡ f818db50-7301-497e-8350-5098dca8eacb
+md"""> **TRY GTAPHING WITH KARNAK**"""
+
+# ╔═╡ e0a1511c-f18e-480f-8800-4e3e9810f640
+md"""## Further work: graph analysis"""
 
 # ╔═╡ dab48f6e-3cf1-4507-89a3-bc9848de0c4a
 md"""## Better: counting the results"""
@@ -100,12 +119,18 @@ paircounts = countmap(namepairs)
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
+GraphIO = "aa1b3936-2fda-51b9-ab35-c553d3a640a2"
+Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
+ParserCombinator = "fae87a5f-d1ad-5cf0-8f61-c941e1580b46"
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
 Combinatorics = "~1.0.2"
+GraphIO = "~0.7.0"
+Graphs = "~1.8.0"
+ParserCombinator = "~2.1.1"
 PlutoTeachingTools = "~0.2.13"
 PlutoUI = "~0.7.52"
 StatsBase = "~0.34.0"
@@ -117,7 +142,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.3"
 manifest_format = "2.0"
-project_hash = "c62b72c25783d02e020dc07f1c0113df80fb3879"
+project_hash = "92543a0989f2de2129eb88dd82e17052a9e8d03d"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -129,8 +154,19 @@ version = "1.2.0"
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
 version = "1.1.1"
 
+[[deps.ArnoldiMethod]]
+deps = ["LinearAlgebra", "Random", "StaticArrays"]
+git-tree-sha1 = "62e51b39331de8911e4a7ff6f5aaf38a5f4cc0ae"
+uuid = "ec485272-7323-5ecc-a04f-4719b315124d"
+version = "0.2.0"
+
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
+
+[[deps.AutoHashEquals]]
+git-tree-sha1 = "45bb6705d93be619b81451bb2006b7ee5d4e4453"
+uuid = "15f4f7f2-30c1-5605-9d31-71845cf9641f"
+version = "0.2.0"
 
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
@@ -182,6 +218,12 @@ version = "0.18.15"
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
+[[deps.DelimitedFiles]]
+deps = ["Mmap"]
+git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
+uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+version = "1.9.1"
+
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
@@ -212,6 +254,30 @@ git-tree-sha1 = "8339d61043228fdd3eb658d86c926cb282ae72a8"
 uuid = "59287772-0a20-5a39-b81b-1366585eb4c0"
 version = "0.4.2"
 
+[[deps.GraphIO]]
+deps = ["DelimitedFiles", "Graphs", "Requires", "SimpleTraits"]
+git-tree-sha1 = "bc5b7609e9f4583f303a0ab2a7016ea318464da0"
+uuid = "aa1b3936-2fda-51b9-ab35-c553d3a640a2"
+version = "0.7.0"
+
+    [deps.GraphIO.extensions]
+    GraphIODOTExt = "ParserCombinator"
+    GraphIOGEXFExt = "EzXML"
+    GraphIOGMLExt = "ParserCombinator"
+    GraphIOGraphMLExt = "EzXML"
+    GraphIOLGCompressedExt = "CodecZlib"
+
+    [deps.GraphIO.weakdeps]
+    CodecZlib = "944b1d66-785c-5afd-91f1-9de20f533193"
+    EzXML = "8f5d6c58-4d21-5cfd-889c-e3ad7ee6a615"
+    ParserCombinator = "fae87a5f-d1ad-5cf0-8f61-c941e1580b46"
+
+[[deps.Graphs]]
+deps = ["ArnoldiMethod", "Compat", "DataStructures", "Distributed", "Inflate", "LinearAlgebra", "Random", "SharedArrays", "SimpleTraits", "SparseArrays", "Statistics"]
+git-tree-sha1 = "1cf1d7dcb4bc32d7b4a5add4232db3750c27ecb4"
+uuid = "86223c79-3864-5bf0-83f7-82e725a168b6"
+version = "1.8.0"
+
 [[deps.Hyperscript]]
 deps = ["Test"]
 git-tree-sha1 = "8d511d5b81240fc8e6802386302675bdf47737b9"
@@ -229,6 +295,11 @@ deps = ["Logging", "Random"]
 git-tree-sha1 = "d75853a0bdbfb1ac815478bacd89cd27b550ace6"
 uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
 version = "0.2.3"
+
+[[deps.Inflate]]
+git-tree-sha1 = "5cd07aab533df5170988219191dfad0519391428"
+uuid = "d25df0c9-e2be-5dd7-82c8-3ad0b3e990b9"
+version = "0.1.3"
 
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
@@ -368,6 +439,12 @@ git-tree-sha1 = "2e73fe17cac3c62ad1aebe70d44c963c3cfdc3e3"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 version = "1.6.2"
 
+[[deps.ParserCombinator]]
+deps = ["AutoHashEquals", "Printf"]
+git-tree-sha1 = "3a0e65d9a73e3bb6ed28017760a1664423d7e37c"
+uuid = "fae87a5f-d1ad-5cf0-8f61-c941e1580b46"
+version = "2.1.1"
+
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
 git-tree-sha1 = "716e24b21538abc91f6205fd1d8363f39b442851"
@@ -451,6 +528,16 @@ version = "0.7.0"
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 
+[[deps.SharedArrays]]
+deps = ["Distributed", "Mmap", "Random", "Serialization"]
+uuid = "1a1011a3-84de-559e-8e89-a11a2f7dc383"
+
+[[deps.SimpleTraits]]
+deps = ["InteractiveUtils", "MacroTools"]
+git-tree-sha1 = "5d7e3f4e11935503d3ecaf7186eac40602e7d231"
+uuid = "699a6c99-e7fa-54fc-8d76-47d257e15c1d"
+version = "0.9.4"
+
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
@@ -463,6 +550,21 @@ version = "1.1.1"
 [[deps.SparseArrays]]
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+
+[[deps.StaticArrays]]
+deps = ["LinearAlgebra", "Random", "StaticArraysCore"]
+git-tree-sha1 = "51621cca8651d9e334a659443a74ce50a3b6dfab"
+uuid = "90137ffa-7385-5640-81b9-e52037218182"
+version = "1.6.3"
+weakdeps = ["Statistics"]
+
+    [deps.StaticArrays.extensions]
+    StaticArraysStatisticsExt = "Statistics"
+
+[[deps.StaticArraysCore]]
+git-tree-sha1 = "36b3d696ce6366023a0ea192b4cd442268995a0d"
+uuid = "1e83bf80-4336-4d27-bf5d-d5a4f845583c"
+version = "1.4.2"
 
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -539,7 +641,7 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═8bf9dbda-52ea-11ee-06b6-ab78a41a5a32
+# ╟─8bf9dbda-52ea-11ee-06b6-ab78a41a5a32
 # ╠═0bbb8fc0-2f0e-487b-923d-fbe8b83f21cb
 # ╟─a3e27d8e-a70e-4b68-8442-a3e1888f4724
 # ╟─dc7dbc66-383f-4619-8fcf-277a3fb0708e
@@ -552,11 +654,16 @@ version = "17.4.0+0"
 # ╠═c0752034-915d-4d2d-8d46-4211e6e73058
 # ╠═639d0644-e83f-4ed1-91ad-485123e82020
 # ╠═0e388796-3e1a-419b-8eaa-faefa92908df
-# ╠═6b029590-c622-4475-8d7b-b51fd6a03987
+# ╟─6b029590-c622-4475-8d7b-b51fd6a03987
 # ╠═c6424d9c-46e7-4f0a-a247-6a0bb6dc9ec9
 # ╠═9a456be8-8e77-4672-b60b-72d725ef367c
 # ╠═bc49e1a9-1575-4934-a570-cb2e724e8299
-# ╠═dab48f6e-3cf1-4507-89a3-bc9848de0c4a
+# ╠═2d36247d-494d-4f48-8937-bc0c5525890f
+# ╟─36bb58bd-1c1c-4e74-80ff-234ee5cb71d3
+# ╠═593f185a-78ae-4640-b19e-9619d7fac2e5
+# ╠═f818db50-7301-497e-8350-5098dca8eacb
+# ╟─e0a1511c-f18e-480f-8800-4e3e9810f640
+# ╟─dab48f6e-3cf1-4507-89a3-bc9848de0c4a
 # ╠═cb6da1fd-e064-4d77-accf-4cd1a4384363
 # ╠═027345af-2a40-41ff-976e-7e87190a775d
 # ╟─00000000-0000-0000-0000-000000000001

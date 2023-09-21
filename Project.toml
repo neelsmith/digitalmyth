@@ -1,5 +1,8 @@
 [deps]
 CourseCalendar = "ae603835-8fca-49e7-adf3-8bd54d23a0ba"
+Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 UnifyJustTheDocs = "11bfd71e-bedf-46a1-8e5b-178579ef73ee"
 
 [compat]

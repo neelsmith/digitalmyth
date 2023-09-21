@@ -17,7 +17,8 @@ has_children: true
 ## Collaborative assignments
 
 - Pluto notebook 1: [identifying named entities](../assignments/nb1/). Due at end of class, Thursday, Sept. 21
-- Pluto notebook 2: [constructing a social network](../assignments/nb2/) (or *graph*), and graph visualization and metrics using Gephi. Due at end of class, Thursday, Sept. 28.
+- Pluto notebook 2: [constructing a social network](../assignments/nb2/) (or *graph*).  Due at end of class, Thursday, Sept. 28.
+- Graph visualization and metrics using Gephi. Due at 12:00, Monday, Oct. 2.
 - Pluto notebook 3: isolating themes in text.  Due at end of class, Thursday, Oct. 5.
 
 

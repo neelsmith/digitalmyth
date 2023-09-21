@@ -12,6 +12,10 @@ has_children: true
 
 ## Announcements
 
+
+- Useful review and reference for assignment 2:
+    - notes on [`for` loops and dictionaries](./julia/julia-loops-dictionaries.html) in Julia
+    - notes on [plain-text formats for graph structures](./julia/graph-formats/)
 - Revised [due dates](./deadlines/) for collaborative assignments:
     - [Collaborative assignment 1](./assignments/nb1/): **4:00 pm, Thurs. Sept. 21**.
     - Redesigned collaborative assignment 2: due **4:00 pm, Thurs. Sept. 28**
@@ -47,3 +51,5 @@ has_children: true
 - Thursday: an n-gram model of texts
 
 ### Due dates to note
+
+- Collaborative assignment 2: please be sure you have uploaded your Pluto notebook to the course Google Drive by **4:00 pm, Thursday, Sept. 28**

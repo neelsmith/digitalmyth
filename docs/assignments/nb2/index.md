@@ -12,7 +12,7 @@ has_children: true
 
 ## Requirements
 
-You will be given a template Pluto notebook with prompts to guide you. Your group will submit a completed a notebook that does the following:
+You can use [this template notebook](./assignment2.html) with prompts to guide you. Your group will submit a completed a notebook that does the following:
 
 1. allows users to select from a list of files to analyze
 2. reads the file and treats each line as a distinct passage ("text") to analyze

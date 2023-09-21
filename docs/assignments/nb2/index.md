@@ -23,7 +23,7 @@ You will be given a template Pluto notebook with prompts to guide you. Your grou
 
 - review your work on assignment 1
 - use these notes to [review key features of Julia](https://neelsmith.github.io/digitalmyth/julia/)
-- 
+- use this summary of the [DOT format for graph structures](https://neelsmith.github.io/digitalmyth/julia/graph-formats/)
 
 
 ## Submitting your notebook
@@ -32,4 +32,4 @@ Each member of team should submit a(n identical) copy of your team's notebook.  
 
 ## Due date
 
-Completed notebook due by 11:00 am, Thursday, Sept. 21.
+Completed notebook due by 11:00 am, Thursday, Sept. 28.

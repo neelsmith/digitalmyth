@@ -26,9 +26,6 @@ end
 # ╔═╡ 6e878c17-29cc-45b3-9377-fc3abe4b2fe8
 using Downloads
 
-# ╔═╡ 00c7e736-92ef-4233-8940-7c7b671ff3ff
-using Combinatorics
-
 # ╔═╡ 0bbb8fc0-2f0e-487b-923d-fbe8b83f21cb
 TableOfContents()
 
@@ -56,7 +53,7 @@ md"""> ## Overview of assignment
 >
 > 1. select a text to analyze, and read the contents of the text from a URL
 > 2. find *named entities* (proper nouns and adjectives) in the text
-> 3. use the `Combinatorics` package to find *unique pairings* of names
+> 3. use nested for loops to find *pairings* of names
 > 4. represent these pairings as a text string in the DOT format, a simple text format  used to represent graph structures 
 > 5. write the results to a file, which you can use in the separate assignment to visualize these results with Gephi
 """
@@ -150,97 +147,56 @@ md"""Now we're ready to put together the data we need: a list of all the upper-c
 uc_wordlists = map(wordlist -> uc_words(wordlist),  wordlists)
 
 # ╔═╡ 866ee948-290d-463b-a8bf-48079fcf6f4c
-md""" ## Using combinatorics to find unique pairs"""
+md""" ## Using `for` loops to find unique pairs"""
 
 # ╔═╡ 05c3a217-beb6-4d70-b739-5ec8814dbf9a
 md"""> **Instructions** 
 > 
 > For our social network analysis, we don't just want  a list of the names in each passage: we want to find every *pair* of names in that passage. 
->
-> Mathematicians who work in the field of combinatorics refer to every possible grouping of items in a list as a *combination*. This is not only a well-studied problem: there's a handy Julia package to compute problems in combinatorics. We'll find all possible combinations of named entities in each section of text, then filter the combinations to keep only *pairs*. In our network graph each pairing will be represented as two connected nodes.
+
 """
-
-# ╔═╡ 12a2b0d5-a753-4b1f-9293-8e8de010ee19
-md"""### Background: `combinations` in Julia"""
-
-# ╔═╡ d18369d0-f561-4086-8d26-08d34b4ef65f
-md"""Unsurprisingly, the Julia package we want to use is called `Combinatorics`, and the function that finds every possible combination of elements in a list is called `combinations`.  Let's look at how it works."""
 
 # ╔═╡ 77f068e5-0373-409b-8e5d-4168aa3065a7
-gods = ["Zeus", "Hera", "Apollo", "Artemis"]
+gods = ["Zeus", "Hera", "Apollo", "Artemis", "Zeus"]
 
-# ╔═╡ 580a294a-c552-4378-9012-7befd3d1076b
-md"""The `combinations` function takes a list, and creates a structure for walking through all possible combinations of the list's elements. (This kind of structure is called an *iterator* in Julia).  We want get a list of those combinations from the iterator with Julia's `collect` function, as in the following cell."""
+# ╔═╡ 2a83319a-eea2-4a91-a430-5db7a86da35a
+function bullet(v)
+	results = []
+	for name in v
+		push!(results, "💥 " * name)
+	end
+	results
+end
 
 # ╔═╡ cfd8646f-42b5-4cf9-b080-e23f188fb86c
-godcombos = collect(combinations(gods))
+bullet(gods)
 
-# ╔═╡ 02f308f9-d687-4ebe-b7f4-a87e5cf4d612
-md"""Notice first that the result is once again a Vector of Vectors: a list containing lists of name combinations. 
-
-Notice also that the result shows us *every* possibility: each name individually, all the names together, and every possible grouping of names.  We're only interested in individual-to-individiual pairings, so we can simply filter this list to keep lists with a length of 2.
-
-"""
-
-# ╔═╡ 016593e5-9b21-4e7e-ad26-f275d450266d
-filter(combo -> length(combo) == 2, godcombos)
-
-# ╔═╡ 90172c9f-8cc6-43fe-890a-023521c14d6a
-md"""There are six possible pairings from our list of four names."""
-
-# ╔═╡ 2545eb40-81b7-4ddf-8b39-1fb84777e7db
-md"""### Finding pairs of names"""
-
-# ╔═╡ fa78effe-b1d4-4b99-8668-6e6f640610b5
-md"""For our purposes, it will be useful to combine the two operations we've just looked at, so that, given a list of values, we can find all the possible *pairs* they can form. Yet again, we'll approach that by writing a short function that encapsulates this idea.
-
-Complete the function `pairs`, that takes a single Vector as its only parameter. First, find all the possible combinations of the Vector's contents, then filter those results to include only pairs of elements.
-"""
-
-# ╔═╡ 3d6559b9-c47a-419a-8d4a-068c98fb1c37
-"""Take a Vector `v`, and find every possible pairing of elements in `v`.
-"""
-function pairs(v)
-	nothing
-end
-
-# ╔═╡ efe45794-61df-4c64-a8cb-1271c6aa9f72
-begin
-	
-	testpairs = pairs(gods)
-	if isnothing(testpairs)
-		still_missing(md"Replace `nothing` in the `pairs` function with Julia code to find unique pairs in a  Vector.")
-	elseif ! (testpairs isa Vector)
-		keep_working(md"Your `pairs` function  should produce a new Vector of name pairs, not $(typeof(wordlists)).")
-			
-	elseif length(testpairs) != 6
-		keep_working(md"Something's not right. Your function found $(length(testpairs)) pairs in our test list, but we expected 6 pairs.")
-		
-	else
-		correct(md"Great! Your function worked correctly on our test data!")
-	end
-end
-
-# ╔═╡ ad8c499e-9f63-44d6-9b58-b6d4e8f13f8d
-md"""With our new `pairs` function in hand, we can map each section's upper-case wordslist to pairs of names co-occurring in that section in a single line.
-"""
-
-# ╔═╡ 639d0644-e83f-4ed1-91ad-485123e82020
-pairspertext = map(namelist -> pairs(namelist), uc_wordlists)
-
-# ╔═╡ eb753120-9949-4944-9575-f0d7ddf8683a
-TODO("Add directions to flatten pairings.")
-
-# ╔═╡ 0e388796-3e1a-419b-8eaa-faefa92908df
-namepairs = begin
-	finallist = []
-	for t in pairspertext
-		for pr in t
-			push!(finallist, pr)
+# ╔═╡ 95d7a55c-58f0-414e-ac53-aecb23183efc
+function cooccurs(v)
+	results = []
+	for name in v
+		for innername in v
+			if name != innername
+				push!(results, sort([name, innername]))
+			end
 		end
 	end
-	finallist
+	results |> unique
 end
+
+# ╔═╡ d13ad822-f846-45a6-b31d-eed8cf82282b
+
+
+# ╔═╡ 89870444-8078-4f5b-8b7e-787637d56875
+cooccurs(gods)
+
+# ╔═╡ 2ea5061b-317a-41fd-af75-e628720f9343
+function ucx(v)
+	filter(s -> isuppercase(s[1]), v)
+end
+
+# ╔═╡ f787703f-5424-4066-bf44-8e90d3587fcf
+ucx(["Joe", "Tom", "baseball"])
 
 # ╔═╡ 6b029590-c622-4475-8d7b-b51fd6a03987
 md"""## Writing the results"""
@@ -326,6 +282,16 @@ begin
 	end
 end
 
+# ╔═╡ 9edef571-122b-4f10-88db-3e09261a7001
+linesx = Downloads.download(apollodorus_url) |> readlines
+
+
+# ╔═╡ 65b82ca6-ff9a-4695-9d31-74b1e56be8cc
+wordsx = map(l -> ucx(split(l)), linesx)
+
+# ╔═╡ 4c2f35fe-06f7-4410-88ea-7da658f863c6
+map(v -> cooccurs(v), wordsx)
+
 # ╔═╡ aa541586-f323-430d-9730-6009e7ab8e5e
 menu = ["" => "Choose a text", hyginus_url => "Hyginus", apollodorus_url => "Apollodorus"]
 
@@ -366,7 +332,6 @@ end
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
-Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 GraphIO = "aa1b3936-2fda-51b9-ab35-c553d3a640a2"
 Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
@@ -375,7 +340,6 @@ PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
-Combinatorics = "~1.0.2"
 GraphIO = "~0.7.0"
 Graphs = "~1.8.0"
 ParserCombinator = "~2.1.1"
@@ -387,9 +351,9 @@ PlutoUI = "~0.7.52"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.3"
+julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "681c3bc11bd27417e98dac7613f5b3a773858b0f"
+project_hash = "22d025553860255aeabe37a47acddf10900cc139"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -430,11 +394,6 @@ git-tree-sha1 = "eb7f0f8307f71fac7c606984ea5fb2817275d6e4"
 uuid = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
 version = "0.11.4"
 
-[[deps.Combinatorics]]
-git-tree-sha1 = "08c8b6831dc00bfea825826be0bc8336fc369860"
-uuid = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
-version = "1.0.2"
-
 [[deps.Compat]]
 deps = ["UUIDs"]
 git-tree-sha1 = "e460f044ca8b99be31d35fe54fc33a5c33dd8ed7"
@@ -448,7 +407,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+0"
+version = "1.0.2+0"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -663,7 +622,7 @@ version = "2.7.2"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.2"
+version = "1.9.0"
 
 [[deps.PlutoHooks]]
 deps = ["InteractiveUtils", "Markdown", "UUIDs"]
@@ -863,24 +822,18 @@ version = "17.4.0+0"
 # ╟─7d02f9a4-0af7-42fb-9558-de2fc2238e75
 # ╠═23290f4c-5289-4bc8-8b38-6bce6a54007b
 # ╟─866ee948-290d-463b-a8bf-48079fcf6f4c
-# ╟─05c3a217-beb6-4d70-b739-5ec8814dbf9a
-# ╟─12a2b0d5-a753-4b1f-9293-8e8de010ee19
-# ╟─d18369d0-f561-4086-8d26-08d34b4ef65f
-# ╠═00c7e736-92ef-4233-8940-7c7b671ff3ff
+# ╠═05c3a217-beb6-4d70-b739-5ec8814dbf9a
 # ╠═77f068e5-0373-409b-8e5d-4168aa3065a7
-# ╟─580a294a-c552-4378-9012-7befd3d1076b
+# ╠═2a83319a-eea2-4a91-a430-5db7a86da35a
 # ╠═cfd8646f-42b5-4cf9-b080-e23f188fb86c
-# ╟─02f308f9-d687-4ebe-b7f4-a87e5cf4d612
-# ╠═016593e5-9b21-4e7e-ad26-f275d450266d
-# ╟─90172c9f-8cc6-43fe-890a-023521c14d6a
-# ╟─2545eb40-81b7-4ddf-8b39-1fb84777e7db
-# ╟─fa78effe-b1d4-4b99-8668-6e6f640610b5
-# ╠═3d6559b9-c47a-419a-8d4a-068c98fb1c37
-# ╟─efe45794-61df-4c64-a8cb-1271c6aa9f72
-# ╟─ad8c499e-9f63-44d6-9b58-b6d4e8f13f8d
-# ╠═639d0644-e83f-4ed1-91ad-485123e82020
-# ╠═eb753120-9949-4944-9575-f0d7ddf8683a
-# ╠═0e388796-3e1a-419b-8eaa-faefa92908df
+# ╠═95d7a55c-58f0-414e-ac53-aecb23183efc
+# ╠═d13ad822-f846-45a6-b31d-eed8cf82282b
+# ╠═89870444-8078-4f5b-8b7e-787637d56875
+# ╠═2ea5061b-317a-41fd-af75-e628720f9343
+# ╠═f787703f-5424-4066-bf44-8e90d3587fcf
+# ╠═9edef571-122b-4f10-88db-3e09261a7001
+# ╠═65b82ca6-ff9a-4695-9d31-74b1e56be8cc
+# ╠═4c2f35fe-06f7-4410-88ea-7da658f863c6
 # ╟─6b029590-c622-4475-8d7b-b51fd6a03987
 # ╠═adcac2c7-b96a-4af8-8b44-7c6aafc8d790
 # ╠═c6424d9c-46e7-4f0a-a247-6a0bb6dc9ec9

@@ -19,6 +19,12 @@ You will be given a template Pluto notebook with prompts to guide you. Your grou
 3. finds named entities in each passage
 4. builds a graph of co-occurrences: a *social network*
 
+## Review and reference
+
+- review your work on assignment 1
+- use these notes to [review key features of Julia](https://neelsmith.github.io/digitalmyth/julia/)
+- 
+
 
 ## Submitting your notebook
 

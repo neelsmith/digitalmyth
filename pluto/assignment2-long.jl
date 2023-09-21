@@ -26,6 +26,9 @@ end
 # ╔═╡ 6e878c17-29cc-45b3-9377-fc3abe4b2fe8
 using Downloads
 
+# ╔═╡ 378f5a44-d6e0-40a0-ab40-bbb8374d522d
+using StatsBase
+
 # ╔═╡ 0bbb8fc0-2f0e-487b-923d-fbe8b83f21cb
 TableOfContents()
 
@@ -84,7 +87,7 @@ end
 tip(md"Notice how, as we did in our first assignment, the following cell checks for the possibility that the user hasn't selected a text yet. We don't want to try to using an empty string with our `readlines_url` function.")
 
 # ╔═╡ 4197b0c4-4070-4afa-a68c-2734d5eec382
-md"""## Finding named entities"""
+md"""## Finding personal names"""
 
 # ╔═╡ 4ae5b5e3-15cb-4adf-9a82-43c00b1062d2
 md""">**Instructions**: review your work on assignment 1. In that assignment, you found *unique* lists of words, then identified possible named entities in that list.
@@ -101,12 +104,7 @@ md""" Start by mapping each passage of text in the Vector named `lines` to a lis
 wordlists = [] 
 
 # ╔═╡ b0108f76-ae1b-4552-9f6b-09b2be3d3afe
-md"""Next, we'll filter each wordlist to keep *only* those that are named entities.  Write a function named `uc_words` that takes a list of strings and filters it to keep only those that start with an uppercase character.
-
-Recall from assignment 1 that we'll want to:
-
-1. filter out punctuation
-2. keep only uppercase words that do *not* also appear as lower case words
+md"""Next, we'll filter each wordlist to keep *only* those that are uppercase.  Write a function named `uc_words` that takes a list of strings and filters it to keep only those that start with an uppercase character.
 
 Let's set up an easy test.  We'll hand-type a short list, and pass it to our function.  If it's working correctly, it should filter the list to show only the words "Zeus" and "Hera".
 """
@@ -150,6 +148,27 @@ md"""Now we're ready to put together the data we need: a list of all the upper-c
 # ╔═╡ 23290f4c-5289-4bc8-8b38-6bce6a54007b
 uc_wordlists = map(wordlist -> uc_words(wordlist),  wordlists)
 
+# ╔═╡ 56b44689-7c55-4801-aa0f-dfebf3652370
+TODO(md"Blow out these temp tests")
+
+# ╔═╡ 2ea5061b-317a-41fd-af75-e628720f9343
+function ucx(v)
+	filter(s -> isuppercase(s[1]), v)
+end
+
+# ╔═╡ f69a3328-279f-47cb-8850-7a0a525dfe10
+function cooccursx(v)
+	results = []
+	for wd in v
+		for wd2 in v
+			if wd != wd2
+				push!(results, sort([wd, wd2]))
+			end
+		end
+	end
+	unique(results)
+end
+
 # ╔═╡ 866ee948-290d-463b-a8bf-48079fcf6f4c
 md""" ## Using `for` loops to find unique pairs"""
 
@@ -158,7 +177,8 @@ md"""> **Instructions**
 > 
 > For our social network analysis, we don't just want  a list of the names in each passage: we want to find every *pair* of names in that passage. 
 >
-> First we'll write a function we can use to get the cooccurrences in each section or chapter of the selected text.
+> First we'll write a function we can use to get the cooccurrences in each section or chapter of the selected text.  Then, we'll count up how many times each cooccurring pair occurs.
+
 """
 
 # ╔═╡ ed834e33-b811-43df-afdf-d11dba6ce05e
@@ -205,11 +225,14 @@ md"""Now we can find cooccurrences of names in every chapter of the text we've s
 # ╔═╡ d4e3d419-ff16-453b-98b0-a641c3cf45ca
 pairsbychapter = map(wdlist -> cooccurs(wdlist), uc_wordlists)
 
+# ╔═╡ b458f493-4a0c-42ec-b9d5-f8dd7df4057c
+md
+
 # ╔═╡ e640f5f7-4e9b-470a-af6b-0c7e6142ef55
-md"""### Finding a list of unique pairs"""
+md"""### Counting up the totals"""
 
 # ╔═╡ 1afd3db0-6b65-4a33-8309-b768df2dc8a1
-md"""Currently, we have every pairing listed in separate lists by chapter: we'd like to *flatten* all those sublists out to get a single, big list of pairs we can count.
+md"""It would be helpful to know not only what pairings occur, but how often they occur. Currently, we have every pairing listed in separate lists by chapter: we'd like to *flatten* all those sublists out to get a single, big list of pairs we can count.
 
 Julia has a function to do just that.  `Iterators.flatten` creates a structure you can use with, for example, `for` loops to visit every element in the nested lists. You can collect all the elements at once with the Julia `collect` function. The following cell gathers together all the elements in the nested lists and assigns them to a variable named `allpairs`.
 
@@ -219,67 +242,47 @@ Julia has a function to do just that.  `Iterators.flatten` creates a structure y
 # ╔═╡ 6400635c-19a6-4afe-8e0d-8a8a8d29429e
 allpairs = pairsbychapter |> Iterators.flatten |> collect
 
-# ╔═╡ 3b319b02-33a5-4beb-a965-b4a24ff2e00d
-md"""This is a unique list of cooccurring names: that's a social network!"""
+# ╔═╡ 87780915-4069-4248-a536-c726e0abe1c4
+md"""As your review notes illustrate, we can quickly count all the elements in a list with the `countmap` function from the `StatsBase` library.
+"""
+
+# ╔═╡ cb6da1fd-e064-4d77-accf-4cd1a4384363
+paircounts = countmap(allpairs)
 
 # ╔═╡ 6b029590-c622-4475-8d7b-b51fd6a03987
-md"""## Formatting a DOT graph """
-
-# ╔═╡ 375ad838-117f-40b2-a06e-e51f556c2e63
-md"""
-> **Instructions** Our final step is to write our social network to a plain-text file you can save on your computer. For this exercise, we'll use the DOT format.  
-"""
-
-# ╔═╡ 572346fc-8ff7-4f4f-9d4b-554a7856a1db
-tip(md"""Review [these notes on the DOT format](https://neelsmith.github.io/digitalmyth/julia/graph-formats/).""")
-
-# ╔═╡ d5a42b8e-4517-435d-9bbc-40a24ef50fd5
-md"""We'll write a function that takes accepts a list of associated pairs as its only parameter.  The outline here starts you off: it defines an empty Vector named `textlines`, and pushes onto it the DOT syntax for beginning and ending a graph structure.  *In between* those two lines, you should write a `for` loop that formats every element in DOT syntax.
-
-"""
-
-# ╔═╡ a48432d2-67c6-4ef0-882d-0c1c20e356fb
-md"""Here's a miniature version of what you want to do. You'll be working with lists that have a pair of names, like this."""
-
-# ╔═╡ b6265311-e2f1-4e8d-bb09-29edad4690fd
-onepair = ["A", "B"]
-
-# ╔═╡ ca9db6a6-4fee-4544-b175-38ffb7cc6426
-md"""You can use Julia's `*` operator to join multiple values together into one string.  The result is one line in DOT syntax for a pair or nodes joined by an edge."""
-
-# ╔═╡ eef41d25-fa0d-46a5-a4cb-8c397bcaf9ab
-onepair[1] * " -- " * onepair[2]
+md"""## Writing the results"""
 
 # ╔═╡ c6424d9c-46e7-4f0a-a247-6a0bb6dc9ec9
-"""Given a list of pair of linked nodes, compose a graph structure in DOT format."""
-function dotformat(pairlist)
-	textlines = []
-	push!(textlines, "graph SOCIALNETWORK {")
-	# add a for loop here that pushes a data line for each entry in `pairlist` onto the `textlines` Vector
-	
+function dotformatx(prlist, label)
+	textlines = ["graph $(label) {"]
+	for pr in unique(prlist)
+		push!(textlines, string("   ", pr[1], " -- ", pr[2]))
+	end
 	push!(textlines, "}")
 	join(textlines,"\n")
 end
 
 # ╔═╡ 9a456be8-8e77-4672-b60b-72d725ef367c
-dot_output = dotformat(allpairs)
-
-# ╔═╡ 21bd7eac-207e-44b0-9f23-7bf5b22b149a
-md"""### Saving the results to a file"""
-
-# ╔═╡ 38bd3746-76dd-4fb1-b772-575d6d957bb3
-md"""When you have completed the rest of your assignment, uncomment the three lines in the following cell. This will write `dot_output` to a file named **assignment2.dot** in the directory where you're running Pluto: **$(pwd())**.
-
-"""
+dotformatx(namepairs, "gods")
 
 # ╔═╡ bc49e1a9-1575-4934-a570-cb2e724e8299
 #open(dotfile, "w") do io
-#	write(io, dot_output)
+#	write(io, dotformat(namepairs, "gods"))
 # end
 
-# ╔═╡ f46c4a94-2721-4650-bf74-43c7cff9d00c
-tip(md"""Your file will be named **assignment2.dot**, and will be saved in this folder on your computer:  **$(pwd())**
-""")
+# ╔═╡ 2d36247d-494d-4f48-8937-bc0c5525890f
+dotfile = joinpath(pwd() |> dirname, "test1.dot")
+
+# ╔═╡ 36bb58bd-1c1c-4e74-80ff-234ee5cb71d3
+md"""## Testing the output"""
+
+# ╔═╡ 593f185a-78ae-4640-b19e-9619d7fac2e5
+begin
+	g = isfile(dotfile) ? loadgraph(dotfile, "gods", DOTFormat()) : nothing
+end
+
+# ╔═╡ f818db50-7301-497e-8350-5098dca8eacb
+md"""> **TRY GTAPHING WITH KARNAK**"""
 
 # ╔═╡ 027345af-2a40-41ff-976e-7e87190a775d
 html"""
@@ -314,6 +317,19 @@ begin
 		correct(md"Great! Your function read the test document correctly!")
 	end
 end
+
+# ╔═╡ 9edef571-122b-4f10-88db-3e09261a7001
+linesx = Downloads.download(apollodorus_url) |> readlines
+
+
+# ╔═╡ 65b82ca6-ff9a-4695-9d31-74b1e56be8cc
+wordsx = map(l -> ucx(split(l)), linesx)
+
+# ╔═╡ 634bec64-eea0-49a6-ad5f-96fdfe55e371
+pairsbychapterx = map(wdlist -> cooccursx(wdlist), wordsx)
+
+# ╔═╡ d2afdda0-9b15-46b8-b086-9ab2b0b0f171
+allpairsx = pairsbychapterx |> Iterators.flatten |> collect
 
 # ╔═╡ aa541586-f323-430d-9730-6009e7ab8e5e
 menu = ["" => "Choose a text", hyginus_url => "Hyginus", apollodorus_url => "Apollodorus"]
@@ -352,22 +368,6 @@ begin
 	end
 end
 
-# ╔═╡ 2d36247d-494d-4f48-8937-bc0c5525890f
-dotfile = joinpath(pwd(), "assignment2.dot")
-
-# ╔═╡ a78e1109-e568-4772-b3e6-d1095853c0c7
-if isfile(dotfile)
-	try
-		g = loadgraph(dotfile, "SOCIALNETWORK", DOTFormat()) 
-		correct(md"Terrific -- looks like your output file is a valid DOT file!")
-	catch e
-		keep_working(md"Something's wrong with your file: I couldn't parse it as a valid DOT file.")
-	end
-else
-	still_missing(md"If you have completed the rest of the assignment, go ahead and uncomment the three lines in the cell above!")
-
-end
-
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
@@ -377,6 +377,7 @@ Graphs = "86223c79-3864-5bf0-83f7-82e725a168b6"
 ParserCombinator = "fae87a5f-d1ad-5cf0-8f61-c941e1580b46"
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 
 [compat]
 GraphIO = "~0.7.0"
@@ -384,6 +385,7 @@ Graphs = "~1.8.0"
 ParserCombinator = "~2.1.1"
 PlutoTeachingTools = "~0.2.13"
 PlutoUI = "~0.7.52"
+StatsBase = "~0.34.0"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -392,7 +394,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "22d025553860255aeabe37a47acddf10900cc139"
+project_hash = "2f86d8a6f9d9f811d94f8903e8abce345d549ebc"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
@@ -448,6 +450,11 @@ deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
 version = "1.0.2+0"
 
+[[deps.DataAPI]]
+git-tree-sha1 = "8da84edb865b0b5b0100c0666a9bc9a0b71c553c"
+uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
+version = "1.15.0"
+
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
 git-tree-sha1 = "3dbd312d370723b6bb43ba9d02fc36abade4518d"
@@ -467,6 +474,12 @@ version = "1.9.1"
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
+
+[[deps.DocStringExtensions]]
+deps = ["LibGit2"]
+git-tree-sha1 = "2fb1e02f2b635d0845df5d7c167fec4dd739b00d"
+uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
+version = "0.9.3"
 
 [[deps.Downloads]]
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
@@ -539,6 +552,11 @@ version = "0.1.3"
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
+[[deps.IrrationalConstants]]
+git-tree-sha1 = "630b497eafcc20001bba38a4651b327dcfc491d2"
+uuid = "92d709cd-6900-40b7-9082-c6be49f344b6"
+version = "0.2.2"
+
 [[deps.JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]
 git-tree-sha1 = "31e996f0a15c7b280ba9f76636b3ff9e2ae58c9a"
@@ -596,6 +614,22 @@ uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
 uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
+[[deps.LogExpFunctions]]
+deps = ["DocStringExtensions", "IrrationalConstants", "LinearAlgebra"]
+git-tree-sha1 = "7d6dd4e9212aebaeed356de34ccf262a3cd415aa"
+uuid = "2ab3a3ac-af41-5b50-aa03-7779005ae688"
+version = "0.3.26"
+
+    [deps.LogExpFunctions.extensions]
+    LogExpFunctionsChainRulesCoreExt = "ChainRulesCore"
+    LogExpFunctionsChangesOfVariablesExt = "ChangesOfVariables"
+    LogExpFunctionsInverseFunctionsExt = "InverseFunctions"
+
+    [deps.LogExpFunctions.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+    ChangesOfVariables = "9e997f8a-9a97-42d5-a9f1-ce6bfc15e2c0"
+    InverseFunctions = "3587e190-3f89-42d0-90ee-14403ec27112"
+
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
@@ -624,6 +658,12 @@ uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
 version = "2.28.2+0"
+
+[[deps.Missings]]
+deps = ["DataAPI"]
+git-tree-sha1 = "f66bdc5de519e8f8ae43bdc598782d35a25b1272"
+uuid = "e1d29d7a-bbdc-5cf2-9ac0-f12de2c33e28"
+version = "1.1.0"
 
 [[deps.Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
@@ -748,6 +788,12 @@ version = "0.9.4"
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
+[[deps.SortingAlgorithms]]
+deps = ["DataStructures"]
+git-tree-sha1 = "c60ec5c62180f27efea3ba2908480f8055e17cee"
+uuid = "a2af1166-a08f-5f64-846c-94a0d3cef48c"
+version = "1.1.1"
+
 [[deps.SparseArrays]]
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
@@ -771,6 +817,18 @@ version = "1.4.2"
 deps = ["LinearAlgebra", "SparseArrays"]
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 version = "1.9.0"
+
+[[deps.StatsAPI]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "1ff449ad350c9c4cbc756624d6f8a8c3ef56d3ed"
+uuid = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
+version = "1.7.0"
+
+[[deps.StatsBase]]
+deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
+git-tree-sha1 = "75ebe04c5bed70b91614d684259b661c9e6274a4"
+uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+version = "0.34.0"
 
 [[deps.SuiteSparse_jll]]
 deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
@@ -857,9 +915,16 @@ version = "17.4.0+0"
 # ╠═731e0924-793a-445b-9988-b97149e14548
 # ╟─91591eb7-a9d3-47a6-bd22-e1eec8af1509
 # ╠═af943162-f0d3-4a45-977e-32661d7ba500
-# ╠═a729576b-8048-4a45-bcc2-a76bb566b6ff
+# ╟─a729576b-8048-4a45-bcc2-a76bb566b6ff
 # ╟─7d02f9a4-0af7-42fb-9558-de2fc2238e75
 # ╠═23290f4c-5289-4bc8-8b38-6bce6a54007b
+# ╠═56b44689-7c55-4801-aa0f-dfebf3652370
+# ╠═9edef571-122b-4f10-88db-3e09261a7001
+# ╠═2ea5061b-317a-41fd-af75-e628720f9343
+# ╠═65b82ca6-ff9a-4695-9d31-74b1e56be8cc
+# ╠═f69a3328-279f-47cb-8850-7a0a525dfe10
+# ╠═634bec64-eea0-49a6-ad5f-96fdfe55e371
+# ╠═d2afdda0-9b15-46b8-b086-9ab2b0b0f171
 # ╟─866ee948-290d-463b-a8bf-48079fcf6f4c
 # ╟─05c3a217-beb6-4d70-b739-5ec8814dbf9a
 # ╟─ed834e33-b811-43df-afdf-d11dba6ce05e
@@ -869,33 +934,28 @@ version = "17.4.0+0"
 # ╠═d13ad822-f846-45a6-b31d-eed8cf82282b
 # ╟─2ca34534-c537-478e-9d1b-b27267b68552
 # ╠═a6bd5e8a-76fe-4e61-96ae-00ac5dc945c6
-# ╠═d73a840c-8dc0-4c5e-bfc6-c9bf14c48ced
+# ╟─d73a840c-8dc0-4c5e-bfc6-c9bf14c48ced
 # ╟─1e3509a5-cb14-4061-b121-17008abfdfd0
 # ╠═d4e3d419-ff16-453b-98b0-a641c3cf45ca
+# ╠═b458f493-4a0c-42ec-b9d5-f8dd7df4057c
 # ╟─e640f5f7-4e9b-470a-af6b-0c7e6142ef55
 # ╟─1afd3db0-6b65-4a33-8309-b768df2dc8a1
 # ╠═6400635c-19a6-4afe-8e0d-8a8a8d29429e
-# ╟─3b319b02-33a5-4beb-a965-b4a24ff2e00d
+# ╟─87780915-4069-4248-a536-c726e0abe1c4
+# ╠═378f5a44-d6e0-40a0-ab40-bbb8374d522d
+# ╠═cb6da1fd-e064-4d77-accf-4cd1a4384363
 # ╟─6b029590-c622-4475-8d7b-b51fd6a03987
-# ╟─375ad838-117f-40b2-a06e-e51f556c2e63
-# ╟─572346fc-8ff7-4f4f-9d4b-554a7856a1db
-# ╟─d5a42b8e-4517-435d-9bbc-40a24ef50fd5
-# ╟─a48432d2-67c6-4ef0-882d-0c1c20e356fb
-# ╠═b6265311-e2f1-4e8d-bb09-29edad4690fd
-# ╟─ca9db6a6-4fee-4544-b175-38ffb7cc6426
-# ╠═eef41d25-fa0d-46a5-a4cb-8c397bcaf9ab
 # ╠═c6424d9c-46e7-4f0a-a247-6a0bb6dc9ec9
 # ╠═9a456be8-8e77-4672-b60b-72d725ef367c
-# ╟─21bd7eac-207e-44b0-9f23-7bf5b22b149a
-# ╟─38bd3746-76dd-4fb1-b772-575d6d957bb3
 # ╠═bc49e1a9-1575-4934-a570-cb2e724e8299
-# ╟─a78e1109-e568-4772-b3e6-d1095853c0c7
-# ╟─f46c4a94-2721-4650-bf74-43c7cff9d00c
+# ╠═2d36247d-494d-4f48-8937-bc0c5525890f
+# ╟─36bb58bd-1c1c-4e74-80ff-234ee5cb71d3
+# ╠═593f185a-78ae-4640-b19e-9619d7fac2e5
+# ╠═f818db50-7301-497e-8350-5098dca8eacb
 # ╟─027345af-2a40-41ff-976e-7e87190a775d
 # ╟─a464db01-1cf8-4934-83a3-f6d946abb79b
 # ╟─6f41d79f-9ee4-42cb-b76c-4e0ec73a0db3
 # ╟─4701b072-b304-4c70-8daa-6c12c7ed3097
 # ╟─aa541586-f323-430d-9730-6009e7ab8e5e
-# ╠═2d36247d-494d-4f48-8937-bc0c5525890f
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

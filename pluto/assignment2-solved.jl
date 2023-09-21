@@ -150,6 +150,45 @@ md"""Now we're ready to put together the data we need: a list of all the upper-c
 # ╔═╡ 23290f4c-5289-4bc8-8b38-6bce6a54007b
 uc_wordlists = map(wordlist -> uc_words(wordlist),  wordlists)
 
+# ╔═╡ 56b44689-7c55-4801-aa0f-dfebf3652370
+TODO(md"Blow out these temp tests")
+
+# ╔═╡ 2ea5061b-317a-41fd-af75-e628720f9343
+function ucx(v)
+	filter(s -> isuppercase(s[1]), v)
+end
+
+# ╔═╡ f69a3328-279f-47cb-8850-7a0a525dfe10
+function cooccursx(v)
+	results = []
+	for wd in v
+		for wd2 in v
+			if wd != wd2
+				push!(results, sort([wd, wd2]))
+			end
+		end
+	end
+	unique(results)
+end
+
+# ╔═╡ e8b1ce1d-2dc9-4413-8ef9-451470168bfb
+"""Given a list of pair of linked nodes, compose a graph structure in DOT format."""
+function dotformatx(pairlist)
+	textlines = []
+	push!(textlines, "graph SOCIALNETWORK {")
+	for onepair in pairlist
+		s = onepair[1] * " -- " * onepair[2]
+		
+		push!(textlines, s)
+	end
+	push!(textlines, "}")
+	push!(textlines, "Type of ")
+	join(textlines,"\n")
+end
+
+# ╔═╡ 8b6d7601-ffa5-4776-afdc-0ee592641196
+
+
 # ╔═╡ 866ee948-290d-463b-a8bf-48079fcf6f4c
 md""" ## Using `for` loops to find unique pairs"""
 
@@ -314,6 +353,22 @@ begin
 		correct(md"Great! Your function read the test document correctly!")
 	end
 end
+
+# ╔═╡ 9edef571-122b-4f10-88db-3e09261a7001
+linesx = Downloads.download(apollodorus_url) |> readlines
+
+
+# ╔═╡ 65b82ca6-ff9a-4695-9d31-74b1e56be8cc
+wordsx = map(l -> ucx(split(l)), linesx)
+
+# ╔═╡ 634bec64-eea0-49a6-ad5f-96fdfe55e371
+pairsbychapterx = map(wdlist -> cooccursx(wdlist), wordsx)
+
+# ╔═╡ d2afdda0-9b15-46b8-b086-9ab2b0b0f171
+allpairsx = pairsbychapterx |> Iterators.flatten |> collect
+
+# ╔═╡ 0b0072b1-2aca-4665-9ef4-b67a59f24cb1
+dot_outputx = dotformatx(allpairsx)
 
 # ╔═╡ aa541586-f323-430d-9730-6009e7ab8e5e
 menu = ["" => "Choose a text", hyginus_url => "Hyginus", apollodorus_url => "Apollodorus"]
@@ -860,6 +915,16 @@ version = "17.4.0+0"
 # ╠═a729576b-8048-4a45-bcc2-a76bb566b6ff
 # ╟─7d02f9a4-0af7-42fb-9558-de2fc2238e75
 # ╠═23290f4c-5289-4bc8-8b38-6bce6a54007b
+# ╠═56b44689-7c55-4801-aa0f-dfebf3652370
+# ╠═9edef571-122b-4f10-88db-3e09261a7001
+# ╠═2ea5061b-317a-41fd-af75-e628720f9343
+# ╠═65b82ca6-ff9a-4695-9d31-74b1e56be8cc
+# ╠═f69a3328-279f-47cb-8850-7a0a525dfe10
+# ╠═634bec64-eea0-49a6-ad5f-96fdfe55e371
+# ╠═d2afdda0-9b15-46b8-b086-9ab2b0b0f171
+# ╠═e8b1ce1d-2dc9-4413-8ef9-451470168bfb
+# ╠═0b0072b1-2aca-4665-9ef4-b67a59f24cb1
+# ╠═8b6d7601-ffa5-4776-afdc-0ee592641196
 # ╟─866ee948-290d-463b-a8bf-48079fcf6f4c
 # ╟─05c3a217-beb6-4d70-b739-5ec8814dbf9a
 # ╟─ed834e33-b811-43df-afdf-d11dba6ce05e

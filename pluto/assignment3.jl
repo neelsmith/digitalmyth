@@ -22,11 +22,11 @@ end
 # ╔═╡ 11e83ae9-6869-4541-a52d-cf253a760536
 using Downloads
 
-# ╔═╡ 5b22c312-d668-4301-8e15-0649c04a2335
-using StatsBase, OrderedCollections
-
 # ╔═╡ da5ebca9-965c-4d54-b3d9-70f43e049652
 using CitableBase
+
+# ╔═╡ 5b22c312-d668-4301-8e15-0649c04a2335
+using StatsBase, OrderedCollections
 
 # ╔═╡ 713b7920-6d87-47cb-b097-d4deb08b5a58
 using PlotlyJS
@@ -54,25 +54,46 @@ end
 # ╔═╡ 904d2e7e-0439-4de1-8178-8ce1daca1a44
 md"""> ## Overview of assignment
 >
->This Pluto notebook will guide you through computing n-gram frequencies in English translations of Apollodorus and Hyginus.  We'll read a text that is segmented into canonically citable sections, and for each section, we'll 
+>This Pluto notebook will guide you through computing n-gram frequencies in English translations of Apollodorus and Hyginus.  We'll prepare a tidy text to analyze, break it up into n-grams, count the frequenceis of the n-grams, and plot a bar chart of the counts.
 >
 """
 
 # ╔═╡ 9f944b0d-a630-4dda-af2c-351d897c1994
-md"""## Prepare data"""
+md"""## Prepare data for analysis"""
 
 # ╔═╡ 3a958d40-97f7-4143-809b-50d8ebb911c1
-md"""> **Instructions**: ...
+md"""> **Instructions**: We'll work again with texts of Apollodorus and Hyginus.  
+> We'll need to download and read the texts, then tidy them up to prepare them for analysis.
 >
+> We'll write a function for each of those two steps:
 >
-> 1. read text
-> 2. tidy it up
+> 1. read string data from a URL
+> 2. tidy up the string for analysis
+>
+> The notebook has already set up for you a menu where users can select a URL for one of the texts, which is assigned to the variable `text_url`.
 """
 
+# ╔═╡ 46cf8696-684d-411a-a6aa-b6b79679b55d
+md"""### Read string data from a URL"""
+
+# ╔═╡ afa6c677-6850-4fcf-9ded-513c4e76e27a
+md"""
+Begin by writing a function that downloads a text and reads the complete contents as a String value.  You've done this before: reuse your earlier function by replacing `nothing` in the body of the `read_url` function with appropriate Julia code.
+"""
+
+# ╔═╡ 6d58c1dc-f26c-464b-8c53-0e6f4e877b4a
+md"""Recall that we'll need to use the `Downloads` package:"""
+
 # ╔═╡ 67683cc9-0e2a-4a7b-8f04-b1350b60cf97
+"""Download a URL `u` and read its contents as a String value.
+Be tidy and remove any temporary files you create!
+"""
 function read_url(u)
 	nothing
 end
+
+# ╔═╡ b4b2396f-af4b-45bf-a92c-080fbe336b2d
+md"""### Tidy up data we've read"""
 
 # ╔═╡ a85a7304-2a81-4021-aa9e-83bc3c129e78
 """Remove punctuation characters from string `s`
@@ -82,17 +103,37 @@ function tidytext(s)
 	nothing
 end
 
-# ╔═╡ 1689b649-fd44-4996-b654-5c5d5c3a3504
-function tidytextx(s)
-	alphas = filter(c -> ! ispunct(c), s)
-	map(c -> lowercase(c), alphas)
+# ╔═╡ 1377097e-c414-48be-b696-b017dfd39cd5
+begin
+	testtidy = tidytext("Hey! This, right here, is not complicated.")
+	if isnothing(testtidy)
+		still_missing(md"In the body of the `tidytext` function, replace `nothing` with appropriate Julia code.")
+		
+	elseif length(testtidy) != 38
+		keep_working(md"I did not find the number of characters I expected in your function's output.")
+
+
+	else
+		caseok = testtidy == lowercase(testtidy)
+		
+		local punctok = true
+		for c in testtidy
+			if ispunct(c)
+				punctok = false
+			end
+		end
+
+		
+		if ! punctok
+			still_missing(md"I'm still finding punctuation characters in the output of your `tidytext` function.")
+			
+		elseif ! caseok
+			still_missing(md"I'm still finding punctuation characters in the output of your function.")	
+		else	
+			correct(md"Excellent! Your function is correctly tidying up test tidy.")
+		end
+	end
 end
-
-# ╔═╡ f3eb558e-784b-4f9e-94c8-e2251cc88ae4
-TODO(md"Check that tidier has no punct and that all chars are lc.")
-
-# ╔═╡ cd158f20-6dff-4b54-9d94-863ae3960640
-
 
 # ╔═╡ 3f685ace-5e2d-445f-8b49-d69298c98dfe
 md"""## Compute n grams"""
@@ -110,23 +151,104 @@ md"""**Instructions**
 # ╔═╡ a8147f92-218b-4ec2-92c5-b889c1d96194
 md"""*n-gram size*: $(@bind n Slider(1:15; default=3, show_value=true))"""
 
+# ╔═╡ e6f261f1-88fd-406c-936c-d627772f3dab
+md"""Check that the slider works as expected:  try sliding to different values, and watch how the variable `n` changes in the next cell."""
+
 # ╔═╡ b19c8354-e2d9-4af1-9162-3514ecd40420
 n
+
+# ╔═╡ 16a49e39-d634-44c4-b1e9-745650baf967
+md"""### Partitioning the text into n-grams"""
+
+# ╔═╡ b569f847-cbd5-4f88-a313-38a56cd6490e
+md"""### Counting frequencies"""
+
+# ╔═╡ 954cd5a7-afd8-4ef9-bf6f-3a9f3846e52b
+nwindows = nothing
+
+# ╔═╡ 06534d10-7aca-4387-8591-96e100635230
+ngs = []
 
 # ╔═╡ 5ce13b44-c088-449a-8bad-2be5f3992acb
 md"""## Plot results"""
 
+# ╔═╡ bc2b3015-44e1-4b0b-b99b-44790574be46
+md"""> **Instructions**:
+>
+"""
+
+# ╔═╡ 1a8762d5-7a63-40b6-bfd1-093a6ec24df8
+md"""### Isolating Vectors of `x` and `y` values"""
+
+# ╔═╡ 3a4a78f6-5a32-4ccf-a5f7-d9a8a0871e5c
+md"""### Plotting the frequencies"""
+
 # ╔═╡ d56c84c1-4256-431f-9dce-e1f134d7d583
 md"""*Number of n-grams to display*: $(@bind maxdisplay Slider(50 : 10 : 500; default=100, show_value=true))"""
 
-# ╔═╡ ab4d39bf-91c8-4c49-9864-87d480b419f9
-md"""*Plot width (pixels)*: $(@bind w Slider(100 : 10 : 1200; default=500, show_value=true))"""
+# ╔═╡ bffb783c-5f5b-4ea7-9369-6a68d18243b2
+md"""Sliders to set variables `h` and `w` which we can use for width and height of the display.
+"""
+
+# ╔═╡ a2de8f0b-7612-4b37-8205-521da096b351
+md"""Slide to set how many rows of data to display:"""
+
+# ╔═╡ 18496c03-182e-4e9b-951d-068ce03cea5a
+function plotngram(xlist, ylist, ngramsize)
+	graphlayout =  Layout(
+	        title = string(ngramsize, "-gram frequency"),
+	        xaxis_title = string(ngramsize, "-grams"),
+	        yaxis_title = "Occurrences",
+			#width=wdt,
+			#height=ht
+	    )
+		
+		thebar = bar(x=xlist, y=ylist)
+		Plot(thebar, graphlayout)
+end
+
+# ╔═╡ 9fc34e03-a6b0-4d9f-8969-66965efa683d
+tip(md"Add user-settable h, w")
 
 # ╔═╡ 89eedbf8-6a5a-4828-9384-6277bd1ef1a8
 md"""*Plot height (pixels)*: $(@bind h Slider(200 : 10 : 800; default=500, show_value=true))"""
 
+# ╔═╡ ab4d39bf-91c8-4c49-9864-87d480b419f9
+md"""*Plot width (pixels)*: $(@bind w Slider(100 : 10 : 1200; default=500, show_value=true))"""
+
 # ╔═╡ e0a6a8f5-8bc1-494d-967e-32bf54ed83c5
 (h, w)
+
+# ╔═╡ 1570e98a-ae26-4d6f-9f14-189b1d58c64b
+TODO(md"""Dev- x functions""")
+
+# ╔═╡ 0eb81723-cdf9-4df7-b517-8cc8c65e1c40
+function read_urlx(u)
+	Downloads.download(u) |> read |> String
+end
+
+# ╔═╡ 1689b649-fd44-4996-b654-5c5d5c3a3504
+function tidytextx(s)
+	alphas = filter(c -> ! ispunct(c), s)
+	map(c -> lowercase(c), alphas)
+end
+
+# ╔═╡ 1817da3c-5538-4af4-9359-14cd62065ebe
+
+
+# ╔═╡ 82430668-846f-486a-abcc-d0dbe80cf1c8
+function plotngramx(xlist, ylist, ngramsize, wdt, ht)
+	graphlayout =  Layout(
+	        title = string(ngramsize, "-gram frequency"),
+	        xaxis_title = string(ngramsize, "-grams"),
+	        yaxis_title = "Occurrences",
+			width=wdt,
+			height=ht
+	    )
+		
+		thebar = bar(x=xlist, y=ylist)
+		Plot(thebar, graphlayout)
+end
 
 # ╔═╡ 9f027a28-f712-45d7-8462-20cce79b595e
 html"""
@@ -155,50 +277,36 @@ begin
 	teststringreading = read_url(apollodorus_url)
 
 	if isnothing(teststringreading)
-		still_missing(md"Hey! Do this!")
-	elseif ! (teststringreading isa Vector{String})
-		keep_working(md"The value you return from `readlines_url` should be a Vector of String values, not $(typeof(teststringreading)).")
+		still_missing(md"In the body of the `read_url` function, replace `nothing` with appropriate Julia code.")
+	elseif ! (teststringreading isa String)
+		keep_working(md"The value you return from `read_url` should be a String value, not $(typeof(teststringreading)).")
 			
-	elseif length(teststringreading) != 210
-		keep_working(md"Something's not right. Instead of reading 210 sections from the test document, your function read $(length(teststringreading)).")
+	elseif length(teststringreading) != 215177
+		keep_working(md"Something's not right: your function created a String of the wrong length.")
 		
 	else
-		correct(md"Great! Your function read the test document correctly!")
+		correct(md"Great! Your function downloaded and read a document correctly!")
 	end
 end
 
-# ╔═╡ a0080ee8-0d50-49b3-90d2-263a57a30024
-menu = ["" => "Choose a text", hyginus_url => "Hyginus", apollodorus_url => "Apollodorus"]
+# ╔═╡ 6b0da1b0-e780-41bd-96de-0c8fee17e970
+tidierx = tidytextx(read_urlx(apollodorus_url))
 
-# ╔═╡ 95d7c11a-1e9a-424c-b7dc-83f42453d31d
-@bind text_url Select(menu)
-
-# ╔═╡ b68483f8-0f72-4907-922b-33dce51d888f
-fulltext = isnothing(text_url) | isempty(text_url) ? [] : read(Downloads.download(text_url)) |> String
-
-# ╔═╡ 1377097e-c414-48be-b696-b017dfd39cd5
-begin
-	
-	if isnothing(fulltext)
-		still_missing(md"Hey! Do this!")
-	
-	
-	else
-		correct(md"Great! Your function read the test document correctly!")
-	end
-end
-
-# ╔═╡ ee83b946-8351-4fc0-9d03-058a0769d429
-tidier = tidytext(fulltext)
-
-# ╔═╡ 597ba48c-3a3a-4edd-8d4c-ad52a4226b3b
-	nwindowsx = isempty(tidier) ? nothing : slidingwindow(split(tidier), n = n)
-
-# ╔═╡ 06534d10-7aca-4387-8591-96e100635230
-ngs = isnothing(nwindowsx) ? nothing : map(t -> join(t,"_"), nwindowsx) |> countmap |> OrderedDict
+# ╔═╡ e70502b5-202b-4659-99e3-3c1741a52648
+nwindowsx = isempty(tidierx) ? nothing : slidingwindow(split(tidierx), n = n)
 
 # ╔═╡ 5a62d7ee-0b6a-4749-9562-215e96a47de1
-orderedngs = isnothing(ngs) ? nothing : sort(ngs, rev=true, byvalue = true)
+ngstrings = if isempty(ngs)
+	[]
+else
+	map(t -> join(t,"_"), nwindowsx)
+end
+
+# ╔═╡ 07dfbfb4-2ce6-4d37-afd2-95b074b8b76f
+ orderedngs = ngstrings |> countmap |> OrderedDict
+
+# ╔═╡ abcfa7d1-60dd-49c1-9052-2f5079886f9e
+sortedngs = sort(orderedngs, rev=true, byvalue=true)
 
 # ╔═╡ 4303b736-9301-4b07-bf1e-26d8700ac318
 xvals = keys(orderedngs) |> collect
@@ -206,28 +314,67 @@ xvals = keys(orderedngs) |> collect
 # ╔═╡ 390d1378-b915-48b4-a558-f434e4f6e913
 yvals = values(orderedngs) |> collect
 
-# ╔═╡ ca31a53d-7829-4308-8299-0cedb61482af
-begin
-	#if isempty(plotdata)
-	#	md"""> *-> Waiting for data to load*."""
-	#else
-		
-		graphlayout =  Layout(
-	        title = "$(n)-gram frequency",
-	        xaxis_title = "$(n)-gram",
-	        yaxis_title = "Occurrences",
-			width=w,
-			height=h
-	    )
-		
-		thebar = bar(x=xvals[1:maxdisplay], y=yvals[1:maxdisplay]) 
-		Plot(thebar, graphlayout)
+# ╔═╡ 4299e723-0ff1-4597-84c5-eb6d39dff736
+ if isempty(xvals) | isempty(yvals)
+ else
+ 	Plot(xvals, yvals)
+ end
 
-#	end
+# ╔═╡ a98b7fe3-feb6-45ff-9367-6e4c32a685b3
+ if isempty(xvals) | isempty(yvals)
+ else
+ 	Plot(xvals[1:maxdisplay], yvals[1:maxdisplay])
+ end
+
+# ╔═╡ 3067fae3-cc52-455d-9324-10c40077ced0
+ if isempty(xvals) | isempty(yvals)
+ else
+ 	plotngram(xvals[1:maxdisplay], yvals[1:maxdisplay], n)
+ end
+
+# ╔═╡ 7cdc55bd-8fec-47b3-99b6-f8e7b74cff9d
+ngsx = isnothing(nwindowsx) ? nothing : map(t -> join(t,"_"), nwindowsx) |> countmap |> OrderedDict
+
+# ╔═╡ 5d1c9159-ac6e-4e79-af4c-361404c96001
+ngstringsx = if isempty(ngsx)
+	[]
+else
+	map(t -> join(t,"_"), nwindowsx)
 end
 
-# ╔═╡ 7fbada01-755b-4403-8c03-d53538999323
-tidier
+# ╔═╡ 9d00cb0b-f51f-4f2e-aa82-3ce026183639
+ orderedngsx = ngstringsx |> countmap |> OrderedDict
+
+# ╔═╡ 3c910873-5b87-461e-bc11-5c34c433bd49
+sortedngsx = sort(orderedngsx, rev=true, byvalue=true)
+
+# ╔═╡ 720a8e0e-10fe-4f14-8a87-9015ab6c284c
+xvalsx = keys(sortedngsx) |> collect
+
+# ╔═╡ 08f7d518-218d-48f2-963f-56602cef06c6
+yvalsx = values(sortedngsx) |> collect
+
+# ╔═╡ 51430eec-e346-453e-95e7-ac907e73c9cf
+plotngramx(xvalsx[1:maxdisplay], yvalsx[1:maxdisplay], n, h, w)
+
+# ╔═╡ a0080ee8-0d50-49b3-90d2-263a57a30024
+menu = ["" => "Choose a text", hyginus_url => "Hyginus", apollodorus_url => "Apollodorus"]
+
+# ╔═╡ 95d7c11a-1e9a-424c-b7dc-83f42453d31d
+@bind text_url Select(menu)
+
+# ╔═╡ 40aa1ba7-a06f-4a44-81fb-5be57184bef1
+text_url
+
+# ╔═╡ b68483f8-0f72-4907-922b-33dce51d888f
+fulltext = if isempty(text_url)
+	""
+else
+	read_url(text_url)
+end
+
+# ╔═╡ ee83b946-8351-4fc0-9d03-058a0769d429
+tidier = tidytext(fulltext)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -253,7 +400,7 @@ StatsBase = "~0.34.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.1"
+julia_version = "1.9.3"
 manifest_format = "2.0"
 project_hash = "bb906fa8770727281df14739abe47fa2206e7deb"
 
@@ -350,7 +497,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.2+0"
+version = "1.0.5+0"
 
 [[deps.DataAPI]]
 git-tree-sha1 = "e8119c1a33d267e16108be441a287a6981ba1630"
@@ -700,7 +847,7 @@ version = "1.3.0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.0"
+version = "1.9.2"
 
 [[deps.PlotlyBase]]
 deps = ["ColorSchemes", "Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "LaTeXStrings", "Logging", "Parameters", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
@@ -953,36 +1100,65 @@ version = "17.4.0+0"
 # ╟─904d2e7e-0439-4de1-8178-8ce1daca1a44
 # ╟─9f944b0d-a630-4dda-af2c-351d897c1994
 # ╟─3a958d40-97f7-4143-809b-50d8ebb911c1
-# ╠═11e83ae9-6869-4541-a52d-cf253a760536
 # ╟─95d7c11a-1e9a-424c-b7dc-83f42453d31d
+# ╠═40aa1ba7-a06f-4a44-81fb-5be57184bef1
+# ╟─46cf8696-684d-411a-a6aa-b6b79679b55d
+# ╟─afa6c677-6850-4fcf-9ded-513c4e76e27a
+# ╟─6d58c1dc-f26c-464b-8c53-0e6f4e877b4a
+# ╠═11e83ae9-6869-4541-a52d-cf253a760536
 # ╠═67683cc9-0e2a-4a7b-8f04-b1350b60cf97
 # ╟─633eb320-30e8-457f-b30d-d648fd2558ef
 # ╠═b68483f8-0f72-4907-922b-33dce51d888f
+# ╟─b4b2396f-af4b-45bf-a92c-080fbe336b2d
 # ╠═a85a7304-2a81-4021-aa9e-83bc3c129e78
-# ╠═1689b649-fd44-4996-b654-5c5d5c3a3504
-# ╠═f3eb558e-784b-4f9e-94c8-e2251cc88ae4
-# ╠═1377097e-c414-48be-b696-b017dfd39cd5
-# ╠═cd158f20-6dff-4b54-9d94-863ae3960640
+# ╟─1377097e-c414-48be-b696-b017dfd39cd5
 # ╠═ee83b946-8351-4fc0-9d03-058a0769d429
 # ╟─3f685ace-5e2d-445f-8b49-d69298c98dfe
 # ╟─a2b3a047-df87-4e03-a2c9-c445bcb52d5c
 # ╟─a8147f92-218b-4ec2-92c5-b889c1d96194
+# ╟─e6f261f1-88fd-406c-936c-d627772f3dab
 # ╠═b19c8354-e2d9-4af1-9162-3514ecd40420
-# ╠═5b22c312-d668-4301-8e15-0649c04a2335
+# ╟─16a49e39-d634-44c4-b1e9-745650baf967
 # ╠═da5ebca9-965c-4d54-b3d9-70f43e049652
-# ╠═597ba48c-3a3a-4edd-8d4c-ad52a4226b3b
-# ╠═7fbada01-755b-4403-8c03-d53538999323
+# ╟─b569f847-cbd5-4f88-a313-38a56cd6490e
+# ╠═5b22c312-d668-4301-8e15-0649c04a2335
+# ╠═954cd5a7-afd8-4ef9-bf6f-3a9f3846e52b
 # ╠═06534d10-7aca-4387-8591-96e100635230
 # ╠═5a62d7ee-0b6a-4749-9562-215e96a47de1
+# ╠═07dfbfb4-2ce6-4d37-afd2-95b074b8b76f
+# ╠═abcfa7d1-60dd-49c1-9052-2f5079886f9e
 # ╟─5ce13b44-c088-449a-8bad-2be5f3992acb
+# ╟─bc2b3015-44e1-4b0b-b99b-44790574be46
+# ╠═1a8762d5-7a63-40b6-bfd1-093a6ec24df8
 # ╠═4303b736-9301-4b07-bf1e-26d8700ac318
 # ╠═390d1378-b915-48b4-a558-f434e4f6e913
-# ╟─d56c84c1-4256-431f-9dce-e1f134d7d583
-# ╟─ab4d39bf-91c8-4c49-9864-87d480b419f9
-# ╟─89eedbf8-6a5a-4828-9384-6277bd1ef1a8
-# ╠═e0a6a8f5-8bc1-494d-967e-32bf54ed83c5
+# ╟─3a4a78f6-5a32-4ccf-a5f7-d9a8a0871e5c
 # ╠═713b7920-6d87-47cb-b097-d4deb08b5a58
-# ╠═ca31a53d-7829-4308-8299-0cedb61482af
+# ╠═4299e723-0ff1-4597-84c5-eb6d39dff736
+# ╟─d56c84c1-4256-431f-9dce-e1f134d7d583
+# ╠═a98b7fe3-feb6-45ff-9367-6e4c32a685b3
+# ╟─bffb783c-5f5b-4ea7-9369-6a68d18243b2
+# ╠═a2de8f0b-7612-4b37-8205-521da096b351
+# ╠═18496c03-182e-4e9b-951d-068ce03cea5a
+# ╠═3067fae3-cc52-455d-9324-10c40077ced0
+# ╟─9fc34e03-a6b0-4d9f-8969-66965efa683d
+# ╟─89eedbf8-6a5a-4828-9384-6277bd1ef1a8
+# ╟─ab4d39bf-91c8-4c49-9864-87d480b419f9
+# ╠═e0a6a8f5-8bc1-494d-967e-32bf54ed83c5
+# ╟─1570e98a-ae26-4d6f-9f14-189b1d58c64b
+# ╠═0eb81723-cdf9-4df7-b517-8cc8c65e1c40
+# ╠═1689b649-fd44-4996-b654-5c5d5c3a3504
+# ╠═6b0da1b0-e780-41bd-96de-0c8fee17e970
+# ╠═e70502b5-202b-4659-99e3-3c1741a52648
+# ╠═7cdc55bd-8fec-47b3-99b6-f8e7b74cff9d
+# ╠═1817da3c-5538-4af4-9359-14cd62065ebe
+# ╠═5d1c9159-ac6e-4e79-af4c-361404c96001
+# ╠═9d00cb0b-f51f-4f2e-aa82-3ce026183639
+# ╠═3c910873-5b87-461e-bc11-5c34c433bd49
+# ╠═720a8e0e-10fe-4f14-8a87-9015ab6c284c
+# ╠═08f7d518-218d-48f2-963f-56602cef06c6
+# ╠═51430eec-e346-453e-95e7-ac907e73c9cf
+# ╠═82430668-846f-486a-abcc-d0dbe80cf1c8
 # ╟─9f027a28-f712-45d7-8462-20cce79b595e
 # ╟─d4bcb39f-23bf-4b2a-ac16-23292eccba2f
 # ╟─42e009fc-5412-4da6-bc52-5065110edb9a

@@ -27,7 +27,21 @@ has_children: true
 Tuesday: introduction to [social network analysis](../../classes/socnet/)
 Thursday: reading and writing formatted text
 
-### Week of Sept. 19, 21
 
-- Tuesday: using Gephi to visualize graphs
-- Thursday: using graph metrics to interpret social networks
+## Week of Sept. 19, 21
+
+### What we'll cover
+
+- representing data structures in plain-text formats
+- using Gephi to visualize and interpret networks
+
+### Assignments
+
+- Tuesday: working with [collections of data](../../classes/textio/) in Julia
+- Thursday: using [Gephi](../../classes/gephi/) to visualize graphs
+
+
+### Due dates to note
+
+- [Collaborative assignment 1](../../assignments/nb1/): please be sure you have uploaded your Pluto notebook to the course Google Drive by **4:00 pm, Thursday, Sept. 21**
+

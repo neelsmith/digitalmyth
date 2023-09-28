@@ -31,17 +31,32 @@ md"""*Unhide the following cell to see what packages this notebook uses.*"""
 
 # ╔═╡ 6ed35212-af84-11ec-2c60-cd3e7a4ec044
 md"""
-# Pluto notebook 3: exploring n-grams
+# Exploring n-grams
+"""
+
+# ╔═╡ 2886e998-8d2f-4f64-8b18-e2e4bac671ef
+md"""> There are four main steps in this notebook.
+>
+> 1. Prepare a text to analyze.  This is down with two functions that you already know how to write.
+> 2. Compile sorted counts of n-grams.  This step is simplified by using functions from existing Julia packages (`slidingwindow` to break up a word list into ngrams and `countmap` to count their frequencies)
+> 3. Separately isolating `x` and `y` values to plot.  This is nothing more than collecting ngrams and their frequencies from an ordered dictionary.
+> 4. Plotting the results. You will write a plotting function to do this.
 """
 
 # ╔═╡ 9c7d75ce-2dc3-4f0a-854f-99c8f402b990
-md"""### (1) Get a text"""
+md"""### (1) Prepare a text to analyze"""
+
+# ╔═╡ 611dbbf9-7045-464e-be9e-16f1b50d69c0
+
 
 # ╔═╡ 45ace21c-913f-45ce-8642-37776e9b3ecf
 md"""### (2) Compile sorted counts of n-grams"""
 
 # ╔═╡ a8147f92-218b-4ec2-92c5-b889c1d96194
 md"""*n-gram size*: $(@bind n Slider(1:15; default=3, show_value=true))"""
+
+# ╔═╡ 2191af34-bdb0-4cba-bd2b-523184fcc833
+n
 
 # ╔═╡ 67d4e4de-eebb-46f5-9b40-d4a5d0318f5c
 md"""### (3) Isolate `x` and `y` values to plot"""
@@ -61,20 +76,20 @@ md"""*Plot width (pixels)*: $(@bind w Slider(100 : 10 : 1200; default=500, show_
 # ╔═╡ f0627523-81dc-4426-a42c-97ee40044a43
 md"""> ## Three functions you will implement"""
 
-# ╔═╡ a85a7304-2a81-4021-aa9e-83bc3c129e78
-"""Remove punctuation characters from string `s`
-and convert the result to all lower case.
-"""
-function tidytext(s)
-	filter(c -> ! ispunct(c), s) |> lowercase
-end
-
 # ╔═╡ 67683cc9-0e2a-4a7b-8f04-b1350b60cf97
 """Download a URL `u` and read its contents as a String value.
 Be tidy and remove any temporary files you create!
 """
 function read_url(u)
 	Downloads.download(u) |> read |> String
+end
+
+# ╔═╡ a85a7304-2a81-4021-aa9e-83bc3c129e78
+"""Remove punctuation characters from string `s`
+and convert the result to all lower case.
+"""
+function tidytext(s)
+	filter(c -> ! ispunct(c), s) |> lowercase
 end
 
 # ╔═╡ 18496c03-182e-4e9b-951d-068ce03cea5a
@@ -87,9 +102,8 @@ function plotngram(xlist, ylist, ngramsize, ht, wdt)
 			width=wdt,
 			height=ht
 	    )
-		
-		thebar = bar(x=xlist, y=ylist)
-		Plot(thebar, graphlayout)
+	thebar = bar(x=xlist, y=ylist)
+	Plot(thebar, graphlayout)
 end
 
 # ╔═╡ 9f027a28-f712-45d7-8462-20cce79b595e
@@ -134,14 +148,14 @@ tidier = tidytext(fulltext)
 windows = slidingwindow(split(tidier), n = n)
 
 # ╔═╡ 5a62d7ee-0b6a-4749-9562-215e96a47de1
-ngstrings =	map(t -> join(t,"_"), windows)
+ngstrings =	map(nlist -> join(nlist, "_"), windows)
 
 
 # ╔═╡ 07dfbfb4-2ce6-4d37-afd2-95b074b8b76f
- orderedngs = ngstrings |> countmap |> OrderedDict
+ orderedngs = countmap(ngstrings) |> OrderedDict
 
 # ╔═╡ abcfa7d1-60dd-49c1-9052-2f5079886f9e
-sortedngs = sort(orderedngs, rev=true, byvalue=true)
+sortedngs = sort(orderedngs, byvalue=true, rev=true)
 
 # ╔═╡ 4303b736-9301-4b07-bf1e-26d8700ac318
 xvals = keys(sortedngs) |> collect
@@ -152,7 +166,7 @@ yvals = values(sortedngs) |> collect
 # ╔═╡ 3067fae3-cc52-455d-9324-10c40077ced0
 if isempty(xvals) | isempty(yvals)
 else
-plotngram(xvals[1:maxdisplay], yvals[1:maxdisplay], n, h, w)
+	plotngram(xvals[1:maxdisplay], yvals[1:maxdisplay], n, h, w)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -874,14 +888,17 @@ version = "17.4.0+0"
 # ╟─9c15feee-fe87-4b06-96dd-59411778eca9
 # ╟─1f84b8d6-4f2d-4fe9-bdfc-e7dcc3d70aaa
 # ╟─6ed35212-af84-11ec-2c60-cd3e7a4ec044
+# ╟─2886e998-8d2f-4f64-8b18-e2e4bac671ef
 # ╟─9c7d75ce-2dc3-4f0a-854f-99c8f402b990
 # ╟─95d7c11a-1e9a-424c-b7dc-83f42453d31d
-# ╟─b68483f8-0f72-4907-922b-33dce51d888f
+# ╠═b68483f8-0f72-4907-922b-33dce51d888f
 # ╠═ee83b946-8351-4fc0-9d03-058a0769d429
+# ╠═611dbbf9-7045-464e-be9e-16f1b50d69c0
 # ╟─45ace21c-913f-45ce-8642-37776e9b3ecf
 # ╟─a8147f92-218b-4ec2-92c5-b889c1d96194
-# ╟─34896de6-43c9-42f2-8c1e-50d9c58f495d
-# ╠═5a62d7ee-0b6a-4749-9562-215e96a47de1
+# ╠═2191af34-bdb0-4cba-bd2b-523184fcc833
+# ╠═34896de6-43c9-42f2-8c1e-50d9c58f495d
+# ╟─5a62d7ee-0b6a-4749-9562-215e96a47de1
 # ╠═07dfbfb4-2ce6-4d37-afd2-95b074b8b76f
 # ╠═abcfa7d1-60dd-49c1-9052-2f5079886f9e
 # ╟─67d4e4de-eebb-46f5-9b40-d4a5d0318f5c
@@ -891,11 +908,11 @@ version = "17.4.0+0"
 # ╟─d56c84c1-4256-431f-9dce-e1f134d7d583
 # ╟─89eedbf8-6a5a-4828-9384-6277bd1ef1a8
 # ╟─ab4d39bf-91c8-4c49-9864-87d480b419f9
-# ╟─3067fae3-cc52-455d-9324-10c40077ced0
+# ╠═3067fae3-cc52-455d-9324-10c40077ced0
 # ╟─f0627523-81dc-4426-a42c-97ee40044a43
-# ╟─a85a7304-2a81-4021-aa9e-83bc3c129e78
 # ╟─67683cc9-0e2a-4a7b-8f04-b1350b60cf97
-# ╟─18496c03-182e-4e9b-951d-068ce03cea5a
+# ╟─a85a7304-2a81-4021-aa9e-83bc3c129e78
+# ╠═18496c03-182e-4e9b-951d-068ce03cea5a
 # ╟─9f027a28-f712-45d7-8462-20cce79b595e
 # ╟─d4bcb39f-23bf-4b2a-ac16-23292eccba2f
 # ╟─42e009fc-5412-4da6-bc52-5065110edb9a

@@ -12,6 +12,7 @@ has_children: true
 
 ## Announcements
 
+- **Important note: the Classics Department Office is out of masks!**  We will continue with our current course masking policy for now, so please be sure you bring a mask with you for Tuesday's class: none are available from the Classics Department.
 - Revised [due dates](./deadlines/) for collaborative assignments:
     - [Visualization of social network with Gephi](./assignments/gephi/): due **12:00 pm, Mon. Oct. 2**
     - No change to due date of [collaborative assignment 3](./assignments/nb3/): **4:00 pm, Thurs. Oct. 5**

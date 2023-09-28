@@ -37,6 +37,27 @@ using PlotlyJS
 # ╔═╡ 7368f682-06e3-4f21-85be-740179763de2
 TableOfContents()
 
+# ╔═╡ 376cbd7c-9d9e-49ee-93ed-d58741283f40
+TODO("REMOVE these solution functions")
+
+# ╔═╡ 73498cec-eab1-45cb-8bf6-50b614823be4
+"""Download a URL `u` and read its contents as a String value.
+Be tidy and remove any temporary files you create!
+"""
+function read_urlx(u)
+	Downloads.download(u) |> read  |> String
+end
+
+# ╔═╡ 0ba261f5-2112-432c-a4dc-7f336a9860da
+function tidytextx(s)
+	alphas = filter(c -> ! ispunct(c), s)
+	map(c -> lowercase(c), alphas)
+
+end
+
+# ╔═╡ 3ffab0f7-4fd0-4b4e-8251-26feefa04ebf
+
+
 # ╔═╡ 6ed35212-af84-11ec-2c60-cd3e7a4ec044
 md"""
 # Pluto notebook 3: exploring n-grams
@@ -505,6 +526,18 @@ hyginus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts
 
 # ╔═╡ aac68d98-b5d8-48c1-972a-3cc431b8e971
 apollodorus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/apollodorus-topos.txt"
+
+# ╔═╡ 6b0da1b0-e780-41bd-96de-0c8fee17e970
+tidierx = tidytextx(read_urlx(apollodorus_url))
+
+# ╔═╡ e70502b5-202b-4659-99e3-3c1741a52648
+windowsx = isempty(tidierx) ? nothing : slidingwindow(split(tidierx), n = n)
+
+# ╔═╡ 7cdc55bd-8fec-47b3-99b6-f8e7b74cff9d
+ngsx = isnothing(windowsx) ? nothing : map(t -> join(t,"_"), windowsx) |> countmap |> OrderedDict
+
+# ╔═╡ 4c482743-9a77-4dde-b750-1538ea8b51ab
+sortedngsx = sort(ngsx, rev = true, byvalue = true)
 
 # ╔═╡ 633eb320-30e8-457f-b30d-d648fd2558ef
 begin
@@ -1266,6 +1299,14 @@ version = "17.4.0+0"
 # ╔═╡ Cell order:
 # ╟─1f84b8d6-4f2d-4fe9-bdfc-e7dcc3d70aaa
 # ╟─7368f682-06e3-4f21-85be-740179763de2
+# ╠═376cbd7c-9d9e-49ee-93ed-d58741283f40
+# ╠═73498cec-eab1-45cb-8bf6-50b614823be4
+# ╠═0ba261f5-2112-432c-a4dc-7f336a9860da
+# ╠═6b0da1b0-e780-41bd-96de-0c8fee17e970
+# ╠═e70502b5-202b-4659-99e3-3c1741a52648
+# ╠═3ffab0f7-4fd0-4b4e-8251-26feefa04ebf
+# ╠═7cdc55bd-8fec-47b3-99b6-f8e7b74cff9d
+# ╠═4c482743-9a77-4dde-b750-1538ea8b51ab
 # ╟─6ed35212-af84-11ec-2c60-cd3e7a4ec044
 # ╟─5631d29a-a810-46db-bd8e-09722527b57a
 # ╠═588eb909-2f02-4c13-9a62-a63be78f44b1

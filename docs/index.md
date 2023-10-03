@@ -13,18 +13,19 @@ has_children: true
 ## Announcements
 
 - **Important note: the Classics Department Office is out of masks!**  We will continue with our current course masking policy for now, so please be sure you bring a mask with you for Tuesday's class: none are available from the Classics Department.
-- Revised [due dates](./deadlines/) for collaborative assignments:
-    - [Visualization of social network with Gephi](./assignments/gephi/): due **12:00 pm, Mon. Oct. 2**
-    - No change to due date of [collaborative assignment 3](./assignments/nb3/): **4:00 pm, Thurs. Oct. 5**
+-  Due date for [collaborative assignment 3](./assignments/nb3/): **4:00 pm, Thurs. Oct. 5**.
+-  Reviewing a social graph in Gephi: screen shot due **Friday, Oct. 6**.
 
 
-## Week of Sept. 26, 28
+
+## Week of Oct. 3 - Oct. 5
 
 ### Assignments
 
-- Tuesday:  [Zipf's law](./classes/zipf/)
-- Thursday: an n-gram model of texts
+- Tuesday:  
+- Thursday: [interpreting mythological texts digitally](./classes/review-fall-break/)
 
 ### Due dates to note
 
-- Collaborative assignment 2: please be sure you have uploaded your Pluto notebook to the course Google Drive by **4:00 pm, Thursday, Sept. 28**
+- Collaborative assignment 3: please be sure you have uploaded your Pluto notebook to the course Google Drive by **4:00 pm, Thursday, Oct. 5**
+- Verifying graph structure with Gephi: please follow the instructions to upload the screen grab with summary of nodes and edges by **Friday, Oct. 6**

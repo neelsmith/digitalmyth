@@ -478,6 +478,37 @@ optimal_h = 0
 # ╔═╡ 3394e128-0642-4bce-adbc-3c9c82981cc2
 optimal_w = 0
 
+# ╔═╡ e705a6d0-6a6a-4ef7-b324-2638d9b7d0da
+md"""## What does it mean?"""
+
+# ╔═╡ cd8ffca2-e2d7-4c45-8025-bc0d88255595
+md""">**Instructions** Your group should add an interpretation of one or more observations you made about one or both texts using the `n-gram` explorer you have written. 
+
+The  final cell in this notebook defines a string valoue named `interpretations`. The assignment statement uses a Julia triple-quoted string, and includes some formatting using markdown. Please document your group's thoughts by replacing the question marks `??` cell with the following content:
+ 
+- what size n-gram resulted in a meaningful observation or observatins? 
+- what text does your observation apply to?  (Apollodorus, Hyginus, or both?)
+- summarize one or more observations you made using your n-gram explorer
+- what interpretation(s) can you offer for the observations you selected?
+"""
+
+
+# ╔═╡ 2cfeabbf-f030-4062-96c0-fd5289f75501
+interpretations = """
+
+**Size of n-gram**: ??
+
+**Text you analyzed**:  ??
+
+**Observation(s)**: ???
+
+**Interpretation(s)**: ??
+
+"""
+
+# ╔═╡ 3450635d-7a28-40cd-b78d-d353c25fce5e
+interpretations |> Markdown.parse
+
 # ╔═╡ a98b7fe3-feb6-45ff-9367-6e4c32a685b3
  if isempty(xvals) | isempty(yvals)
  else
@@ -1366,12 +1397,16 @@ version = "17.4.0+0"
 # ╟─89eedbf8-6a5a-4828-9384-6277bd1ef1a8
 # ╟─ab4d39bf-91c8-4c49-9864-87d480b419f9
 # ╠═facedc34-5d42-41d7-83c5-41b73a35d84f
-# ╠═de311bd4-0cda-45f7-9b30-39878dac8d00
+# ╟─de311bd4-0cda-45f7-9b30-39878dac8d00
 # ╠═e60a81de-fd9b-417f-8c1e-a337d124fc36
 # ╠═809db002-acba-4773-bb9f-83fc8b7ba71d
 # ╟─d972f781-886d-46dd-90bb-1a607d6e078b
 # ╠═b86c7648-36d0-4a81-a287-d53726797231
 # ╠═3394e128-0642-4bce-adbc-3c9c82981cc2
+# ╟─e705a6d0-6a6a-4ef7-b324-2638d9b7d0da
+# ╟─cd8ffca2-e2d7-4c45-8025-bc0d88255595
+# ╟─3450635d-7a28-40cd-b78d-d353c25fce5e
+# ╠═2cfeabbf-f030-4062-96c0-fd5289f75501
 # ╟─a98b7fe3-feb6-45ff-9367-6e4c32a685b3
 # ╟─9f027a28-f712-45d7-8462-20cce79b595e
 # ╟─d4bcb39f-23bf-4b2a-ac16-23292eccba2f

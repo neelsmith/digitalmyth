@@ -31,6 +31,8 @@ You can use [this template notebook](./assignment3.html) with prompts to guide y
 
 Each member of team should submit a(n identical) copy of your team's notebook.  By dropping the notebook in your personal folder on the [course Google Drive](https://drive.google.com/drive/u/0/folders/16AqmgQKUxF0Rx-1DEO5KVcVYedKjzXiH).
 
+
+
 ## Due date
 
 Completed notebook due by 11:00 am, Thursday, Oct. 5.

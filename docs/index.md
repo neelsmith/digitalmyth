@@ -12,6 +12,7 @@ has_children: true
 
 ## Announcements
 
+- **Proposal for extending an assignment**: due **Oct 3**, extension to **Oct. 6** available on request (see [instructions](./assignments/extended/))
 - **Important note: the Classics Department Office is out of masks!**  We will continue with our current course masking policy for now, so please be sure you bring a mask with you for Tuesday's class: none are available from the Classics Department.
 -  Due date for [collaborative assignment 3](./assignments/nb3/): **4:00 pm, Thurs. Oct. 5**.
 -  Reviewing a [social graph in Gephi](./assignments/gephi/): screen shot due **Friday, Oct. 6**.

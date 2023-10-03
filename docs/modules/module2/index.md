@@ -45,3 +45,5 @@ Thursday: reading and writing formatted text
 
 - [Collaborative assignment 1](../../assignments/nb1/): please be sure you have uploaded your Pluto notebook to the course Google Drive by **4:00 pm, Thursday, Sept. 21**
 
+
+

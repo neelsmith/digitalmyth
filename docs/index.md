@@ -18,6 +18,18 @@ has_children: true
 - Please be familiar with [deadlines in October and November for a longer project](./deadlines/)
 
 
+
+## Week of Oct. 17 - Oct. 19
+
+- Tuesday: follow-up to your collaborative work: [close reading of a narrative](./classes/review-response/)
+- Thursday: text modelling and unsupervised classification
+
+
+## Week of Oct. 10 - Oct. 12
+
+> **Enjoy fall break**!
+
+
 ## Week of Oct. 3 - Oct. 5
 
 ### Assignments

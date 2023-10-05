@@ -12,10 +12,9 @@ has_children: true
 
 ## Announcements
 
+- A [template Pluto notebook](./text_template_nb.html) with just the code you need to select the URL for a text of Apollodorus or Hyginus from a menu.
 - **Proposal for extending an assignment**: due **Oct 3**, extension to **Oct. 6** available on request (see [instructions for the assignment](./assignments/extended/))
 - **Important note: the Classics Department Office is out of masks!**  We will continue with our current course masking policy for now, so please be sure you bring a mask with you for Tuesday's class: none are available from the Classics Department.
--  Due date for [collaborative assignment 3](./assignments/nb3/): **4:00 pm, Thurs. Oct. 5**.
--  Reviewing a [social graph in Gephi](./assignments/gephi/): screen shot due **Friday, Oct. 6**.
 - Please be familiar with [deadlines in October and November for a longer project](./deadlines/)
 
 

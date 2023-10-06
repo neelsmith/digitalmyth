@@ -118,6 +118,9 @@ docindices = ta_corpus[term]
 # ╔═╡ aa31d440-72a0-4cf8-a17a-a0509c821165
 matchcount = length(docindices)
 
+# ╔═╡ b3d45eab-4949-4fa3-8ed9-a0bf2b69ac18
+ta_corpus.documents[20] |> text
+
 # ╔═╡ c87e708f-6a31-45f0-b3ee-b572938dd58a
 tfidf = isempty(text_url) ? nothing : tf_idf(dtmatrix)
 
@@ -132,6 +135,26 @@ md"""
 - The **lexicon**: a dictionary with $(length(lex)) entries
 - The **TF-IDF** matrix: $(tfidf)
 """
+end
+
+# ╔═╡ 223eea90-18e3-4b27-8b79-bcc7f2869b26
+"""Add to string `s` an HTML span to hilight occurrences of substring `hilite`."""
+function format(s, hilite)
+	s = replace(s, hilite => "<span class=\"hilite\">$(hilite)</span>")
+	sub2 = titlecase(hilite)
+	s = replace(s, sub2 =>  "<span class=\"hilite\">$(sub2)</span>") 
+end
+
+# ╔═╡ d4add6e6-228b-4001-a553-12c522f85a64
+begin
+	hdr = length(docindices) == 1 ? "<b>1</b> matching passage:" : "<b>$(length(docindices))</b> matching passages:"
+	disp = [hdr, "<ol>"]
+	for i in docindices
+		push!(disp, "<li>" * format(txtlines[i], term) * "</li>")
+	end
+	push!(disp, "</ol>")
+	rslt = join(disp, "\n")
+	HTML(rslt)
 end
 
 # ╔═╡ 847b2530-0e01-4bbc-8b16-2b2934a514fb
@@ -672,27 +695,30 @@ version = "17.4.0+0"
 
 # ╔═╡ Cell order:
 # ╟─e41210b1-6226-41d3-98b1-9e0db3019e62
-# ╟─a0bdf2f2-cd95-416c-b773-ac838d36f79a
-# ╠═bd2d1d93-f7f3-40ae-bcb7-37e2a9566488
 # ╟─b0ad29b0-6397-11ee-0e81-a33397602b1a
 # ╟─6d3e9eaa-f90a-46bf-bf21-847e39089547
 # ╟─dd4ad87d-7920-4c9b-8b91-19ee0005fd63
 # ╟─2c479460-b221-48da-ab12-9bdd9604987d
 # ╟─7f9a7666-68e5-45c0-b655-21cb4db65dba
+# ╟─d4add6e6-228b-4001-a553-12c522f85a64
 # ╟─e48347c2-46ab-46b5-b672-75906cea7f99
 # ╠═1467a135-09eb-4a86-a692-9e91b63bbb25
 # ╠═e652a1d6-d062-400c-9545-67046cb0be3b
 # ╠═aa31d440-72a0-4cf8-a17a-a0509c821165
+# ╠═b3d45eab-4949-4fa3-8ed9-a0bf2b69ac18
 # ╟─1afe5802-2f09-4413-9ffd-195a356773b7
 # ╟─dd679822-39da-45f7-8937-22395fb1b399
 # ╠═9ca6298d-3477-4599-98a5-e44b0b50fdc3
 # ╟─c87e708f-6a31-45f0-b3ee-b572938dd58a
 # ╟─b6a84bb2-c501-40f0-ac8d-beaa432da15d
+# ╟─a0bdf2f2-cd95-416c-b773-ac838d36f79a
+# ╟─bd2d1d93-f7f3-40ae-bcb7-37e2a9566488
 # ╟─e227e324-653a-4c10-bc66-dac95459f78f
 # ╟─80e4ec59-f9df-40b0-883b-6c0d929bc16a
 # ╟─bd5149e2-814c-441a-a97a-6594bceac276
 # ╟─0a1b7c78-5670-4661-8eeb-d9cfd4b67fdf
 # ╟─f07527b5-9643-4363-a845-081763ff60e8
-# ╠═847b2530-0e01-4bbc-8b16-2b2934a514fb
+# ╟─223eea90-18e3-4b27-8b79-bcc7f2869b26
+# ╟─847b2530-0e01-4bbc-8b16-2b2934a514fb
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

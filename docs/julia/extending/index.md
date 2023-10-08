@@ -11,3 +11,4 @@ has_children: true
 
 - [Using Markdown](./Markdown.html) (a Julia notebook)
 - [Working with canonically citable texts](./search-citable-text.html): a Julia notebook implementing simple full-text search
+- ["Fuzzy" matching](./fuzzy-matching.html): Levenshtein edit distance (a Julia notebook)

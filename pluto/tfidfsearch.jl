@@ -88,9 +88,6 @@ md"> Citable text passages and corpora"
 # ╔═╡ 9fc91194-e193-4a82-8283-1a3e55dff4dc
 md">Other"
 
-# ╔═╡ 528b3811-e55e-4fb9-96e6-47a102f8c53c
-archivecorpus = ""
-
 # ╔═╡ 09e0722b-9571-4c94-a6cc-b408fc3f13cc
 c = hmt_normalized()
 
@@ -106,16 +103,15 @@ function formatscholion(i)
 	scholurn = comments[i].urn
 	docid = workparts(scholurn)[2]
 
-	#=
+	
 	scholpsg = collapsePassageBy(scholurn, 1) |>  passagecomponent
-	ref = replace(passagecomponent(scholurn), "comment" => "ref")
+ref = replace(passagecomponent(scholurn), "comment" => "ref")
 	refurn = addpassage(scholurn, ref)
 	iliad = filter(cn -> cn.urn == refurn, c.passages)
 	iliadurn = CtsUrn(iliad[1].text)
 	ilmatches = length(iliad)
-	
 	string("<b>", docid, "</b> ", scholpsg,  ", commenting on <b><i>Iliad</i> ", passagecomponent(iliadurn), "</b> <blockquote class=\"scholion\">", comments[i].text,"</blockquote>" )
-	=#
+	
 end
 
 # ╔═╡ 1c938931-47bb-4042-a051-84b48c2eaecb
@@ -1796,15 +1792,15 @@ version = "17.4.0+0"
 # ╟─3ced021a-5548-464c-8448-4cdbf62c2fb0
 # ╠═e2e87b56-8003-41f8-8660-55e557665276
 # ╟─c6405d2c-5c14-4ee1-bf6d-165f3e0d9ec3
+# ╠═8f4d6f76-a6f4-4f3e-a4a2-cd96e5794637
 # ╟─f6d71fbd-cf3b-4ee3-a45a-4108f28a84d5
 # ╟─2f5200bc-03c7-4423-b23b-6e0fdf9e9ade
-# ╠═8f4d6f76-a6f4-4f3e-a4a2-cd96e5794637
+# ╠═13092236-e810-4ace-aa40-8250edbad095
 # ╟─99dab151-d9bb-43d0-b215-3c38482d3d50
 # ╠═0526b4e1-cd16-4fab-8951-1c1bfac4d465
 # ╠═7bccf880-ae21-40ac-ac99-7e1bf59f683b
 # ╠═f274badc-adb1-4136-ab45-e614c08618a1
 # ╟─cf4f497b-0ef6-4e50-8aef-f0fe945222dc
-# ╠═13092236-e810-4ace-aa40-8250edbad095
 # ╟─3ecf3e9f-328e-4265-b99c-ed5784be1301
 # ╟─3d7bafa0-1819-4944-8648-fc26da7213b6
 # ╠═91dee988-3378-47da-803f-4d839b828c4a
@@ -1812,7 +1808,6 @@ version = "17.4.0+0"
 # ╟─bba171b2-f0a9-4172-a7e9-5d365a1b4f22
 # ╟─1c938931-47bb-4042-a051-84b48c2eaecb
 # ╟─9fc91194-e193-4a82-8283-1a3e55dff4dc
-# ╠═528b3811-e55e-4fb9-96e6-47a102f8c53c
 # ╟─09e0722b-9571-4c94-a6cc-b408fc3f13cc
 # ╟─9d0c3590-293b-427c-82bd-9e9f1c67b73e
 # ╟─f60970e8-ca28-458a-b23d-a581c960e3f1

@@ -14,9 +14,13 @@ has_children: true
 
 - Extending an assignment: in order to schedule a presentation in class, you must discuss an approved topic with me by **Oct. 19**
 - Please note schedule of [deadlines for multi-step (final) project](./deadlines/)
-- A [template Pluto notebook](./text_template_nb.html) with just the code you need to select the URL for a text of Apollodorus or Hyginus from a menu.
 - **Proposal for extending an assignment**: due **Oct 3**, extension to **Oct. 6** available on request (see [instructions for the assignment](./assignments/extended/))
 
+
+## Helpful code
+
+- A [template Pluto notebook](./text_template_nb.html) with just the code you need to select the URL for a text of Apollodorus or Hyginus from a menu.
+- A Pluto notebook for [searching canonically citable text of Apollodorus](./search-apollodorus.html)
 
 
 

@@ -10,3 +10,4 @@ has_children: true
 
 - Aug. 29 - Sept. 7: [Using named entities to explore myths](./module1/)
 - Sept. 11 - Sept. 21: [understanding social networks](./module2/)
+- Sept. 28 - Oct.  5:  [modelling texts](./module3/)

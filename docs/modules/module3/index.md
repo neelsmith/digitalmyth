@@ -11,6 +11,23 @@ has_children: true
 
 
 
+## Week of Oct. 10 - Oct. 12
+
+> **Enjoy fall break**!
+
+
+## Week of Oct. 3 - Oct. 5
+
+### Assignments
+
+- Tuesday:  extending your work
+- Thursday: [interpreting mythological texts digitally](./classes/review-fall-break/)
+
+### Due dates to note
+
+- Collaborative assignment 3: please be sure you have uploaded your Pluto notebook to the course Google Drive by **4:00 pm, Thursday, Oct. 5**
+- Verifying graph structure with Gephi: please follow the instructions to upload the screen grab with summary of nodes and edges by **Friday, Oct. 6**
+
 ## Week of Sept. 26, 28
 
 ### Assignments

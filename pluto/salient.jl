@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.29
 
 using Markdown
 using InteractiveUtils
@@ -20,9 +20,6 @@ begin
 	using PlutoUI, Markdown
 	using Downloads 
 end
-
-# ╔═╡ a0bdf2f2-cd95-416c-b773-ac838d36f79a
-md"""> **Compare raw data**"""
 
 # ╔═╡ b0ad29b0-6397-11ee-0e81-a33397602b1a
 md"""# Explore salient terms in a corpus"""
@@ -68,6 +65,9 @@ function ta_structs_from_url(u; lc = true)
 	(corp,  lexicon(corp), DocumentTermMatrix(corp))
 end
 
+# ╔═╡ a0bdf2f2-cd95-416c-b773-ac838d36f79a
+md"""> **Compare raw data**"""
+
 # ╔═╡ e227e324-653a-4c10-bc66-dac95459f78f
 html"""
 <br/><br/><br/><br/><br/><br/>
@@ -88,9 +88,6 @@ menu = ["" => "Choose a text", hyginus_url => "Hyginus", apollodorus_url => "Apo
 
 # ╔═╡ 2c479460-b221-48da-ab12-9bdd9604987d
 @bind text_url Select(menu)
-
-# ╔═╡ bd2d1d93-f7f3-40ae-bcb7-37e2a9566488
-txtlines = isnothing(text_url) ? nothing : Downloads.download(text_url) |> readlines
 
 # ╔═╡ 9ca6298d-3477-4599-98a5-e44b0b50fdc3
 (ta_corpus, lex,  dtmatrix) = isempty(text_url) ? nothing : ta_structs_from_url(text_url; lc = case_insensitive)
@@ -136,6 +133,9 @@ md"""
 - The **TF-IDF** matrix: $(tfidf)
 """
 end
+
+# ╔═╡ bd2d1d93-f7f3-40ae-bcb7-37e2a9566488
+txtlines = isnothing(text_url) ? nothing : Downloads.download(text_url) |> readlines
 
 # ╔═╡ 223eea90-18e3-4b27-8b79-bcc7f2869b26
 """Add to string `s` an HTML span to hilight occurrences of substring `hilite`."""
@@ -694,7 +694,7 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─e41210b1-6226-41d3-98b1-9e0db3019e62
+# ╠═e41210b1-6226-41d3-98b1-9e0db3019e62
 # ╟─b0ad29b0-6397-11ee-0e81-a33397602b1a
 # ╟─6d3e9eaa-f90a-46bf-bf21-847e39089547
 # ╟─dd4ad87d-7920-4c9b-8b91-19ee0005fd63
@@ -710,14 +710,14 @@ version = "17.4.0+0"
 # ╟─dd679822-39da-45f7-8937-22395fb1b399
 # ╠═9ca6298d-3477-4599-98a5-e44b0b50fdc3
 # ╟─c87e708f-6a31-45f0-b3ee-b572938dd58a
-# ╟─b6a84bb2-c501-40f0-ac8d-beaa432da15d
+# ╠═b6a84bb2-c501-40f0-ac8d-beaa432da15d
 # ╟─a0bdf2f2-cd95-416c-b773-ac838d36f79a
 # ╟─bd2d1d93-f7f3-40ae-bcb7-37e2a9566488
 # ╟─e227e324-653a-4c10-bc66-dac95459f78f
 # ╟─80e4ec59-f9df-40b0-883b-6c0d929bc16a
-# ╟─bd5149e2-814c-441a-a97a-6594bceac276
-# ╟─0a1b7c78-5670-4661-8eeb-d9cfd4b67fdf
-# ╟─f07527b5-9643-4363-a845-081763ff60e8
+# ╠═bd5149e2-814c-441a-a97a-6594bceac276
+# ╠═0a1b7c78-5670-4661-8eeb-d9cfd4b67fdf
+# ╠═f07527b5-9643-4363-a845-081763ff60e8
 # ╟─223eea90-18e3-4b27-8b79-bcc7f2869b26
 # ╟─847b2530-0e01-4bbc-8b16-2b2934a514fb
 # ╟─00000000-0000-0000-0000-000000000001

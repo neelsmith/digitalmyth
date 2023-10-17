@@ -40,6 +40,11 @@ begin
 	Pkg.add("SplitApplyCombine")
 	using SplitApplyCombine
 
+	Pkg.add("StatsBase")
+	using StatsBase
+	Pkg.add("OrderedCollections")
+	using OrderedCollections
+
 	Pkg.add("TSne")
 	using TSne
 	
@@ -75,6 +80,16 @@ function modeltopics(corp, n)
 	model
 end
 
+# ╔═╡ b813512f-f26f-4156-9c4a-98653a4818bb
+md"""
+*Number of stop-word candidates to review* $(@bind top_n confirm(Slider(20:500, default = 100, show_value = true)))
+"""
+
+# ╔═╡ 4f50711c-ed11-4230-94d0-4d6b8619bd13
+md"""
+*Any **unchecked** terms will be treated as stop words.  **Check** any terms to include in the topic model.*
+"""
+
 # ╔═╡ e295ca3b-7e89-41c6-9163-b2a85526ebf0
 md"""
 !!! note "Results"
@@ -89,8 +104,6 @@ md"""
 thelayout = Layout(
 	title = "Plotted",
 	height = 300
-	
-	
 )
 
 # ╔═╡ 893a7b3d-102a-4c2c-98d1-d37a03d0fa8a
@@ -110,6 +123,24 @@ c = fromcex(apollodorus_url, CitableTextCorpus, UrlReader)
 # ╔═╡ 8eceb8d5-5e86-4b71-96d2-d78c94d2e552
 md"""*Passages to include*: $(@bind n_psgs confirm(Slider(0:length(c.passages), default=10, show_value = true))) 
 """
+
+# ╔═╡ e3e84c55-1e00-46ad-9d1a-f0723326268d
+lex = filter(t -> t.tokentype == LexicalToken(), tokenize(c, simpleAscii()))
+
+# ╔═╡ 27d954bf-16e7-479f-aab9-89a976a302e4
+counts = countmap(map( t -> t.passage.text, lex)) |> OrderedDict
+
+# ╔═╡ 313e6cc1-3fb0-41bc-8190-deebf45564d3
+sorteddict = sort(counts, rev=true, byvalue = true)
+
+# ╔═╡ c09bb3ec-b7bf-4d52-8ecd-e9f95a389cdc
+sorted = keys(sorteddict) |> collect
+
+# ╔═╡ 021a00fe-e6f6-4c65-b31f-5af14d987c91
+begin
+	most_freq = sorted[1:top_n]
+	@bind keepers MultiCheckBox(most_freq)
+end
 
 # ╔═╡ 2db7e0d3-8f44-4e1e-9043-c97d97b5eac3
 """From a `CitableTextCorpus`, create a `Corpus` in the model of the `TopicModelsVB` package
@@ -149,8 +180,8 @@ begin
 	join(rows, "\n") |> Markdown.parse
 end
 
-# ╔═╡ 524866e0-499d-4aa8-98fd-4054840acfe8
-#tmcorpus(CitableTextCorpus(c.passages[1:n_psgs]), simpleAscii())
+# ╔═╡ 892ccf3b-f70d-4704-a062-afacb1b6cbd6
+tmcorpus(CitableTextCorpus(c.passages[1:100]), simpleAscii())
 
 # ╔═╡ 39a7935d-fb4b-4893-aad5-13abc205758d
 md"""> **Reduce data for visualization**"""
@@ -188,19 +219,26 @@ Plot(
 # ╟─8eceb8d5-5e86-4b71-96d2-d78c94d2e552
 # ╠═90b5a2ef-c8ab-4fb9-a12d-0832a9d4e9fb
 # ╟─9e43dba0-1ed9-441b-aca1-7bdadabae761
+# ╟─b813512f-f26f-4156-9c4a-98653a4818bb
+# ╟─4f50711c-ed11-4230-94d0-4d6b8619bd13
+# ╟─021a00fe-e6f6-4c65-b31f-5af14d987c91
 # ╟─e295ca3b-7e89-41c6-9163-b2a85526ebf0
 # ╟─741b67b6-a185-4ac8-a442-6a25067de3f7
 # ╟─218dede6-c21d-43de-850e-7d3bebe6a1d1
 # ╟─645301aa-2870-44fd-a076-33d3a676e69b
 # ╟─4c2472a2-8d5f-4093-b925-4e8698e79ff6
-# ╠═556457dc-bbbd-41a8-bf47-21b19ce3dec7
+# ╟─556457dc-bbbd-41a8-bf47-21b19ce3dec7
 # ╟─893a7b3d-102a-4c2c-98d1-d37a03d0fa8a
 # ╟─89d9e7cd-a425-4afc-8403-b5469323e63c
 # ╟─f57b186d-1576-403f-86ea-2916678f9739
 # ╟─444060a8-c88a-45c5-b8c2-f97065c85888
 # ╠═38a31546-a376-4398-a185-fb751f769362
+# ╠═e3e84c55-1e00-46ad-9d1a-f0723326268d
+# ╠═27d954bf-16e7-479f-aab9-89a976a302e4
+# ╠═313e6cc1-3fb0-41bc-8190-deebf45564d3
+# ╠═c09bb3ec-b7bf-4d52-8ecd-e9f95a389cdc
 # ╠═2db7e0d3-8f44-4e1e-9043-c97d97b5eac3
-# ╠═524866e0-499d-4aa8-98fd-4054840acfe8
+# ╠═892ccf3b-f70d-4704-a062-afacb1b6cbd6
 # ╟─39a7935d-fb4b-4893-aad5-13abc205758d
 # ╟─48a2ca09-b1f8-437f-8a39-09f9c68850d1
 # ╠═e8e4a94f-3d02-4e30-9405-80de8e652001

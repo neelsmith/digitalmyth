@@ -24,15 +24,22 @@ end
 TableOfContents()
 
 # ╔═╡ c6d6a650-660b-11ee-1ef3-279692599a5d
-md"""# Search canonically citable text
-> *A brief demonstration of how to work with citable text passages as parallel vectors containing a list of text references and a list of text contents.*
+md"""# Search canonically citable text: Apollodorus' *Library*
+
 """
 
-# ╔═╡ 2c957db0-74ce-4ab7-a894-938be09ffe35
-md"""## Reading a delimited-text file including canonical citation of a text"""
+# ╔═╡ 35f1e99e-bb1e-47c7-b95b-3d857b8f3717
+md"""*Search text for*:  $(@bind term TextField())"""
 
-# ╔═╡ 31aa4a41-bcde-4916-9637-95695be96631
-md"""URL for a two-column, delimited text file.  The first column has the canonical reference, the second column has the text contents:"""
+# ╔═╡ 4c202330-6210-4824-88d7-3ab2309e8c0d
+html"""
+<br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/>
+"""
+
+# ╔═╡ c48c02c0-4ddc-4bfb-a3cf-4533476c3e1d
+md"""> **Download and organize data**"""
 
 # ╔═╡ 7e2ecd8f-8d45-4ba7-b285-ce671ec25dcb
 apollodorus = "https://raw.githubusercontent.com/neelsmith/digitalmyth/main/texts/apollodorus-w-ref.txt"
@@ -52,51 +59,8 @@ function readurl(u; separator = "|")
 	(reff, text)
 end
 
-# ╔═╡ 806e1022-7e45-45e0-a3f7-393a350c36ea
-md"""The `readurl` function returns *two* Vectors which we assign to the two variable `cites` and `texts`."""
-
 # ╔═╡ d58d916d-d0a5-4418-becd-8a7776e0f648
 (cites, texts) = readurl(apollodorus)
-
-# ╔═╡ e53157b0-770f-4942-a2a7-7d7963c77afb
-
-
-# ╔═╡ 6f61ef28-5302-46d4-92e8-f91be28c9bd4
-md"""## Example application: full-text search"""
-
-# ╔═╡ 97f83202-236e-4156-adb1-6717be5c4cb0
-md"""We'll introduce two standard Julia functions to implement our full-text search.
-
-**1**. `contains` is a boolean function that takes two arguments: a string and a substring.  The function is true if the string contains the substring. Example:
-"""
-
-# ╔═╡ 0d81ce9a-825b-4ad1-b5e2-36e209075a9a
-contains("Julia is a modern programming language", "mode" )
-
-# ╔═╡ 9e665569-d5e9-4479-9c84-f4c4b9840a6e
-md"""
-
-**2**. `findall` finds the vector indexes for every entry in a list that satisfies a condition.  The syntax is just like `filter` or `map`.  Example: in a vector of words, find the index of every word containing the vowel `e`.
-"""
-
-# ╔═╡ 54bb3d34-2c49-4f39-99df-936ab16376c2
-wordlist = split("This is a short sentence")
-
-# ╔═╡ ededa907-098f-4c40-b271-2c8ffda626a6
-findall(wd -> contains(wd, "e"), wordlist)
-
-# ╔═╡ 3f07ddc7-7d12-4f94-b681-ea1a51bbcaf4
-md"""Use these two new functions to find indexes of texts in Apollodorus containing the term you entered. 
-"""
-
-# ╔═╡ f8360199-630c-4729-a07e-1c314c0c6652
-md"""The following cell uses a PlutoUI widget to let you type text into a box and assign it to a variable named `term`."""
-
-# ╔═╡ 35f1e99e-bb1e-47c7-b95b-3d857b8f3717
-md"""*Search text for*:  $(@bind term TextField())"""
-
-# ╔═╡ d80cc029-582d-40f6-afb8-4b838e3b2a2d
-term
 
 # ╔═╡ 27834bb8-caba-46bb-b6fc-5dc90ccee73d
 indexlist = if isempty(term)
@@ -104,33 +68,6 @@ indexlist = if isempty(term)
 else
 	findall(ln -> contains(ln, term), texts)
 end
-
-# ╔═╡ 1a9ba23d-43ce-4416-83be-48ee87a63d41
-md"*Number of matching texts*:  **$(length(indexlist))**"
-
-# ╔═╡ 8c663d6a-bfb7-40ba-9261-4bbdcdf69369
-md"""## Combining reference and text contents for matching texts
-"""
-
-# ╔═╡ 48b22f6c-b027-44d4-b86c-6f3da49ad088
-md"""
-Because the Vectors for our citations and text contents are aligned, the indexes that we found will correctly point to the corresponding element in each list
-"""
-
-# ╔═╡ 501c7343-3542-4d6b-8b41-7b628c3932d7
-begin
-	simplelist = []
-	for i in indexlist
-		push!(simplelist, string(cites[i], ":  ", texts[i],"\n" ))
-	end
-	join(simplelist, "\n\n") |> Markdown.parse
-end
-
-# ╔═╡ 317f0b6e-0b46-45ab-9042-464b3e902796
-md""" ## Add some Markdown to dress up the display"""
-
-# ╔═╡ 2055ae85-043d-4afe-9009-f452816f29d5
-md"""The following cell does the same thing as the previous cell, but adds a little Markdown formatting.  We use the `replace` function to emphasize the search term by surrounding it with `**`."""
 
 # ╔═╡ 43222139-19ee-42ae-a218-0035f0737083
 begin
@@ -416,33 +353,16 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═eb11542c-d33c-421e-b8c4-58b90ba88bd9
+# ╟─eb11542c-d33c-421e-b8c4-58b90ba88bd9
 # ╟─e6fea5a3-cd8b-4a99-b126-eccf4f2d2f0a
 # ╟─c6d6a650-660b-11ee-1ef3-279692599a5d
-# ╟─2c957db0-74ce-4ab7-a894-938be09ffe35
-# ╟─31aa4a41-bcde-4916-9637-95695be96631
+# ╟─35f1e99e-bb1e-47c7-b95b-3d857b8f3717
+# ╟─43222139-19ee-42ae-a218-0035f0737083
+# ╟─4c202330-6210-4824-88d7-3ab2309e8c0d
+# ╟─c48c02c0-4ddc-4bfb-a3cf-4533476c3e1d
+# ╟─27834bb8-caba-46bb-b6fc-5dc90ccee73d
+# ╠═d58d916d-d0a5-4418-becd-8a7776e0f648
 # ╟─7e2ecd8f-8d45-4ba7-b285-ce671ec25dcb
 # ╟─829a84c7-8413-4a19-bc5e-e1b45da58a78
-# ╟─806e1022-7e45-45e0-a3f7-393a350c36ea
-# ╠═d58d916d-d0a5-4418-becd-8a7776e0f648
-# ╠═e53157b0-770f-4942-a2a7-7d7963c77afb
-# ╟─6f61ef28-5302-46d4-92e8-f91be28c9bd4
-# ╟─97f83202-236e-4156-adb1-6717be5c4cb0
-# ╠═0d81ce9a-825b-4ad1-b5e2-36e209075a9a
-# ╟─9e665569-d5e9-4479-9c84-f4c4b9840a6e
-# ╠═54bb3d34-2c49-4f39-99df-936ab16376c2
-# ╠═ededa907-098f-4c40-b271-2c8ffda626a6
-# ╟─3f07ddc7-7d12-4f94-b681-ea1a51bbcaf4
-# ╟─f8360199-630c-4729-a07e-1c314c0c6652
-# ╟─35f1e99e-bb1e-47c7-b95b-3d857b8f3717
-# ╠═d80cc029-582d-40f6-afb8-4b838e3b2a2d
-# ╠═27834bb8-caba-46bb-b6fc-5dc90ccee73d
-# ╟─1a9ba23d-43ce-4416-83be-48ee87a63d41
-# ╟─8c663d6a-bfb7-40ba-9261-4bbdcdf69369
-# ╟─48b22f6c-b027-44d4-b86c-6f3da49ad088
-# ╠═501c7343-3542-4d6b-8b41-7b628c3932d7
-# ╟─317f0b6e-0b46-45ab-9042-464b3e902796
-# ╟─2055ae85-043d-4afe-9009-f452816f29d5
-# ╠═43222139-19ee-42ae-a218-0035f0737083
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

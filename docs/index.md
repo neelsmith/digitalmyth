@@ -12,10 +12,12 @@ has_children: true
 
 ## Announcements
 
+- Extending an assignment: in order to schedule a presentation in class, you must discuss an approved topic with me by **Oct. 19**
+- Please note schedule of [deadlines for multi-step (final) project](./deadlines/)
 - A [template Pluto notebook](./text_template_nb.html) with just the code you need to select the URL for a text of Apollodorus or Hyginus from a menu.
 - **Proposal for extending an assignment**: due **Oct 3**, extension to **Oct. 6** available on request (see [instructions for the assignment](./assignments/extended/))
-- **Important note: the Classics Department Office is out of masks!**  We will continue with our current course masking policy for now, so please be sure you bring a mask with you for Tuesday's class: none are available from the Classics Department.
-- Please be familiar with [deadlines in October and November for a longer project](./deadlines/)
+
+
 
 
 
@@ -23,21 +25,3 @@ has_children: true
 
 - Tuesday: follow-up to your collaborative work: [close reading of a narrative](./classes/review-response/)
 - Thursday: text modelling and unsupervised classification
-
-
-## Week of Oct. 10 - Oct. 12
-
-> **Enjoy fall break**!
-
-
-## Week of Oct. 3 - Oct. 5
-
-### Assignments
-
-- Tuesday:  extending your work
-- Thursday: [interpreting mythological texts digitally](./classes/review-fall-break/)
-
-### Due dates to note
-
-- Collaborative assignment 3: please be sure you have uploaded your Pluto notebook to the course Google Drive by **4:00 pm, Thursday, Oct. 5**
-- Verifying graph structure with Gephi: please follow the instructions to upload the screen grab with summary of nodes and edges by **Friday, Oct. 6**

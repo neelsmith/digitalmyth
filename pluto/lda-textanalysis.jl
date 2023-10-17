@@ -62,6 +62,51 @@ md"""
 !!! note "Interpret topic model"
 """
 
+# ╔═╡ 4b742534-045e-43ce-96c1-9ad1587fba80
+md"""*View top terms for each topic* $(@bind toptermcount confirm(Slider(1:30, default = 8, show_value = true)))"""
+
+# ╔═╡ 06dc5860-f258-44c5-9017-d6fc5718d419
+repeat("| --- ", toptermcount + 1) * "|"
+
+# ╔═╡ f59dba8a-03d4-4a85-a994-de832e8ddf5f
+function hdr(n)
+	rowval = ["| topic "]
+	for i in 1:n
+		push!(rowval, "| $(i) ")
+	end
+	join(rowval) * "|" 
+end
+
+# ╔═╡ e57a1d64-d14a-44ea-92b5-bd7d73c61aed
+"""Find terms in `termlist` corresponding to top `n` values in a row of
+topic-to-term values.
+"""
+function top_terms(row, termlist; n = 10)
+	sorted = sort(row, rev = true)
+	termvalpairs = []
+	for val in sorted[1:n]
+		
+		rowidx = findfirst(col -> col == val, row)
+		push!(termvalpairs, (termlist[rowidx], val))
+	end
+	termvalpairs
+end
+
+# ╔═╡ dbab6c6e-8016-487a-887a-255c2f25b02e
+"""Make a Markdown table to display top terms.
+"""
+function topterms_md(topictotermscores, termlist, termcount)
+	lines = [hdr(termcount)]
+		#repeat("| --- ", toptermcount + 1) * "|"
+	push!(lines, repeat("| --- ", toptermcount + 1) * "|")
+	
+	for i in 1:k
+		bigterms = top_terms(topictotermscores[i,:], termlist; n = termcount)
+		push!(lines, "| topic $(i) |" * join(map(pr -> pr[1], bigterms), " |"))
+	end
+	join(lines,"\n")
+end
+
 # ╔═╡ 184efc56-f3ae-49ff-a9cb-044e5cf9f307
 lda
 
@@ -265,6 +310,13 @@ end
 
 # ╔═╡ d349bd4d-843f-441f-ae06-ed4314b47a81
 θ[1,:]
+
+# ╔═╡ 8542080a-efb9-4084-a7a5-6314bd1f39dc
+top_terms(ϕ[1,:], dtmatrix.terms; n = toptermcount)
+
+
+# ╔═╡ 1fbd8ebc-adaa-4d42-b65f-291faac7633e
+topterms_md(ϕ, dtmatrix.terms, toptermcount) |> Markdown.parse
 
 # ╔═╡ a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 reff = isnothing(c) ? [] : map(psg -> passagecomponent(psg.urn), c.passages)
@@ -953,12 +1005,19 @@ version = "17.4.0+0"
 # ╟─60af1314-1b94-43af-954e-f1f984582144
 # ╟─df880285-50a9-4a18-9203-0971b3e45924
 # ╟─dceb616c-e86d-40f9-815b-d8acbf2744f0
-# ╟─99b012eb-6f17-403e-b541-c1497ee1e7e5
+# ╠═99b012eb-6f17-403e-b541-c1497ee1e7e5
 # ╟─3044d17c-b365-402a-a276-f3d4ae807cb5
 # ╟─423c2f39-5e1a-4751-989f-b68003d061d4
 # ╟─94672682-2e7e-4f70-b335-01f09f603add
 # ╟─2350681e-861a-4f51-b4ca-1d0e29311b1f
 # ╟─5c30d252-9e76-4209-b47f-d85ed5f38e5b
+# ╟─4b742534-045e-43ce-96c1-9ad1587fba80
+# ╠═8542080a-efb9-4084-a7a5-6314bd1f39dc
+# ╠═1fbd8ebc-adaa-4d42-b65f-291faac7633e
+# ╠═dbab6c6e-8016-487a-887a-255c2f25b02e
+# ╠═06dc5860-f258-44c5-9017-d6fc5718d419
+# ╠═f59dba8a-03d4-4a85-a994-de832e8ddf5f
+# ╠═e57a1d64-d14a-44ea-92b5-bd7d73c61aed
 # ╠═184efc56-f3ae-49ff-a9cb-044e5cf9f307
 # ╟─5e68da71-5eb4-4e14-b117-52e3b063c96c
 # ╟─b820a2ab-f4ab-46cd-9819-b96dae1b7b06
@@ -967,11 +1026,11 @@ version = "17.4.0+0"
 # ╟─df619570-048c-40c9-aa07-7686bbe52300
 # ╟─73e82fc2-8fa1-4645-bafd-d26807ecea1b
 # ╟─4c27b02a-222c-431a-9d00-7b022795efde
-# ╠═2542845b-4409-404b-8a5c-cb26fb9131b7
+# ╟─2542845b-4409-404b-8a5c-cb26fb9131b7
 # ╠═b0ed7772-7872-439c-b444-5d6f937ff1f6
 # ╠═ecde8272-8ef0-4bdb-9ee6-95c366c1fc79
 # ╠═d349bd4d-843f-441f-ae06-ed4314b47a81
-# ╠═f85d3875-abf0-45cd-bac4-9260a6f1498b
+# ╟─f85d3875-abf0-45cd-bac4-9260a6f1498b
 # ╟─e8588ce7-26ac-42f7-9e04-bbb1ed0575f1
 # ╟─7c90c208-f329-4eb7-be28-08379eb7eaf3
 # ╠═624bd0ae-df61-4b78-b88f-ed7bf6409d40

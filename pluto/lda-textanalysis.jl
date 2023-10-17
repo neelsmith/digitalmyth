@@ -24,7 +24,7 @@ begin
 	using StatsBase
 	using OrderedCollections
 	
-	using CitableBase, CitableCorpus
+	using CitableBase, CitableCorpus, CitableText
 	using Orthography
 	md"*Unhide this cell to see the Julia environment.*"
 end
@@ -61,6 +61,76 @@ md"""*β* $(@bind β confirm(Slider(0:0.1:1.0, default = 0.1, show_value = true)
 md"""
 !!! note "Interpret topic model"
 """
+
+# ╔═╡ 184efc56-f3ae-49ff-a9cb-044e5cf9f307
+lda
+
+# ╔═╡ 5e68da71-5eb4-4e14-b117-52e3b063c96c
+md"""### Topic-to-terms scores"""
+
+# ╔═╡ b820a2ab-f4ab-46cd-9819-b96dae1b7b06
+md"""Each *row* of ϕ is a topic.  Each column is the score for a term.  The sum of each *row* == 1.0. 
+"""
+
+# ╔═╡ df619570-048c-40c9-aa07-7686bbe52300
+md"""
+From the docs:
+
+`ϕ: ntopics × nwords Sparse matrix of probabilities s.t. sum(ϕ, 1) == 1`
+
+
+"""
+
+# ╔═╡ 4c27b02a-222c-431a-9d00-7b022795efde
+md"""### Topics-to-documents scores"""
+
+# ╔═╡ 2542845b-4409-404b-8a5c-cb26fb9131b7
+md"""Each *row* is a topic. Each column is the score for a document.
+The sum of each *column* == 1.0.
+"""
+
+# ╔═╡ f85d3875-abf0-45cd-bac4-9260a6f1498b
+md"""From the docs:
+
+`θ: ntopics × ndocs Dense matrix of probabilities s.t. sum(θ, 1) == 1`
+"""
+
+# ╔═╡ e8588ce7-26ac-42f7-9e04-bbb1ed0575f1
+md"""## Learn the package"""
+
+# ╔═╡ 7c90c208-f329-4eb7-be28-08379eb7eaf3
+md"""
+!!! notes "Use the DT Matrix's `terms` member to convert numbers to term strings"
+"""
+
+# ╔═╡ 624bd0ae-df61-4b78-b88f-ed7bf6409d40
+dummycorp, dummym = begin
+	tempcorp= Corpus([StringDocument("Banks  finance  interest rates"),
+              StringDocument("Banks jams backboards")])
+	update_lexicon!(tempcorp)
+	(tempcorp, DocumentTermMatrix(tempcorp))
+end
+
+# ╔═╡ 446b0896-0380-4d04-8907-06f6b907d840
+lexkeys = lexicon(dummycorp) |> keys |> collect
+
+# ╔═╡ 31adf8e3-1302-4ba6-a462-63e52d194aaa
+phi,theta = lda(dummym, 2, iters, α, β)
+
+# ╔═╡ 050bd8b1-720b-4912-8f69-8a642ebf8320
+dummym.terms
+
+# ╔═╡ ebfcc2f8-f8f2-4a10-84aa-14647a63343d
+phi
+
+# ╔═╡ 77f71a07-fd9d-49aa-a274-19049bd8cb15
+phi[2,:]
+
+# ╔═╡ 2baf5a68-f34f-4acb-8d39-18ed1e4d3d22
+phi[1,:]
+
+# ╔═╡ dd7705a8-3f7d-4e4f-8f87-6c4e53c15f01
+theta
 
 # ╔═╡ 8a2f14b8-6fb3-49f3-b161-e06ffe32108a
 html"""
@@ -174,17 +244,37 @@ else
 end
 
 # ╔═╡ 2350681e-861a-4f51-b4ca-1d0e29311b1f
+# ╠═╡ show_logs = false
 ϕ, θ  = isnothing(dtmatrix) ? (nothing, nothing) : lda(dtmatrix, k, iters, α, β)
+
+# ╔═╡ 341d9af1-b120-49f7-9b8a-0f2dae0e098a
+ϕ
+
+# ╔═╡ 54d3f1a4-16a3-4bec-97ab-48dde26d703a
+ϕ[1,:]
 
 # ╔═╡ 73e82fc2-8fa1-4645-bafd-d26807ecea1b
 θ
 
+
+# ╔═╡ b0ed7772-7872-439c-b444-5d6f937ff1f6
+θ
+
+# ╔═╡ ecde8272-8ef0-4bdb-9ee6-95c366c1fc79
+θ[:,2] |> sum
+
+# ╔═╡ d349bd4d-843f-441f-ae06-ed4314b47a81
+θ[1,:]
+
+# ╔═╡ a7917f32-8d08-4d3e-a34d-4cedbb5b9649
+reff = isnothing(c) ? [] : map(psg -> passagecomponent(psg.urn), c.passages)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CitableBase = "d6f014bd-995c-41bd-9893-703339864534"
 CitableCorpus = "cf5ac11a-93ef-4a1a-97a3-f6af101603b5"
+CitableText = "41e66566-473b-49d4-85b7-da83b66615d8"
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
@@ -196,6 +286,7 @@ TextAnalysis = "a2db99b7-8b79-58f8-94bf-bbc811eef33d"
 [compat]
 CitableBase = "~10.3.0"
 CitableCorpus = "~0.13.4"
+CitableText = "~0.16.0"
 OrderedCollections = "~1.6.2"
 Orthography = "~0.21.2"
 PlutoUI = "~0.7.52"
@@ -209,7 +300,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "966f5d16e12b66d7c0a712356869091c9eaa05f6"
+project_hash = "806032ebdc75547ebd399b7a4429adbc796d7b75"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -866,9 +957,31 @@ version = "17.4.0+0"
 # ╟─3044d17c-b365-402a-a276-f3d4ae807cb5
 # ╟─423c2f39-5e1a-4751-989f-b68003d061d4
 # ╟─94672682-2e7e-4f70-b335-01f09f603add
-# ╠═2350681e-861a-4f51-b4ca-1d0e29311b1f
+# ╟─2350681e-861a-4f51-b4ca-1d0e29311b1f
 # ╟─5c30d252-9e76-4209-b47f-d85ed5f38e5b
-# ╠═73e82fc2-8fa1-4645-bafd-d26807ecea1b
+# ╠═184efc56-f3ae-49ff-a9cb-044e5cf9f307
+# ╟─5e68da71-5eb4-4e14-b117-52e3b063c96c
+# ╟─b820a2ab-f4ab-46cd-9819-b96dae1b7b06
+# ╠═341d9af1-b120-49f7-9b8a-0f2dae0e098a
+# ╠═54d3f1a4-16a3-4bec-97ab-48dde26d703a
+# ╟─df619570-048c-40c9-aa07-7686bbe52300
+# ╟─73e82fc2-8fa1-4645-bafd-d26807ecea1b
+# ╟─4c27b02a-222c-431a-9d00-7b022795efde
+# ╠═2542845b-4409-404b-8a5c-cb26fb9131b7
+# ╠═b0ed7772-7872-439c-b444-5d6f937ff1f6
+# ╠═ecde8272-8ef0-4bdb-9ee6-95c366c1fc79
+# ╠═d349bd4d-843f-441f-ae06-ed4314b47a81
+# ╠═f85d3875-abf0-45cd-bac4-9260a6f1498b
+# ╟─e8588ce7-26ac-42f7-9e04-bbb1ed0575f1
+# ╟─7c90c208-f329-4eb7-be28-08379eb7eaf3
+# ╠═624bd0ae-df61-4b78-b88f-ed7bf6409d40
+# ╠═446b0896-0380-4d04-8907-06f6b907d840
+# ╠═31adf8e3-1302-4ba6-a462-63e52d194aaa
+# ╠═050bd8b1-720b-4912-8f69-8a642ebf8320
+# ╠═ebfcc2f8-f8f2-4a10-84aa-14647a63343d
+# ╠═77f71a07-fd9d-49aa-a274-19049bd8cb15
+# ╠═2baf5a68-f34f-4acb-8d39-18ed1e4d3d22
+# ╠═dd7705a8-3f7d-4e4f-8f87-6c4e53c15f01
 # ╟─8a2f14b8-6fb3-49f3-b161-e06ffe32108a
 # ╟─f50104d7-1c06-4813-bc86-1a6d4167d309
 # ╟─d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
@@ -876,6 +989,7 @@ version = "17.4.0+0"
 # ╠═42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
 # ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
+# ╠═a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 # ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
 # ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8
 # ╟─5827632f-bd27-4658-a42b-d8fb7ff3e8bb

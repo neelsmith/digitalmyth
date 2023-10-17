@@ -42,7 +42,7 @@ md"""*Case-insensitive*: $(@bind case_insensitive CheckBox(default = true))"""
 
 # ╔═╡ dceb616c-e86d-40f9-815b-d8acbf2744f0
 md"""
-!!! note "Settings for topic model"
+!!! note "Compute topic model"
 """
 
 # ╔═╡ 99b012eb-6f17-403e-b541-c1497ee1e7e5
@@ -56,6 +56,11 @@ md"""*α* $(@bind α confirm(Slider(0:0.1:1.0, default = 0.1, show_value = true)
 
 # ╔═╡ 94672682-2e7e-4f70-b335-01f09f603add
 md"""*β* $(@bind β confirm(Slider(0:0.1:1.0, default = 0.1, show_value = true)))"""
+
+# ╔═╡ 5c30d252-9e76-4209-b47f-d85ed5f38e5b
+md"""
+!!! note "Interpret topic model"
+"""
 
 # ╔═╡ 8a2f14b8-6fb3-49f3-b161-e06ffe32108a
 html"""
@@ -97,14 +102,13 @@ end
 md"""> **UI widgets**"""
 
 # ╔═╡ 8eff85fd-02ce-46ec-ba59-3208e73400fb
-hyginus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.txt"
+hyginus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.cex"
 
 # ╔═╡ b34d675c-9f1a-49da-a4e1-54c1c1d1dcf0
 apollodorus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/main/texts/apollodorus.cex"
 
 # ╔═╡ 623099bd-d8fa-452c-b9f2-52e2940a0fb8
-# hyginus_url => "Hyginus", 
-menu = ["" => "Choose a text", apollodorus_url => "Apollodorus"]
+menu = ["" => "Choose a text", hyginus_url => "Hyginus", apollodorus_url => "Apollodorus"]
 
 # ╔═╡ fcef1df7-4cac-4be1-9e98-67b835d81fb8
 @bind text_url Select(menu)
@@ -126,7 +130,7 @@ if isnothing(c)
 	
 else
 md"""
-*Number of stop-word candidates to review* $(@bind top_n confirm(Slider(20:500, default = 100, show_value = true)))
+*Number of stop-word candidates to review* $(@bind top_n confirm(Slider(20:300, default = 100, show_value = true)))
 
 
 *Any **unchecked** terms will be treated as stop words.  **Check** any terms to include in the topic model.*
@@ -156,9 +160,6 @@ else
 end
 
 
-# ╔═╡ 5538be1e-f4fa-4064-8e10-a71277cba691
-most_freq
-
 # ╔═╡ d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
 stopwords = filter(w -> ! (w in keepers), most_freq)
 
@@ -173,7 +174,7 @@ else
 end
 
 # ╔═╡ 2350681e-861a-4f51-b4ca-1d0e29311b1f
-ϕ, θ  = lda(dtmatrix, k, iters, α, β)
+ϕ, θ  = isnothing(dtmatrix) ? (nothing, nothing) : lda(dtmatrix, k, iters, α, β)
 
 # ╔═╡ 73e82fc2-8fa1-4645-bafd-d26807ecea1b
 θ
@@ -866,19 +867,19 @@ version = "17.4.0+0"
 # ╟─423c2f39-5e1a-4751-989f-b68003d061d4
 # ╟─94672682-2e7e-4f70-b335-01f09f603add
 # ╠═2350681e-861a-4f51-b4ca-1d0e29311b1f
+# ╟─5c30d252-9e76-4209-b47f-d85ed5f38e5b
 # ╠═73e82fc2-8fa1-4645-bafd-d26807ecea1b
 # ╟─8a2f14b8-6fb3-49f3-b161-e06ffe32108a
-# ╠═5538be1e-f4fa-4064-8e10-a71277cba691
 # ╟─f50104d7-1c06-4813-bc86-1a6d4167d309
 # ╟─d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
 # ╟─863fd7c4-5460-4de0-b422-fa38350f7545
 # ╠═42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
 # ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
-# ╠═68dc297d-ccd0-4dd1-a652-f19cfcd3c111
-# ╠═1623909b-1c27-4cac-8cbe-4287ed3e30e8
-# ╠═5827632f-bd27-4658-a42b-d8fb7ff3e8bb
-# ╠═0439bf2f-69a1-4aa8-a71a-dd058ebf5bfe
+# ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
+# ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8
+# ╟─5827632f-bd27-4658-a42b-d8fb7ff3e8bb
+# ╟─0439bf2f-69a1-4aa8-a71a-dd058ebf5bfe
 # ╟─9c3ce649-4b24-476b-9798-386b5712000b
 # ╠═623099bd-d8fa-452c-b9f2-52e2940a0fb8
 # ╠═8eff85fd-02ce-46ec-ba59-3208e73400fb

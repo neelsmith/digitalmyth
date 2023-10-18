@@ -76,12 +76,6 @@ md"""*Plot topic weights for topic:*"""
 # ╔═╡ 0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
 @bind topicdetail Slider(1:k, show_value = true)
 
-# ╔═╡ 457c6359-fe3f-4055-8907-d41f90ce2998
-samp = 0.0120898
-
-# ╔═╡ 4e65e4ae-a96e-4bda-a5d6-0747357aed8a
-samp2 = 0.00172712
-
 # ╔═╡ 7d740f6c-9430-4367-90a6-32933c3b4cd7
 md"""
 !!! note "View most significant documents for each topic"
@@ -91,8 +85,24 @@ md"""
 md"""*View highest scoring passages (documents) for each topic* $(@bind topdocscount confirm(Slider(1:30, default = 8, show_value = true)))"""
 
 # ╔═╡ 0e1fc056-c946-4c53-a046-69c6edec3044
-md"""### View topic rankings for a given passage
+md"""### View details for a given passage ("document")
 """
+
+# ╔═╡ ec514c67-d35a-42aa-b2c0-cd56ba105c51
+md"""*Select a passage*:"""
+
+# ╔═╡ fc12e5a6-6451-4b1e-8300-6d115c94cf66
+md"""
+!!! notes "Find column index of document in theta"
+"""
+
+# ╔═╡ e8ef7ca6-5910-421d-9892-c3d999937875
+docxs = begin
+	ycol = []
+for i in 1:k
+	push!(ycol, "Topic $(i)")
+end
+end
 
 # ╔═╡ 8a2f14b8-6fb3-49f3-b161-e06ffe32108a
 html"""
@@ -104,34 +114,41 @@ html"""
 # ╔═╡ f50104d7-1c06-4813-bc86-1a6d4167d309
 md"""> **Computing LDA**"""
 
+# ╔═╡ ab7df6f8-2f79-4ee2-bf94-dcba9a1cfe3a
+"""Given one row of a topic index, find top `n` scores,
+and return a Vector of `n` pairs of topic relations and scores."""
+function raw_pairs(row, termlist; n = 10)
+	sorted = sort(row, rev = true)
+	termvalpairs = []
+	for val in sorted[1:n]	
+		rowidx = findall(col -> col == val, row)
+		push!(termvalpairs, (termlist[rowidx], val))
+	end
+    termvalpairs
+end
+
+
+# ╔═╡ 2ee1af26-c722-4874-a497-3dcd2d9d39fd
+"""Given a list of possible index keys with corresponding scores, flatten the
+list to create a list of the top `n` value-score pairs."""
+function isolatescores(scorelists, n)
+    flatresults = []
+    names = map(pr -> pr[1], scorelists) |> Iterators.flatten |> collect |> unique
+    for nameval in names[1:n]
+        score = filter(pr -> nameval in pr[1], scorelists)[1][2]
+        push!(flatresults,(nameval,score))
+    end
+    flatresults
+end
+
+
 # ╔═╡ e57a1d64-d14a-44ea-92b5-bd7d73c61aed
 """Find terms in `termlist` corresponding to top `n` values in a row of
 topic-to-term values.
 """
 function top_terms(row, termlist; n = 10)
-	sorted = sort(row, rev = true)
-	termvalpairs = []
-	for val in sorted[1:n]
-		
-		rowidx = findfirst(col -> col == val, row)
-		push!(termvalpairs, (termlist[rowidx], val))
-	end
-	termvalpairs
-end
-
-# ╔═╡ d6f842b6-d55f-4705-8dcf-7a1d2c91f616
-"""Find passages in `psglist` corresponding to top `n` values in a row of
-topic-to-document values.
-"""
-function top_docs(row, psglist; n = 10)
-	sorted = sort(row, rev = true)
-	termvalpairs = []
-	for val in sorted[1:n]
-		
-		rowidx = findfirst(col -> col == val, row)
-		push!(termvalpairs, (psglist[rowidx], val))
-	end
-	termvalpairs
+	raw = raw_pairs(row, termlist; n = n)
+	isolatescores(raw, n)
 end
 
 # ╔═╡ 89d1bd74-3e0b-4ef7-b4ed-d0923c00845f
@@ -175,8 +192,7 @@ end
 """
 function topterms_md(topictotermscores, termlist, termcount)
 	lines = [hdr(termcount)]
-		#repeat("| --- ", toptermcount + 1) * "|"
-	push!(lines, repeat("| --- ", toptermcount + 1) * "|")
+	push!(lines, repeat("| --- ", termcount + 1) * "|")
 	
 	for i in 1:k
 		bigterms = top_terms(topictotermscores[i,:], termlist; n = termcount)
@@ -290,40 +306,15 @@ end
 # ╠═╡ show_logs = false
 ϕ, θ  = isnothing(dtmatrix) ? (nothing, nothing) : lda(dtmatrix, k, iters, α, β)
 
-# ╔═╡ e5c85504-9580-46a4-9c0f-c38ed5e97930
-t5 = ϕ[5,:]
-
-# ╔═╡ da525dd0-206b-40b7-8e73-ca7fad8780eb
-findall(cval -> cval == samp2, ϕ[5,:] )
-
 # ╔═╡ 1fbd8ebc-adaa-4d42-b65f-291faac7633e
 isnothing(dtmatrix) ? nothing : topterms_md(ϕ, dtmatrix.terms, toptermcount) |> Markdown.parse
-
-# ╔═╡ 240dff61-2b3e-4296-88b8-ac1ac87d1e1d
-begin
-	sortedvals = sort(ϕ[5,:], rev = true)
-	termvalpairs = []
-
-	seen = []
-	dupecount = 1
-	for val in sortedvals[1:toptermcount]
-		if val in seen
-			dupecount = dupecount + 1
-		else
-			duepcount = 1
-			push!(seen, val)
-		end
-		
-		rowidx = findall(col -> col == val,ϕ[5,:] )
-		push!(termvalpairs, (dtmatrix.terms[rowidx[dupecount]], val))
-	end
-	termvalpairs
-end
 
 # ╔═╡ 084082de-30f5-43a6-9a78-a4e7d2ec99e7
 begin
 	layout = Layout(
 		title = "Topic $(topicdetail)",
+		xaxis_title = "Term score",
+		yaxis_title = "Term",
 		height = 300
 	)
 	barview = termsbar(ϕ[topicdetail,:], dtmatrix.terms, toptermcount)
@@ -334,7 +325,41 @@ end
 reff = isnothing(c) ? [] : map(psg -> passagecomponent(psg.urn), c.passages)
 
 # ╔═╡ 952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
-isnothing(dtmatrix) ? nothing : topdocs_md(θ, reff, topdocscount) |> Markdown.parse
+isnothing(dtmatrix) ? nothing : topterms_md(θ, reff, topdocscount) |> Markdown.parse
+
+# ╔═╡ 45c8ba32-fda0-41e4-9c76-528d191fc298
+begin
+	doclayout = Layout(
+		title = "Top document scores for topic $(topicdetail)",
+		yaxis_title = "Canonical reference",
+		xaxis_title = "Document score",
+		height = 300
+	)
+	docbarview = termsbar(θ[topicdetail,:], reff, topdocscount)
+	Plot(docbarview, doclayout)
+end
+
+# ╔═╡ c9e0e222-200f-400e-9831-780133df3253
+@bind psgref Select(vcat([""], reff))
+
+# ╔═╡ d6c59846-88d1-48d8-9405-67bac12c5eeb
+if ! isempty(psgref)
+		
+	psgtext = filter(psg -> passagecomponent(psg.urn) == psgref, c.passages)[1].text 
+	"*Text of passage*:\n\n>**$(psgref)**: " * psgtext |> Markdown.parse
+end
+
+# ╔═╡ d82bbca8-e3bc-45fe-b473-fb86e7995650
+docidx = findfirst(r -> r == psgref, reff)
+
+# ╔═╡ 3a922ff3-6b57-4161-8d68-a0cafaa96377
+θ[:,docidx]
+
+# ╔═╡ 280de380-2dd0-4a88-b042-9767921a67d6
+docys = θ[:,docidx]
+
+# ╔═╡ 57779e81-b2c9-4067-a675-4de47646556d
+Plot(bar(x=docxs, y = docys), Layout(title = "Topic scores for passage (document) $(psgref)", height = 200, yaxis_title = "Topic number", xaxis_title = "Topic score in document" ))
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1159,7 +1184,7 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╠═0c6337e6-4de7-4e76-9589-42bc170a931a
+# ╟─0c6337e6-4de7-4e76-9589-42bc170a931a
 # ╟─6d24ec36-6d02-11ee-24af-7f32effe1a76
 # ╟─e2ea0057-9a4c-4ddf-985a-e107fb3b0b38
 # ╟─fcef1df7-4cac-4be1-9e98-67b835d81fb8
@@ -1176,34 +1201,40 @@ version = "17.4.0+0"
 # ╠═2350681e-861a-4f51-b4ca-1d0e29311b1f
 # ╟─8d5f6c03-a776-4304-9b5f-dfd9c235edbd
 # ╟─4b742534-045e-43ce-96c1-9ad1587fba80
-# ╠═1fbd8ebc-adaa-4d42-b65f-291faac7633e
+# ╟─1fbd8ebc-adaa-4d42-b65f-291faac7633e
 # ╟─1bce7141-c7db-4a86-ac1a-36bff54edc86
 # ╟─0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
-# ╠═457c6359-fe3f-4055-8907-d41f90ce2998
-# ╠═4e65e4ae-a96e-4bda-a5d6-0747357aed8a
-# ╠═e5c85504-9580-46a4-9c0f-c38ed5e97930
-# ╠═da525dd0-206b-40b7-8e73-ca7fad8780eb
-# ╠═240dff61-2b3e-4296-88b8-ac1ac87d1e1d
 # ╟─084082de-30f5-43a6-9a78-a4e7d2ec99e7
 # ╟─7d740f6c-9430-4367-90a6-32933c3b4cd7
 # ╟─0aad525c-1a6d-4a33-a046-1704fb0cbc36
 # ╟─952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
-# ╠═0e1fc056-c946-4c53-a046-69c6edec3044
+# ╟─45c8ba32-fda0-41e4-9c76-528d191fc298
+# ╟─0e1fc056-c946-4c53-a046-69c6edec3044
+# ╟─ec514c67-d35a-42aa-b2c0-cd56ba105c51
+# ╟─c9e0e222-200f-400e-9831-780133df3253
+# ╟─57779e81-b2c9-4067-a675-4de47646556d
+# ╟─d6c59846-88d1-48d8-9405-67bac12c5eeb
+# ╟─fc12e5a6-6451-4b1e-8300-6d115c94cf66
+# ╠═3a922ff3-6b57-4161-8d68-a0cafaa96377
+# ╠═d82bbca8-e3bc-45fe-b473-fb86e7995650
+# ╠═280de380-2dd0-4a88-b042-9767921a67d6
+# ╠═e8ef7ca6-5910-421d-9892-c3d999937875
 # ╟─8a2f14b8-6fb3-49f3-b161-e06ffe32108a
 # ╟─f50104d7-1c06-4813-bc86-1a6d4167d309
 # ╟─d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
 # ╟─543080bf-fa45-42ba-89db-1ba06f2c0f41
-# ╠═e57a1d64-d14a-44ea-92b5-bd7d73c61aed
-# ╟─d6f842b6-d55f-4705-8dcf-7a1d2c91f616
+# ╟─e57a1d64-d14a-44ea-92b5-bd7d73c61aed
+# ╟─ab7df6f8-2f79-4ee2-bf94-dcba9a1cfe3a
+# ╟─2ee1af26-c722-4874-a497-3dcd2d9d39fd
 # ╟─89d1bd74-3e0b-4ef7-b4ed-d0923c00845f
 # ╟─2547227f-99f2-49c6-a8d6-c1dbdda24fd9
-# ╟─2e0e0119-32b5-46f3-aea7-7a447878ce33
-# ╟─dbab6c6e-8016-487a-887a-255c2f25b02e
+# ╠═2e0e0119-32b5-46f3-aea7-7a447878ce33
+# ╠═dbab6c6e-8016-487a-887a-255c2f25b02e
 # ╟─f59dba8a-03d4-4a85-a994-de832e8ddf5f
 # ╟─863fd7c4-5460-4de0-b422-fa38350f7545
 # ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
-# ╠═fd23b519-3d5f-4a88-931c-a3118fbc256e
+# ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
 # ╟─a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 # ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
 # ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8

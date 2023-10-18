@@ -90,40 +90,34 @@ write(io, topterms_md(phi,dtmatrix.terms, 10))
 end
 
 
-function top_terms(row, termlist; n = 10)
+function raw_pairs(row, termlist; n = 10)
 	sorted = sort(row, rev = true)
 	termvalpairs = []
 	for val in sorted[1:n]	
 		rowidx = findall(col -> col == val, row)
 		push!(termvalpairs, (termlist[rowidx], val))
 	end
-	finalpairs = []
-    seen = []
-    counter = 1
-    
-    for pr in termvalpairs
-        namelist = pr[1]
-        score = pr[2]
-        @info("Check $(namelist[counter]) in list of $(length(namelist))")
-        if namelist[counter] in seen
-            @info("Seen $(namelist[counter]), recording score and bumping counter val")
-            push!(finalpairs, (namelist[counter], score))
-            counter = counter + 1
-        else
-            @info("Name not seen")
-            push!(seen, namelist[counter])
-            push!(finalpairs, (namelist[counter], score))
-        end
-        
-        #
-        
-    end
-
-    finalpairs
+    termvalpairs
 end
 
-termpaireg = top_terms(phi[3,:], dtmatrix.terms)
+raw = raw_pairs(phi[3,:], dtmatrix.terms)
 
-names
 
-#join(top_terms(phi[3,:], dtmatrix.terms),"\n\n") |> println
+function isolatescores(scorelists, n = 10)
+    flatresults = []
+    names = map(pr -> pr[1], scorelists) |> Iterators.flatten |> collect |> unique
+    for nameval in names[1:n]
+        @info("Look at $(nameval)")
+        score = filter(pr -> nameval in pr[1], scorelists)[1][2]
+        @info("Got $(score)")
+        push!(flatresults,(nameval,score))
+    end
+    flatresults
+   
+end
+
+isolatescores(raw)
+
+
+
+println(join(raw, "\n"))

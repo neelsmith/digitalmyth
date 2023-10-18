@@ -29,11 +29,12 @@ begin
 	using TextAnalysis
 	
 	using PlotlyJS
+	using TSne
 	md"*Unhide this cell to see the Julia environment.*"
 end
 
 # ╔═╡ c0543064-597c-4104-b26a-333437ddf4d8
-nbversion = "1.0"
+nbversion = "1.0.0"
 
 # ╔═╡ 6d24ec36-6d02-11ee-24af-7f32effe1a76
 md"""# LDA topic modeling with the Julia `TextAnalysis` package
@@ -48,7 +49,7 @@ md"""*See release notes* $(@bind history CheckBox())"""
 # ╔═╡ f0bd2768-68bd-4535-b90e-34359b3030f9
 if history
 md"""
-- **1.0**: initial release
+- **1.0.0**: initial release
 """
 end
 
@@ -458,6 +459,7 @@ Orthography = "0b4c9448-09b0-4e78-95ea-3eb3328be36d"
 PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+TSne = "24678dba-d5e9-5843-a4c6-250288b04835"
 TextAnalysis = "a2db99b7-8b79-58f8-94bf-bbc811eef33d"
 
 [compat]
@@ -469,6 +471,7 @@ Orthography = "~0.21.2"
 PlotlyJS = "~0.18.11"
 PlutoUI = "~0.7.52"
 StatsBase = "~0.34.2"
+TSne = "~1.3.0"
 TextAnalysis = "~0.7.5"
 """
 
@@ -478,7 +481,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "f9130c1bf4819bb45b37b671ece0761ba5814fe9"
+project_hash = "dd6b4dba4f0cae5c34c46cc87747af6f8728bf01"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -659,6 +662,20 @@ deps = ["Indexing", "Random", "Serialization"]
 git-tree-sha1 = "e82c3c97b5b4ec111f3c1b55228cebc7510525a2"
 uuid = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
 version = "0.3.25"
+
+[[deps.Distances]]
+deps = ["LinearAlgebra", "Statistics", "StatsAPI"]
+git-tree-sha1 = "5225c965635d8c21168e32a12954675e7bea1151"
+uuid = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
+version = "0.10.10"
+
+    [deps.Distances.extensions]
+    DistancesChainRulesCoreExt = "ChainRulesCore"
+    DistancesSparseArraysExt = "SparseArrays"
+
+    [deps.Distances.weakdeps]
+    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+    SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
@@ -1135,6 +1152,12 @@ deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 version = "1.0.3"
 
+[[deps.TSne]]
+deps = ["Distances", "LinearAlgebra", "Printf", "ProgressMeter", "Statistics"]
+git-tree-sha1 = "6f1dfbf9dad6958439816fa9c5fa20898203fdf4"
+uuid = "24678dba-d5e9-5843-a4c6-250288b04835"
+version = "1.3.0"
+
 [[deps.TableTraits]]
 deps = ["IteratorInterfaceExtensions"]
 git-tree-sha1 = "c06b2f539df1c6efa794486abfb6ed2022561a39"
@@ -1272,7 +1295,7 @@ version = "17.4.0+0"
 # ╟─0c6337e6-4de7-4e76-9589-42bc170a931a
 # ╟─6d24ec36-6d02-11ee-24af-7f32effe1a76
 # ╟─082b0f1f-12b2-4f09-be8f-4e2cbf35d714
-# ╟─f0bd2768-68bd-4535-b90e-34359b3030f9
+# ╠═f0bd2768-68bd-4535-b90e-34359b3030f9
 # ╟─e2ea0057-9a4c-4ddf-985a-e107fb3b0b38
 # ╟─fcef1df7-4cac-4be1-9e98-67b835d81fb8
 # ╟─0e6f70dc-2da6-43f1-9ded-66dcaa92877d

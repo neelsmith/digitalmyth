@@ -29,9 +29,6 @@ begin
 	md"*Unhide this cell to see the Julia environment.*"
 end
 
-# ╔═╡ fb7aa807-aef3-424b-b6cd-c05233cac80b
-fromcex("https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.cex", CitableTextCorpus, UrlReader)
-
 # ╔═╡ 6d24ec36-6d02-11ee-24af-7f32effe1a76
 md"""# LDA with Julia `TextAnalysis`"""
 
@@ -60,57 +57,52 @@ md"""*α* $(@bind α confirm(Slider(0:0.1:1.0, default = 0.1, show_value = true)
 # ╔═╡ 94672682-2e7e-4f70-b335-01f09f603add
 md"""*β* $(@bind β confirm(Slider(0:0.1:1.0, default = 0.1, show_value = true)))"""
 
-# ╔═╡ 2733adb5-8dfd-4df9-8e28-5aa6dae9c175
-md"""*Computation of ϕ and θ using LDA algorithm*:"""
-
 # ╔═╡ 5c30d252-9e76-4209-b47f-d85ed5f38e5b
 md"""
-!!! note "Interpret the topic model"
-"""
-
-# ╔═╡ 5236cd42-cf50-4dee-8660-b626278fd639
-md"""### View most significant terms for each topic"""
-
-# ╔═╡ 7c90c208-f329-4eb7-be28-08379eb7eaf3
-md"""
-!!! notes "☞ Tip: use the DT Matrix's `terms` member to convert numbers to term strings."
+!!! note "Interpret topic model"
 """
 
 # ╔═╡ 4b742534-045e-43ce-96c1-9ad1587fba80
 md"""*View top terms for each topic* $(@bind toptermcount confirm(Slider(1:30, default = 8, show_value = true)))"""
 
-# ╔═╡ 7d740f6c-9430-4367-90a6-32933c3b4cd7
-md"""### View most significant documents for each topic"""
+# ╔═╡ f59dba8a-03d4-4a85-a994-de832e8ddf5f
+function hdr(n)
+	rowval = ["| topic "]
+	for i in 1:n
+		push!(rowval, "| $(i) ")
+	end
+	join(rowval) * "|" 
+end
 
-# ╔═╡ 23606996-1d87-444f-b29a-908f35177b0a
-md"""
-!!! notes "☞  Tip: use the CITE references to convert documents to canonical references"
+# ╔═╡ e57a1d64-d14a-44ea-92b5-bd7d73c61aed
+"""Find terms in `termlist` corresponding to top `n` values in a row of
+topic-to-term values.
 """
+function top_terms(row, termlist; n = 10)
+	sorted = sort(row, rev = true)
+	termvalpairs = []
+	for val in sorted[1:n]
+		
+		rowidx = findfirst(col -> col == val, row)
+		push!(termvalpairs, (termlist[rowidx], val))
+	end
+	termvalpairs
+end
 
-# ╔═╡ 0aad525c-1a6d-4a33-a046-1704fb0cbc36
-md"""*View highest scoring passages (documents) for each topic* $(@bind topdocscount confirm(Slider(1:30, default = 8, show_value = true)))"""
-
-# ╔═╡ b11cee00-80e1-4e8e-9b65-5fee473d9091
-md"""### View top passages of text for a given topic"""
-
-# ╔═╡ 3e7a2779-1a28-476a-b665-afed3cd6846c
-md"""> ### TBD"""
-
-# ╔═╡ 0e1fc056-c946-4c53-a046-69c6edec3044
-md"""### View topic rankings for a given passage
-
-> ### TBD
+# ╔═╡ dbab6c6e-8016-487a-887a-255c2f25b02e
+"""Make a Markdown table to display top terms.
 """
-
-# ╔═╡ 8a2f14b8-6fb3-49f3-b161-e06ffe32108a
-html"""
-<br/><br/><br/><br/>
-<br/><br/><br/><br/>
-<br/><br/><br/><br/>
-"""
-
-# ╔═╡ b4359e0f-351c-4b40-a95f-00f607c12609
-md"""> **LDA results**"""
+function topterms_md(topictotermscores, termlist, termcount)
+	lines = [hdr(termcount)]
+		#repeat("| --- ", toptermcount + 1) * "|"
+	push!(lines, repeat("| --- ", toptermcount + 1) * "|")
+	
+	for i in 1:k
+		bigterms = top_terms(topictotermscores[i,:], termlist; n = termcount)
+		push!(lines, "| topic $(i) |" * join(map(pr -> pr[1], bigterms), " |"))
+	end
+	join(lines,"\n")
+end
 
 # ╔═╡ 5e68da71-5eb4-4e14-b117-52e3b063c96c
 md"""### Topic-to-terms scores"""
@@ -142,77 +134,52 @@ md"""From the docs:
 `θ: ntopics × ndocs Dense matrix of probabilities s.t. sum(θ, 1) == 1`
 """
 
+# ╔═╡ e8588ce7-26ac-42f7-9e04-bbb1ed0575f1
+md"""## Learn the package"""
+
+# ╔═╡ 7c90c208-f329-4eb7-be28-08379eb7eaf3
+md"""
+!!! notes "Use the DT Matrix's `terms` member to convert numbers to term strings"
+"""
+
+# ╔═╡ 624bd0ae-df61-4b78-b88f-ed7bf6409d40
+dummycorp, dummym = begin
+	tempcorp= Corpus([StringDocument("Banks  finance  interest rates"),
+              StringDocument("Banks jams backboards")])
+	update_lexicon!(tempcorp)
+	(tempcorp, DocumentTermMatrix(tempcorp))
+end
+
+# ╔═╡ 446b0896-0380-4d04-8907-06f6b907d840
+lexkeys = lexicon(dummycorp) |> keys |> collect
+
+# ╔═╡ 31adf8e3-1302-4ba6-a462-63e52d194aaa
+phi,theta = lda(dummym, 2, iters, α, β)
+
+# ╔═╡ 050bd8b1-720b-4912-8f69-8a642ebf8320
+dummym.terms
+
+# ╔═╡ ebfcc2f8-f8f2-4a10-84aa-14647a63343d
+phi
+
+# ╔═╡ 77f71a07-fd9d-49aa-a274-19049bd8cb15
+phi[2,:]
+
+# ╔═╡ 2baf5a68-f34f-4acb-8d39-18ed1e4d3d22
+phi[1,:]
+
+# ╔═╡ dd7705a8-3f7d-4e4f-8f87-6c4e53c15f01
+theta
+
+# ╔═╡ 8a2f14b8-6fb3-49f3-b161-e06ffe32108a
+html"""
+<br/><br/><br/><br/>
+<br/><br/><br/><br/>
+<br/><br/><br/><br/>
+"""
+
 # ╔═╡ f50104d7-1c06-4813-bc86-1a6d4167d309
-md"""> **Computing LDA**"""
-
-# ╔═╡ d6f842b6-d55f-4705-8dcf-7a1d2c91f616
-"""Find passages in `psglist` corresponding to top `n` values in a row of
-topic-to-document values.
-"""
-function top_docs(row, psglist; n = 10)
-	sorted = sort(row, rev = true)
-	termvalpairs = []
-	for val in sorted[1:n]
-		
-		rowidx = findfirst(col -> col == val, row)
-		push!(termvalpairs, (psglist[rowidx], val))
-	end
-	termvalpairs
-end
-
-# ╔═╡ e57a1d64-d14a-44ea-92b5-bd7d73c61aed
-"""Find terms in `termlist` corresponding to top `n` values in a row of
-topic-to-term values.
-"""
-function top_terms(row, termlist; n = 10)
-	sorted = sort(row, rev = true)
-	termvalpairs = []
-	for val in sorted[1:n]
-		
-		rowidx = findfirst(col -> col == val, row)
-		push!(termvalpairs, (termlist[rowidx], val))
-	end
-	termvalpairs
-end
-
-# ╔═╡ f59dba8a-03d4-4a85-a994-de832e8ddf5f
-"""Compose markdown string to separate table header and body for a table with `n` columns."""
-function hdr(n)
-	rowval = ["| topic "]
-	for i in 1:n
-		push!(rowval, "| $(i) ")
-	end
-	join(rowval) * "|" 
-end
-
-# ╔═╡ 2e0e0119-32b5-46f3-aea7-7a447878ce33
-"""Make a Markdown table to display top ranked documents for a given topic.
-"""
-function topdocs_md(topictodocscores, psglist, doccount)
-	lines = [hdr(doccount)]
-	push!(lines, repeat("| --- ", doccount + 1) * "|")
-	
-	for i in 1:k
-		bigdocs = top_docs(topictodocscores[i,:], psglist; n = doccount)
-		push!(lines, "| topic $(i) |" * join(map(pr -> pr[1], bigdocs), " |"))
-	end
-	join(lines,"\n")
-end
-
-# ╔═╡ dbab6c6e-8016-487a-887a-255c2f25b02e
-"""Make a Markdown table to display list of top terms for a topic.
-"""
-function topterms_md(topictotermscores, termlist, termcount)
-	lines = [hdr(termcount)]
-		#repeat("| --- ", toptermcount + 1) * "|"
-	push!(lines, repeat("| --- ", toptermcount + 1) * "|")
-	
-	for i in 1:k
-		bigterms = top_terms(topictotermscores[i,:], termlist; n = termcount)
-		push!(lines, "| topic $(i) |" * join(map(pr -> pr[1], bigterms), " |"))
-	end
-	join(lines,"\n")
-end
+md"""> **LDA**"""
 
 # ╔═╡ 863fd7c4-5460-4de0-b422-fa38350f7545
 md"""> **Load data**"""
@@ -329,14 +296,15 @@ end
 # ╔═╡ b0ed7772-7872-439c-b444-5d6f937ff1f6
 θ
 
+# ╔═╡ 8542080a-efb9-4084-a7a5-6314bd1f39dc
+isnothing(dtmatrix) ? nothing : top_terms(ϕ[1,:], dtmatrix.terms; n = toptermcount)
+
+
 # ╔═╡ 1fbd8ebc-adaa-4d42-b65f-291faac7633e
 isnothing(dtmatrix) ? nothing : topterms_md(ϕ, dtmatrix.terms, toptermcount) |> Markdown.parse
 
 # ╔═╡ a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 reff = isnothing(c) ? [] : map(psg -> passagecomponent(psg.urn), c.passages)
-
-# ╔═╡ 952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
-isnothing(dtmatrix) ? nothing : topdocs_md(θ, reff, topdocscount) |> Markdown.parse
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1013,7 +981,6 @@ version = "17.4.0+0"
 
 # ╔═╡ Cell order:
 # ╟─0c6337e6-4de7-4e76-9589-42bc170a931a
-# ╠═fb7aa807-aef3-424b-b6cd-c05233cac80b
 # ╟─6d24ec36-6d02-11ee-24af-7f32effe1a76
 # ╟─e2ea0057-9a4c-4ddf-985a-e107fb3b0b38
 # ╟─fcef1df7-4cac-4be1-9e98-67b835d81fb8
@@ -1026,22 +993,15 @@ version = "17.4.0+0"
 # ╟─3044d17c-b365-402a-a276-f3d4ae807cb5
 # ╟─423c2f39-5e1a-4751-989f-b68003d061d4
 # ╟─94672682-2e7e-4f70-b335-01f09f603add
-# ╟─2733adb5-8dfd-4df9-8e28-5aa6dae9c175
 # ╟─2350681e-861a-4f51-b4ca-1d0e29311b1f
 # ╟─5c30d252-9e76-4209-b47f-d85ed5f38e5b
-# ╟─5236cd42-cf50-4dee-8660-b626278fd639
-# ╟─7c90c208-f329-4eb7-be28-08379eb7eaf3
 # ╟─4b742534-045e-43ce-96c1-9ad1587fba80
+# ╟─543080bf-fa45-42ba-89db-1ba06f2c0f41
+# ╟─8542080a-efb9-4084-a7a5-6314bd1f39dc
 # ╟─1fbd8ebc-adaa-4d42-b65f-291faac7633e
-# ╟─7d740f6c-9430-4367-90a6-32933c3b4cd7
-# ╟─23606996-1d87-444f-b29a-908f35177b0a
-# ╟─0aad525c-1a6d-4a33-a046-1704fb0cbc36
-# ╟─952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
-# ╟─b11cee00-80e1-4e8e-9b65-5fee473d9091
-# ╟─3e7a2779-1a28-476a-b665-afed3cd6846c
-# ╟─0e1fc056-c946-4c53-a046-69c6edec3044
-# ╟─8a2f14b8-6fb3-49f3-b161-e06ffe32108a
-# ╟─b4359e0f-351c-4b40-a95f-00f607c12609
+# ╟─dbab6c6e-8016-487a-887a-255c2f25b02e
+# ╟─f59dba8a-03d4-4a85-a994-de832e8ddf5f
+# ╟─e57a1d64-d14a-44ea-92b5-bd7d73c61aed
 # ╟─5e68da71-5eb4-4e14-b117-52e3b063c96c
 # ╟─b820a2ab-f4ab-46cd-9819-b96dae1b7b06
 # ╠═341d9af1-b120-49f7-9b8a-0f2dae0e098a
@@ -1051,16 +1011,21 @@ version = "17.4.0+0"
 # ╟─2542845b-4409-404b-8a5c-cb26fb9131b7
 # ╠═b0ed7772-7872-439c-b444-5d6f937ff1f6
 # ╟─f85d3875-abf0-45cd-bac4-9260a6f1498b
+# ╟─e8588ce7-26ac-42f7-9e04-bbb1ed0575f1
+# ╟─7c90c208-f329-4eb7-be28-08379eb7eaf3
+# ╠═624bd0ae-df61-4b78-b88f-ed7bf6409d40
+# ╠═446b0896-0380-4d04-8907-06f6b907d840
+# ╠═31adf8e3-1302-4ba6-a462-63e52d194aaa
+# ╠═050bd8b1-720b-4912-8f69-8a642ebf8320
+# ╠═ebfcc2f8-f8f2-4a10-84aa-14647a63343d
+# ╠═77f71a07-fd9d-49aa-a274-19049bd8cb15
+# ╠═2baf5a68-f34f-4acb-8d39-18ed1e4d3d22
+# ╠═dd7705a8-3f7d-4e4f-8f87-6c4e53c15f01
+# ╟─8a2f14b8-6fb3-49f3-b161-e06ffe32108a
 # ╟─f50104d7-1c06-4813-bc86-1a6d4167d309
 # ╟─d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
-# ╟─543080bf-fa45-42ba-89db-1ba06f2c0f41
-# ╟─d6f842b6-d55f-4705-8dcf-7a1d2c91f616
-# ╟─2e0e0119-32b5-46f3-aea7-7a447878ce33
-# ╟─e57a1d64-d14a-44ea-92b5-bd7d73c61aed
-# ╟─dbab6c6e-8016-487a-887a-255c2f25b02e
-# ╟─f59dba8a-03d4-4a85-a994-de832e8ddf5f
 # ╟─863fd7c4-5460-4de0-b422-fa38350f7545
-# ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
+# ╠═42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
 # ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
 # ╠═a7917f32-8d08-4d3e-a34d-4cedbb5b9649

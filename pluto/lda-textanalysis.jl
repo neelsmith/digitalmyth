@@ -76,6 +76,12 @@ md"""*Plot topic weights for topic:*"""
 # ╔═╡ 0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
 @bind topicdetail Slider(1:k, show_value = true)
 
+# ╔═╡ 457c6359-fe3f-4055-8907-d41f90ce2998
+samp = 0.0120898
+
+# ╔═╡ 4e65e4ae-a96e-4bda-a5d6-0747357aed8a
+samp2 = 0.00172712
+
 # ╔═╡ 7d740f6c-9430-4367-90a6-32933c3b4cd7
 md"""
 !!! note "View most significant documents for each topic"
@@ -86,8 +92,6 @@ md"""*View highest scoring passages (documents) for each topic* $(@bind topdocsc
 
 # ╔═╡ 0e1fc056-c946-4c53-a046-69c6edec3044
 md"""### View topic rankings for a given passage
-
-> ### TBD
 """
 
 # ╔═╡ 8a2f14b8-6fb3-49f3-b161-e06ffe32108a
@@ -286,8 +290,35 @@ end
 # ╠═╡ show_logs = false
 ϕ, θ  = isnothing(dtmatrix) ? (nothing, nothing) : lda(dtmatrix, k, iters, α, β)
 
+# ╔═╡ e5c85504-9580-46a4-9c0f-c38ed5e97930
+t5 = ϕ[5,:]
+
+# ╔═╡ da525dd0-206b-40b7-8e73-ca7fad8780eb
+findall(cval -> cval == samp2, ϕ[5,:] )
+
 # ╔═╡ 1fbd8ebc-adaa-4d42-b65f-291faac7633e
 isnothing(dtmatrix) ? nothing : topterms_md(ϕ, dtmatrix.terms, toptermcount) |> Markdown.parse
+
+# ╔═╡ 240dff61-2b3e-4296-88b8-ac1ac87d1e1d
+begin
+	sortedvals = sort(ϕ[5,:], rev = true)
+	termvalpairs = []
+
+	seen = []
+	dupecount = 1
+	for val in sortedvals[1:toptermcount]
+		if val in seen
+			dupecount = dupecount + 1
+		else
+			duepcount = 1
+			push!(seen, val)
+		end
+		
+		rowidx = findall(col -> col == val,ϕ[5,:] )
+		push!(termvalpairs, (dtmatrix.terms[rowidx[dupecount]], val))
+	end
+	termvalpairs
+end
 
 # ╔═╡ 084082de-30f5-43a6-9a78-a4e7d2ec99e7
 begin
@@ -1128,7 +1159,7 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─0c6337e6-4de7-4e76-9589-42bc170a931a
+# ╠═0c6337e6-4de7-4e76-9589-42bc170a931a
 # ╟─6d24ec36-6d02-11ee-24af-7f32effe1a76
 # ╟─e2ea0057-9a4c-4ddf-985a-e107fb3b0b38
 # ╟─fcef1df7-4cac-4be1-9e98-67b835d81fb8
@@ -1142,22 +1173,27 @@ version = "17.4.0+0"
 # ╟─3044d17c-b365-402a-a276-f3d4ae807cb5
 # ╟─99b012eb-6f17-403e-b541-c1497ee1e7e5
 # ╟─2733adb5-8dfd-4df9-8e28-5aa6dae9c175
-# ╟─2350681e-861a-4f51-b4ca-1d0e29311b1f
+# ╠═2350681e-861a-4f51-b4ca-1d0e29311b1f
 # ╟─8d5f6c03-a776-4304-9b5f-dfd9c235edbd
 # ╟─4b742534-045e-43ce-96c1-9ad1587fba80
-# ╟─1fbd8ebc-adaa-4d42-b65f-291faac7633e
+# ╠═1fbd8ebc-adaa-4d42-b65f-291faac7633e
 # ╟─1bce7141-c7db-4a86-ac1a-36bff54edc86
 # ╟─0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
+# ╠═457c6359-fe3f-4055-8907-d41f90ce2998
+# ╠═4e65e4ae-a96e-4bda-a5d6-0747357aed8a
+# ╠═e5c85504-9580-46a4-9c0f-c38ed5e97930
+# ╠═da525dd0-206b-40b7-8e73-ca7fad8780eb
+# ╠═240dff61-2b3e-4296-88b8-ac1ac87d1e1d
 # ╟─084082de-30f5-43a6-9a78-a4e7d2ec99e7
 # ╟─7d740f6c-9430-4367-90a6-32933c3b4cd7
 # ╟─0aad525c-1a6d-4a33-a046-1704fb0cbc36
 # ╟─952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
-# ╟─0e1fc056-c946-4c53-a046-69c6edec3044
+# ╠═0e1fc056-c946-4c53-a046-69c6edec3044
 # ╟─8a2f14b8-6fb3-49f3-b161-e06ffe32108a
 # ╟─f50104d7-1c06-4813-bc86-1a6d4167d309
 # ╟─d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
 # ╟─543080bf-fa45-42ba-89db-1ba06f2c0f41
-# ╟─e57a1d64-d14a-44ea-92b5-bd7d73c61aed
+# ╠═e57a1d64-d14a-44ea-92b5-bd7d73c61aed
 # ╟─d6f842b6-d55f-4705-8dcf-7a1d2c91f616
 # ╟─89d1bd74-3e0b-4ef7-b4ed-d0923c00845f
 # ╟─2547227f-99f2-49c6-a8d6-c1dbdda24fd9
@@ -1167,7 +1203,7 @@ version = "17.4.0+0"
 # ╟─863fd7c4-5460-4de0-b422-fa38350f7545
 # ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
-# ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
+# ╠═fd23b519-3d5f-4a88-931c-a3118fbc256e
 # ╟─a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 # ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
 # ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8

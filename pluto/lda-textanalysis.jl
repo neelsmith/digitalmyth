@@ -34,7 +34,7 @@ begin
 end
 
 # ╔═╡ c0543064-597c-4104-b26a-333437ddf4d8
-nbversion = "1.0.0"
+nbversion = "1.1.0"
 
 # ╔═╡ 6d24ec36-6d02-11ee-24af-7f32effe1a76
 md"""# LDA topic modeling with the Julia `TextAnalysis` package
@@ -44,11 +44,12 @@ md"""# LDA topic modeling with the Julia `TextAnalysis` package
 """
 
 # ╔═╡ 082b0f1f-12b2-4f09-be8f-4e2cbf35d714
-md"""*See release notes* $(@bind history CheckBox())"""
+md"""*See release notes* $(@bind release_history CheckBox())"""
 
 # ╔═╡ f0bd2768-68bd-4535-b90e-34359b3030f9
-if history
+if release_history
 md"""
+- **1.1.0**: add plotting of TSne reduction of documents in topic space
 - **1.0.0**: initial release
 """
 end
@@ -116,6 +117,11 @@ html"""
 <br/><br/><br/><br/>
 <br/><br/><br/><br/>
 <br/><br/><br/><br/>
+"""
+
+# ╔═╡ 7214e92f-9bfa-42c2-b970-c1799f072d65
+md"""
+!!! warn "Everything below here is computation, not user interaction"
 """
 
 # ╔═╡ fc12e5a6-6451-4b1e-8300-6d115c94cf66
@@ -445,6 +451,41 @@ if isnothing(ϕ)
 else
 	Plot(bar(y=docxs, x = docys, orientation = "h"), Layout(title = "Topic scores for passage (document) $(psgref)", height = 200, yaxis_title = "Topic number", xaxis_title = "Score for topic" ))
 end
+
+# ╔═╡ 0b32cc4f-3263-4c26-8591-a385fdcbbcd8
+md"""> **TSne reduction**"""
+
+# ╔═╡ 3484f277-83b8-4924-8b13-243b284386b6
+"""Scale data for plotting with TSne.
+This is voodoo from the TSne docs.
+"""
+rescale(A; dims=1) = (A .- mean(A, dims=dims)) ./ max.(std(A, dims=dims), eps())
+
+# ╔═╡ d9938322-6a16-475b-b276-f98768088ceb
+rescaled = rescale(θ, dims=1)
+
+# ╔═╡ 071d771b-6549-4991-a237-087b1f5a7480
+# ╠═╡ show_logs = false
+# Final TSne reduction:
+reduced = tsne(transpose(rescaled))
+
+# ╔═╡ a5cac246-3efe-4362-bf49-8163698bf313
+xs = reduced[:,1]
+
+# ╔═╡ c73318ff-c281-401a-8824-6c8890a88f6e
+ys = reduced[:,2]
+
+# ╔═╡ e753de93-c464-4642-adb3-46eda45df8bf
+tsneplot = scatter(x = xs, y = ys, mode = "markers")
+
+# ╔═╡ 8d52220a-3ab5-4428-b1e3-65afa3485666
+tsnelayout = Layout(
+	title = "Plot of documents in topic space",
+	height = 300
+)
+
+# ╔═╡ 553174fd-3b15-4a0b-b083-b103dc9e982e
+Plot(tsneplot, tsnelayout)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1316,6 +1357,7 @@ version = "17.4.0+0"
 # ╟─0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
 # ╟─084082de-30f5-43a6-9a78-a4e7d2ec99e7
 # ╟─7d740f6c-9430-4367-90a6-32933c3b4cd7
+# ╠═553174fd-3b15-4a0b-b083-b103dc9e982e
 # ╟─0aad525c-1a6d-4a33-a046-1704fb0cbc36
 # ╟─952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
 # ╟─45c8ba32-fda0-41e4-9c76-528d191fc298
@@ -1325,6 +1367,7 @@ version = "17.4.0+0"
 # ╟─57779e81-b2c9-4067-a675-4de47646556d
 # ╟─d6c59846-88d1-48d8-9405-67bac12c5eeb
 # ╟─8a2f14b8-6fb3-49f3-b161-e06ffe32108a
+# ╟─7214e92f-9bfa-42c2-b970-c1799f072d65
 # ╟─fc12e5a6-6451-4b1e-8300-6d115c94cf66
 # ╟─d82bbca8-e3bc-45fe-b473-fb86e7995650
 # ╟─280de380-2dd0-4a88-b042-9767921a67d6
@@ -1358,5 +1401,13 @@ version = "17.4.0+0"
 # ╟─7be14d53-9eaa-482f-b9f8-870154ab7c52
 # ╟─54bb7773-bd62-4cc0-9e19-35fc088a1a1f
 # ╟─a1db21b6-6d6f-4dcd-a0e2-f538d3a25a13
+# ╟─0b32cc4f-3263-4c26-8591-a385fdcbbcd8
+# ╟─3484f277-83b8-4924-8b13-243b284386b6
+# ╠═d9938322-6a16-475b-b276-f98768088ceb
+# ╟─071d771b-6549-4991-a237-087b1f5a7480
+# ╠═a5cac246-3efe-4362-bf49-8163698bf313
+# ╠═c73318ff-c281-401a-8824-6c8890a88f6e
+# ╠═e753de93-c464-4642-adb3-46eda45df8bf
+# ╠═8d52220a-3ab5-4428-b1e3-65afa3485666
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

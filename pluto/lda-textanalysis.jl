@@ -237,21 +237,70 @@ hyginus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts
 apollodorus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/main/texts/apollodorus.cex"
 
 # ╔═╡ 623099bd-d8fa-452c-b9f2-52e2940a0fb8
-menu = ["" => "Choose a text", hyginus_url => "Hyginus", apollodorus_url => "Apollodorus"]
+menu = [[] => "Choose a text", [hyginus_url] => "Hyginus", [apollodorus_url] => "Apollodorus", [apollodorus_url, hyginus_url] => "Both"]
 
 # ╔═╡ fcef1df7-4cac-4be1-9e98-67b835d81fb8
 @bind text_url Select(menu)
+
+# ╔═╡ 4ae018f9-2e20-474b-a99a-964e5d3d6887
+hygwork = "stoa1263.stoa001"
+
+# ╔═╡ 22cc0a3f-bbd6-483e-b407-ef56c8dba75f
+apwork = "tlg0548.tlg001"
+
+# ╔═╡ 7be14d53-9eaa-482f-b9f8-870154ab7c52
+"""Strip work abbreviations off of brief string references."""
+function stripref(s)
+	s1 = replace(s, "Ap. " => "" )
+	replace(s1, "Hyg. " => "")
+end
+
+# ╔═╡ 54bb7773-bd62-4cc0-9e19-35fc088a1a1f
+"""
+Create a single composite CitableTextCorpus` from two sources.
+"""
+function combine(c1::CitableTextCorpus, c2::CitableTextCorpus)
+    CitableTextCorpus(vcat(c1.passages, c2.passages))
+end
+
+
+
+
+# ╔═╡ a1db21b6-6d6f-4dcd-a0e2-f538d3a25a13
+
+"""
+Create a single composite CitableTextCorpus` from an array of source corpora by recursively adding corpora.
+"""
+function combine(src_array, composite = nothing)
+    if src_array === nothing || isempty(src_array)
+        composite
+    else 
+        trim = src_array[1]
+        popfirst!(src_array) 
+        if isnothing(composite)
+            combine(src_array, trim)
+        else
+            newcomposite = combine(trim, composite)
+            combine(src_array, newcomposite)
+        end
+    end
+end
 
 # ╔═╡ fd23b519-3d5f-4a88-931c-a3118fbc256e
 c = if isempty(text_url) 
 	nothing 
 else
-
-	if case_insensitive
-		map(psg -> CitablePassage(psg.urn, lowercase(psg.text)), fromcex(text_url, CitableTextCorpus, UrlReader).passages) |> CitableTextCorpus
-	else
-		fromcex(text_url, CitableTextCorpus, UrlReader)
+	corpora = []
+	for u in text_url
+		if case_insensitive
+			dl = fromcex(u, CitableTextCorpus, UrlReader)
+			lccorp = map(psg -> CitablePassage(psg.urn, lowercase(psg.text)), dl.passages) |> CitableTextCorpus
+			push!(corpora, lccorp)
+		else
+			push!(corpora, fromcex(u, CitableTextCorpus, UrlReader))
+		end
 	end
+	combine(corpora)
 end
 
 # ╔═╡ c6b5a24b-3f29-49e2-b64b-8761854ec503
@@ -322,12 +371,6 @@ else
 	Plot(barview, layout)
 end
 
-# ╔═╡ 4ae018f9-2e20-474b-a99a-964e5d3d6887
-hygwork = "stoa1263.stoa001"
-
-# ╔═╡ 22cc0a3f-bbd6-483e-b407-ef56c8dba75f
-apwork = "tlg0548.tlg001"
-
 # ╔═╡ a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 reff = if isnothing(c)  
 	[]  
@@ -365,6 +408,13 @@ end
 # ╔═╡ c9e0e222-200f-400e-9831-780133df3253
 @bind psgref Select(vcat([""], reff))
 
+# ╔═╡ d6c59846-88d1-48d8-9405-67bac12c5eeb
+if ! isempty(psgref)
+	stripped = stripref(psgref)
+	psgtext = filter(psg -> passagecomponent(psg.urn) == stripped, c.passages)[1].text 
+	"*Text of passage*:\n\n>**$(psgref)**: " * psgtext |> Markdown.parse
+end
+
 # ╔═╡ d82bbca8-e3bc-45fe-b473-fb86e7995650
 docidx = findfirst(r -> r == psgref, reff)
 
@@ -375,20 +425,6 @@ docys = isnothing(θ) | isempty(psgref) ? [] : θ[:,docidx]
 if isnothing(ϕ)
 else
 	Plot(bar(y=docxs, x = docys, orientation = "h"), Layout(title = "Topic scores for passage (document) $(psgref)", height = 200, yaxis_title = "Topic number", xaxis_title = "Score for topic" ))
-end
-
-# ╔═╡ 7be14d53-9eaa-482f-b9f8-870154ab7c52
-"""Strip work abbreviations off of brief string references."""
-function stripref(s)
-	s1 = replace(s, "Ap. " => "" )
-	replace(s1, "Hyg. " => "")
-end
-
-# ╔═╡ d6c59846-88d1-48d8-9405-67bac12c5eeb
-if ! isempty(psgref)
-	stripped = stripref(psgref)
-	psgtext = filter(psg -> passagecomponent(psg.urn) == stripped, c.passages)[1].text 
-	"*Text of passage*:\n\n>**$(psgref)**: " * psgtext |> Markdown.parse
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1263,7 +1299,7 @@ version = "17.4.0+0"
 # ╟─863fd7c4-5460-4de0-b422-fa38350f7545
 # ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
-# ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
+# ╠═fd23b519-3d5f-4a88-931c-a3118fbc256e
 # ╟─a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 # ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
 # ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8
@@ -1276,5 +1312,7 @@ version = "17.4.0+0"
 # ╠═4ae018f9-2e20-474b-a99a-964e5d3d6887
 # ╟─22cc0a3f-bbd6-483e-b407-ef56c8dba75f
 # ╟─7be14d53-9eaa-482f-b9f8-870154ab7c52
+# ╟─54bb7773-bd62-4cc0-9e19-35fc088a1a1f
+# ╟─a1db21b6-6d6f-4dcd-a0e2-f538d3a25a13
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

@@ -32,7 +32,7 @@ begin
 end
 
 # ╔═╡ 6d24ec36-6d02-11ee-24af-7f32effe1a76
-md"""# LDA with Julia `TextAnalysis`"""
+md"""# LDA topic modeling with the Julia `TextAnalysis` package"""
 
 # ╔═╡ e2ea0057-9a4c-4ddf-985a-e107fb3b0b38
 md"""
@@ -85,24 +85,12 @@ md"""
 md"""*View highest scoring passages (documents) for each topic* $(@bind topdocscount confirm(Slider(1:30, default = 8, show_value = true)))"""
 
 # ╔═╡ 0e1fc056-c946-4c53-a046-69c6edec3044
-md"""### View details for a given passage ("document")
+md"""
+!!! note "View details for a given passage (\"document\")"
 """
 
 # ╔═╡ ec514c67-d35a-42aa-b2c0-cd56ba105c51
 md"""*Select a passage*:"""
-
-# ╔═╡ fc12e5a6-6451-4b1e-8300-6d115c94cf66
-md"""
-!!! notes "Find column index of document in theta"
-"""
-
-# ╔═╡ e8ef7ca6-5910-421d-9892-c3d999937875
-docxs = begin
-	ycol = []
-for i in 1:k
-	push!(ycol, "Topic $(i)")
-end
-end
 
 # ╔═╡ 8a2f14b8-6fb3-49f3-b161-e06ffe32108a
 html"""
@@ -110,6 +98,18 @@ html"""
 <br/><br/><br/><br/>
 <br/><br/><br/><br/>
 """
+
+# ╔═╡ fc12e5a6-6451-4b1e-8300-6d115c94cf66
+md"""> **Find document data in theta**
+"""
+
+# ╔═╡ e8ef7ca6-5910-421d-9892-c3d999937875
+docxs = begin
+	ycol = []
+	for i in 1:k
+		push!(ycol, "Topic $(i)")
+	end
+end
 
 # ╔═╡ f50104d7-1c06-4813-bc86-1a6d4167d309
 md"""> **Computing LDA**"""
@@ -228,7 +228,7 @@ function ta_structs_from_corpus(citecorp; lc = true, stoplist = [])
 end
 
 # ╔═╡ 9c3ce649-4b24-476b-9798-386b5712000b
-md"""> **UI widgets**"""
+md"""> **UI widgets and canonical references**"""
 
 # ╔═╡ 8eff85fd-02ce-46ec-ba59-3208e73400fb
 hyginus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.cex"
@@ -310,7 +310,8 @@ end
 isnothing(dtmatrix) ? nothing : topterms_md(ϕ, dtmatrix.terms, toptermcount) |> Markdown.parse
 
 # ╔═╡ 084082de-30f5-43a6-9a78-a4e7d2ec99e7
-begin
+if isnothing(ϕ)
+else
 	layout = Layout(
 		title = "Topic $(topicdetail)",
 		xaxis_title = "Term score",
@@ -321,14 +322,36 @@ begin
 	Plot(barview, layout)
 end
 
+# ╔═╡ 4ae018f9-2e20-474b-a99a-964e5d3d6887
+hygwork = "stoa1263.stoa001"
+
+# ╔═╡ 22cc0a3f-bbd6-483e-b407-ef56c8dba75f
+apwork = "tlg0548.tlg001"
+
 # ╔═╡ a7917f32-8d08-4d3e-a34d-4cedbb5b9649
-reff = isnothing(c) ? [] : map(psg -> passagecomponent(psg.urn), c.passages)
+reff = if isnothing(c)  
+	[]  
+else
+	workabbr = ""
+	briefreff = []
+	for psg in c.passages
+	
+		if contains(workcomponent(psg.urn), hygwork)
+			workabbr = "Hyg. "
+		elseif contains(workcomponent(psg.urn), apwork)
+			workabbr = "Ap. "
+		end
+		push!(briefreff, workabbr * passagecomponent(psg.urn))
+	end
+	briefreff
+end
 
 # ╔═╡ 952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
 isnothing(dtmatrix) ? nothing : topterms_md(θ, reff, topdocscount) |> Markdown.parse
 
 # ╔═╡ 45c8ba32-fda0-41e4-9c76-528d191fc298
-begin
+if isnothing(ϕ)
+else
 	doclayout = Layout(
 		title = "Top document scores for topic $(topicdetail)",
 		yaxis_title = "Canonical reference",
@@ -342,24 +365,31 @@ end
 # ╔═╡ c9e0e222-200f-400e-9831-780133df3253
 @bind psgref Select(vcat([""], reff))
 
-# ╔═╡ d6c59846-88d1-48d8-9405-67bac12c5eeb
-if ! isempty(psgref)
-		
-	psgtext = filter(psg -> passagecomponent(psg.urn) == psgref, c.passages)[1].text 
-	"*Text of passage*:\n\n>**$(psgref)**: " * psgtext |> Markdown.parse
-end
-
 # ╔═╡ d82bbca8-e3bc-45fe-b473-fb86e7995650
 docidx = findfirst(r -> r == psgref, reff)
 
-# ╔═╡ 3a922ff3-6b57-4161-8d68-a0cafaa96377
-θ[:,docidx]
-
 # ╔═╡ 280de380-2dd0-4a88-b042-9767921a67d6
-docys = θ[:,docidx]
+docys = isnothing(θ) | isempty(psgref) ? [] : θ[:,docidx]
 
 # ╔═╡ 57779e81-b2c9-4067-a675-4de47646556d
-Plot(bar(x=docxs, y = docys), Layout(title = "Topic scores for passage (document) $(psgref)", height = 200, yaxis_title = "Topic number", xaxis_title = "Topic score in document" ))
+if isnothing(ϕ)
+else
+	Plot(bar(y=docxs, x = docys, orientation = "h"), Layout(title = "Topic scores for passage (document) $(psgref)", height = 200, yaxis_title = "Topic number", xaxis_title = "Score for topic" ))
+end
+
+# ╔═╡ 7be14d53-9eaa-482f-b9f8-870154ab7c52
+"""Strip work abbreviations off of brief string references."""
+function stripref(s)
+	s1 = replace(s, "Ap. " => "" )
+	replace(s1, "Hyg. " => "")
+end
+
+# ╔═╡ d6c59846-88d1-48d8-9405-67bac12c5eeb
+if ! isempty(psgref)
+	stripped = stripref(psgref)
+	psgtext = filter(psg -> passagecomponent(psg.urn) == stripped, c.passages)[1].text 
+	"*Text of passage*:\n\n>**$(psgref)**: " * psgtext |> Markdown.parse
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1214,12 +1244,11 @@ version = "17.4.0+0"
 # ╟─c9e0e222-200f-400e-9831-780133df3253
 # ╟─57779e81-b2c9-4067-a675-4de47646556d
 # ╟─d6c59846-88d1-48d8-9405-67bac12c5eeb
-# ╟─fc12e5a6-6451-4b1e-8300-6d115c94cf66
-# ╠═3a922ff3-6b57-4161-8d68-a0cafaa96377
-# ╠═d82bbca8-e3bc-45fe-b473-fb86e7995650
-# ╠═280de380-2dd0-4a88-b042-9767921a67d6
-# ╠═e8ef7ca6-5910-421d-9892-c3d999937875
 # ╟─8a2f14b8-6fb3-49f3-b161-e06ffe32108a
+# ╟─fc12e5a6-6451-4b1e-8300-6d115c94cf66
+# ╟─d82bbca8-e3bc-45fe-b473-fb86e7995650
+# ╟─280de380-2dd0-4a88-b042-9767921a67d6
+# ╟─e8ef7ca6-5910-421d-9892-c3d999937875
 # ╟─f50104d7-1c06-4813-bc86-1a6d4167d309
 # ╟─d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
 # ╟─543080bf-fa45-42ba-89db-1ba06f2c0f41
@@ -1228,8 +1257,8 @@ version = "17.4.0+0"
 # ╟─2ee1af26-c722-4874-a497-3dcd2d9d39fd
 # ╟─89d1bd74-3e0b-4ef7-b4ed-d0923c00845f
 # ╟─2547227f-99f2-49c6-a8d6-c1dbdda24fd9
-# ╠═2e0e0119-32b5-46f3-aea7-7a447878ce33
-# ╠═dbab6c6e-8016-487a-887a-255c2f25b02e
+# ╟─2e0e0119-32b5-46f3-aea7-7a447878ce33
+# ╟─dbab6c6e-8016-487a-887a-255c2f25b02e
 # ╟─f59dba8a-03d4-4a85-a994-de832e8ddf5f
 # ╟─863fd7c4-5460-4de0-b422-fa38350f7545
 # ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
@@ -1244,5 +1273,8 @@ version = "17.4.0+0"
 # ╠═623099bd-d8fa-452c-b9f2-52e2940a0fb8
 # ╠═8eff85fd-02ce-46ec-ba59-3208e73400fb
 # ╠═b34d675c-9f1a-49da-a4e1-54c1c1d1dcf0
+# ╠═4ae018f9-2e20-474b-a99a-964e5d3d6887
+# ╟─22cc0a3f-bbd6-483e-b407-ef56c8dba75f
+# ╟─7be14d53-9eaa-482f-b9f8-870154ab7c52
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

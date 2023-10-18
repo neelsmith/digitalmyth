@@ -26,11 +26,10 @@ begin
 	
 	using CitableBase, CitableCorpus, CitableText
 	using Orthography
+
+	using PlotlyJS
 	md"*Unhide this cell to see the Julia environment.*"
 end
-
-# ╔═╡ fb7aa807-aef3-424b-b6cd-c05233cac80b
-fromcex("https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.cex", CitableTextCorpus, UrlReader)
 
 # ╔═╡ 6d24ec36-6d02-11ee-24af-7f32effe1a76
 md"""# LDA with Julia `TextAnalysis`"""
@@ -48,53 +47,42 @@ md"""
 !!! note "Compute topic model"
 """
 
-# ╔═╡ 99b012eb-6f17-403e-b541-c1497ee1e7e5
-md"""*Number of topics (`k`)* $(@bind k confirm(Slider(2:40, default = 6, show_value = true)))"""
-
-# ╔═╡ 3044d17c-b365-402a-a276-f3d4ae807cb5
-md"""*Number of iterations* $(@bind iters confirm(Slider(1000:200:4000, show_value = true)))"""
-
 # ╔═╡ 423c2f39-5e1a-4751-989f-b68003d061d4
 md"""*α* $(@bind α confirm(Slider(0:0.1:1.0, default = 0.1, show_value = true)))"""
 
 # ╔═╡ 94672682-2e7e-4f70-b335-01f09f603add
 md"""*β* $(@bind β confirm(Slider(0:0.1:1.0, default = 0.1, show_value = true)))"""
 
+# ╔═╡ 3044d17c-b365-402a-a276-f3d4ae807cb5
+md"""*Number of iterations* $(@bind iters confirm(Slider(1000:200:4000, show_value = true)))"""
+
+# ╔═╡ 99b012eb-6f17-403e-b541-c1497ee1e7e5
+md"""*Number of topics (`k`)* $(@bind k confirm(Slider(2:40, default = 6, show_value = true)))"""
+
 # ╔═╡ 2733adb5-8dfd-4df9-8e28-5aa6dae9c175
 md"""*Computation of ϕ and θ using LDA algorithm*:"""
 
-# ╔═╡ 5c30d252-9e76-4209-b47f-d85ed5f38e5b
+# ╔═╡ 8d5f6c03-a776-4304-9b5f-dfd9c235edbd
 md"""
-!!! note "Interpret the topic model"
-"""
-
-# ╔═╡ 5236cd42-cf50-4dee-8660-b626278fd639
-md"""### View most significant terms for each topic"""
-
-# ╔═╡ 7c90c208-f329-4eb7-be28-08379eb7eaf3
-md"""
-!!! notes "☞ Tip: use the DT Matrix's `terms` member to convert numbers to term strings."
+!!! note "Review results: highest term scores for each topic"
 """
 
 # ╔═╡ 4b742534-045e-43ce-96c1-9ad1587fba80
 md"""*View top terms for each topic* $(@bind toptermcount confirm(Slider(1:30, default = 8, show_value = true)))"""
 
-# ╔═╡ 7d740f6c-9430-4367-90a6-32933c3b4cd7
-md"""### View most significant documents for each topic"""
+# ╔═╡ 1bce7141-c7db-4a86-ac1a-36bff54edc86
+md"""*Plot topic weights for topic:*"""
 
-# ╔═╡ 23606996-1d87-444f-b29a-908f35177b0a
+# ╔═╡ 0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
+@bind topicdetail Slider(1:k, show_value = true)
+
+# ╔═╡ 7d740f6c-9430-4367-90a6-32933c3b4cd7
 md"""
-!!! notes "☞  Tip: use the CITE references to convert documents to canonical references"
+!!! note "View most significant documents for each topic"
 """
 
 # ╔═╡ 0aad525c-1a6d-4a33-a046-1704fb0cbc36
 md"""*View highest scoring passages (documents) for each topic* $(@bind topdocscount confirm(Slider(1:30, default = 8, show_value = true)))"""
-
-# ╔═╡ b11cee00-80e1-4e8e-9b65-5fee473d9091
-md"""### View top passages of text for a given topic"""
-
-# ╔═╡ 3e7a2779-1a28-476a-b665-afed3cd6846c
-md"""> ### TBD"""
 
 # ╔═╡ 0e1fc056-c946-4c53-a046-69c6edec3044
 md"""### View topic rankings for a given passage
@@ -109,41 +97,23 @@ html"""
 <br/><br/><br/><br/>
 """
 
-# ╔═╡ b4359e0f-351c-4b40-a95f-00f607c12609
-md"""> **LDA results**"""
-
-# ╔═╡ 5e68da71-5eb4-4e14-b117-52e3b063c96c
-md"""### Topic-to-terms scores"""
-
-# ╔═╡ b820a2ab-f4ab-46cd-9819-b96dae1b7b06
-md"""Each *row* of ϕ is a topic.  Each column is the score for a term.  The sum of each *row* == 1.0. 
-"""
-
-# ╔═╡ df619570-048c-40c9-aa07-7686bbe52300
-md"""
-From the docs:
-
-`ϕ: ntopics × nwords Sparse matrix of probabilities s.t. sum(ϕ, 1) == 1`
-
-
-"""
-
-# ╔═╡ 4c27b02a-222c-431a-9d00-7b022795efde
-md"""### Topics-to-documents scores"""
-
-# ╔═╡ 2542845b-4409-404b-8a5c-cb26fb9131b7
-md"""Each *row* is a topic. Each column is the score for a document.
-The sum of each *column* == 1.0.
-"""
-
-# ╔═╡ f85d3875-abf0-45cd-bac4-9260a6f1498b
-md"""From the docs:
-
-`θ: ntopics × ndocs Dense matrix of probabilities s.t. sum(θ, 1) == 1`
-"""
-
 # ╔═╡ f50104d7-1c06-4813-bc86-1a6d4167d309
 md"""> **Computing LDA**"""
+
+# ╔═╡ e57a1d64-d14a-44ea-92b5-bd7d73c61aed
+"""Find terms in `termlist` corresponding to top `n` values in a row of
+topic-to-term values.
+"""
+function top_terms(row, termlist; n = 10)
+	sorted = sort(row, rev = true)
+	termvalpairs = []
+	for val in sorted[1:n]
+		
+		rowidx = findfirst(col -> col == val, row)
+		push!(termvalpairs, (termlist[rowidx], val))
+	end
+	termvalpairs
+end
 
 # ╔═╡ d6f842b6-d55f-4705-8dcf-7a1d2c91f616
 """Find passages in `psglist` corresponding to top `n` values in a row of
@@ -160,19 +130,16 @@ function top_docs(row, psglist; n = 10)
 	termvalpairs
 end
 
-# ╔═╡ e57a1d64-d14a-44ea-92b5-bd7d73c61aed
-"""Find terms in `termlist` corresponding to top `n` values in a row of
-topic-to-term values.
-"""
-function top_terms(row, termlist; n = 10)
-	sorted = sort(row, rev = true)
-	termvalpairs = []
-	for val in sorted[1:n]
-		
-		rowidx = findfirst(col -> col == val, row)
-		push!(termvalpairs, (termlist[rowidx], val))
-	end
-	termvalpairs
+# ╔═╡ 89d1bd74-3e0b-4ef7-b4ed-d0923c00845f
+md"""> **Markdown display**"""
+
+# ╔═╡ 2547227f-99f2-49c6-a8d6-c1dbdda24fd9
+"""Compose horizontal bar plot of term scores for a topic."""
+function termsbar(termscores, termlist, numterms)
+	termscorepairs = top_terms(termscores, termlist; n = numterms)
+	xs = map(pr -> pr[2], termscorepairs)
+	ys = map(pr -> pr[1], termscorepairs)
+	bplot = bar(x = xs, y = ys, orientation = "h")
 end
 
 # ╔═╡ f59dba8a-03d4-4a85-a994-de832e8ddf5f
@@ -272,7 +239,7 @@ if isnothing(c)
 	
 else
 md"""
-*Number of stop-word candidates to review* $(@bind top_n confirm(Slider(20:300, default = 100, show_value = true)))
+*Number of stop-word candidates to review* $(@bind top_n confirm(Slider(10:300, default = 100, show_value = true)))
 
 
 *Any **unchecked** terms will be treated as stop words.  **Check** any terms to include in the topic model.*
@@ -319,18 +286,18 @@ end
 # ╠═╡ show_logs = false
 ϕ, θ  = isnothing(dtmatrix) ? (nothing, nothing) : lda(dtmatrix, k, iters, α, β)
 
-# ╔═╡ 341d9af1-b120-49f7-9b8a-0f2dae0e098a
-ϕ
-
-# ╔═╡ 73e82fc2-8fa1-4645-bafd-d26807ecea1b
-θ
-
-
-# ╔═╡ b0ed7772-7872-439c-b444-5d6f937ff1f6
-θ
-
 # ╔═╡ 1fbd8ebc-adaa-4d42-b65f-291faac7633e
 isnothing(dtmatrix) ? nothing : topterms_md(ϕ, dtmatrix.terms, toptermcount) |> Markdown.parse
+
+# ╔═╡ 084082de-30f5-43a6-9a78-a4e7d2ec99e7
+begin
+	layout = Layout(
+		title = "Topic $(topicdetail)",
+		height = 300
+	)
+	barview = termsbar(ϕ[topicdetail,:], dtmatrix.terms, toptermcount)
+	Plot(barview, layout)
+end
 
 # ╔═╡ a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 reff = isnothing(c) ? [] : map(psg -> passagecomponent(psg.urn), c.passages)
@@ -348,6 +315,7 @@ Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
 OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 Orthography = "0b4c9448-09b0-4e78-95ea-3eb3328be36d"
+PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 TextAnalysis = "a2db99b7-8b79-58f8-94bf-bbc811eef33d"
@@ -358,6 +326,7 @@ CitableCorpus = "~0.13.4"
 CitableText = "~0.16.0"
 OrderedCollections = "~1.6.2"
 Orthography = "~0.21.2"
+PlotlyJS = "~0.18.11"
 PlutoUI = "~0.7.52"
 StatsBase = "~0.34.2"
 TextAnalysis = "~0.7.5"
@@ -369,7 +338,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "806032ebdc75547ebd399b7a4429adbc796d7b75"
+project_hash = "f9130c1bf4819bb45b37b671ece0761ba5814fe9"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -401,6 +370,12 @@ version = "1.1.1"
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
+[[deps.AssetRegistry]]
+deps = ["Distributed", "JSON", "Pidfile", "SHA", "Test"]
+git-tree-sha1 = "b25e88db7944f98789130d7b503276bc34bc098e"
+uuid = "bf4720bc-e11a-5d0c-854e-bdca1663c893"
+version = "0.1.0"
+
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
@@ -408,6 +383,12 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 git-tree-sha1 = "43b1a4a8f797c1cddadf60499a8a077d4af2cd2d"
 uuid = "d1d4a3ce-64b1-5f1a-9ba4-7e7e69966f35"
 version = "0.1.7"
+
+[[deps.Blink]]
+deps = ["Base64", "Distributed", "HTTP", "JSExpr", "JSON", "Lazy", "Logging", "MacroTools", "Mustache", "Mux", "Pkg", "Reexport", "Sockets", "WebIO"]
+git-tree-sha1 = "b1c61fd7e757c7e5ca6521ef41df8d929f41e3af"
+uuid = "ad839575-38b3-5650-b840-f874b8c74a25"
+version = "0.12.8"
 
 [[deps.CSV]]
 deps = ["CodecZlib", "Dates", "FilePathsBase", "InlineStrings", "Mmap", "Parsers", "PooledArrays", "PrecompileTools", "SentinelArrays", "Tables", "Unicode", "WeakRefStrings", "WorkerUtilities"]
@@ -445,11 +426,35 @@ git-tree-sha1 = "cd67fc487743b2f0fd4380d4cbd3a24660d0eec8"
 uuid = "944b1d66-785c-5afd-91f1-9de20f533193"
 version = "0.7.3"
 
+[[deps.ColorSchemes]]
+deps = ["ColorTypes", "ColorVectorSpace", "Colors", "FixedPointNumbers", "PrecompileTools", "Random"]
+git-tree-sha1 = "67c1f244b991cad9b0aa4b7540fb758c2488b129"
+uuid = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
+version = "3.24.0"
+
 [[deps.ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
 git-tree-sha1 = "eb7f0f8307f71fac7c606984ea5fb2817275d6e4"
 uuid = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
 version = "0.11.4"
+
+[[deps.ColorVectorSpace]]
+deps = ["ColorTypes", "FixedPointNumbers", "LinearAlgebra", "Requires", "Statistics", "TensorCore"]
+git-tree-sha1 = "a1f44953f2382ebb937d60dafbe2deea4bd23249"
+uuid = "c3611d14-8923-5661-9e6a-0046d554d3a4"
+version = "0.10.0"
+
+    [deps.ColorVectorSpace.extensions]
+    SpecialFunctionsExt = "SpecialFunctions"
+
+    [deps.ColorVectorSpace.weakdeps]
+    SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
+
+[[deps.Colors]]
+deps = ["ColorTypes", "FixedPointNumbers", "Reexport"]
+git-tree-sha1 = "fc08e5930ee9a4e03f84bfb5211cb54e7769758a"
+uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
+version = "0.12.10"
 
 [[deps.Compat]]
 deps = ["UUIDs"]
@@ -557,6 +562,12 @@ git-tree-sha1 = "335bfdceacc84c5cdf16aadc768aa5ddfc5383cc"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
 version = "0.8.4"
 
+[[deps.FunctionalCollections]]
+deps = ["Test"]
+git-tree-sha1 = "04cb9cfaa6ba5311973994fe3496ddec19b6292a"
+uuid = "de31a74c-ac4f-5751-b3fd-e18cd04993ca"
+version = "0.5.0"
+
 [[deps.Future]]
 deps = ["Random"]
 uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
@@ -572,6 +583,12 @@ deps = ["Base64", "CodecZlib", "ConcurrentUtilities", "Dates", "ExceptionUnwrapp
 git-tree-sha1 = "5eab648309e2e060198b45820af1a37182de3cce"
 uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
 version = "1.10.0"
+
+[[deps.Hiccup]]
+deps = ["MacroTools", "Test"]
+git-tree-sha1 = "6187bb2d5fcbb2007c39e7ac53308b0d371124bd"
+uuid = "9fb69e20-1954-56bb-a84f-559cc56a8ff7"
+version = "0.2.2"
 
 [[deps.Hyperscript]]
 deps = ["Test"]
@@ -622,17 +639,40 @@ git-tree-sha1 = "7e5d6779a1e09a36db2a7b6cff50942a0a7d0fca"
 uuid = "692b3bcd-3c85-4b1f-b108-f13ce0eb3210"
 version = "1.5.0"
 
+[[deps.JSExpr]]
+deps = ["JSON", "MacroTools", "Observables", "WebIO"]
+git-tree-sha1 = "b413a73785b98474d8af24fd4c8a975e31df3658"
+uuid = "97c1335a-c9c5-57fe-bc5d-ec35cebe8660"
+version = "0.5.4"
+
 [[deps.JSON]]
 deps = ["Dates", "Mmap", "Parsers", "Unicode"]
 git-tree-sha1 = "31e996f0a15c7b280ba9f76636b3ff9e2ae58c9a"
 uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 version = "0.21.4"
 
+[[deps.Kaleido_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "43032da5832754f58d14a91ffbe86d5f176acda9"
+uuid = "f7e6163d-2fa5-5f23-b69c-1db539e41963"
+version = "0.2.1+0"
+
+[[deps.LaTeXStrings]]
+git-tree-sha1 = "f2355693d6778a178ade15952b7ac47a4ff97996"
+uuid = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+version = "1.3.0"
+
 [[deps.Languages]]
 deps = ["InteractiveUtils", "JSON", "RelocatableFolders"]
 git-tree-sha1 = "85b0221304a723f3fc5221f33b471675e5f64e74"
 uuid = "8ef0a80b-9436-5d2c-a485-80b904378c43"
 version = "0.4.4"
+
+[[deps.Lazy]]
+deps = ["MacroTools"]
+git-tree-sha1 = "1370f8202dac30758f3c345f9909b97f53d87d3f"
+uuid = "50d2b5c4-7a5e-59d5-8109-a42b560f39c0"
+version = "0.15.1"
 
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
@@ -690,6 +730,12 @@ git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
 uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
 version = "0.1.4"
 
+[[deps.MacroTools]]
+deps = ["Markdown", "Random"]
+git-tree-sha1 = "9ee1618cbf5240e6d4e0371d6f24065083f60c48"
+uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
+version = "0.5.11"
+
 [[deps.Markdown]]
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
@@ -718,9 +764,26 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
 version = "2022.10.11"
 
+[[deps.Mustache]]
+deps = ["Printf", "Tables"]
+git-tree-sha1 = "821e918c170ead5298ff84bffee41dd28929a681"
+uuid = "ffc61752-8dc7-55ee-8c37-f3e9cdd09e70"
+version = "1.0.17"
+
+[[deps.Mux]]
+deps = ["AssetRegistry", "Base64", "HTTP", "Hiccup", "MbedTLS", "Pkg", "Sockets"]
+git-tree-sha1 = "0bdaa479939d2a1f85e2f93e38fbccfcb73175a5"
+uuid = "a975b10e-0019-58db-a62f-e48ff68538c9"
+version = "1.0.1"
+
 [[deps.NetworkOptions]]
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
+
+[[deps.Observables]]
+git-tree-sha1 = "6862738f9796b3edc1c09d0890afce4eca9e7e93"
+uuid = "510215fc-4207-5dde-b226-833fc4488ee2"
+version = "0.5.4"
 
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
@@ -750,16 +813,40 @@ git-tree-sha1 = "2c7ad8379d41a57687b95d8e21a48a7145c6b77a"
 uuid = "0b4c9448-09b0-4e78-95ea-3eb3328be36d"
 version = "0.21.2"
 
+[[deps.Parameters]]
+deps = ["OrderedCollections", "UnPack"]
+git-tree-sha1 = "34c0e9ad262e5f7fc75b10a9952ca7692cfc5fbe"
+uuid = "d96e819e-fc66-5662-9728-84c9c7592b0a"
+version = "0.12.3"
+
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
 git-tree-sha1 = "716e24b21538abc91f6205fd1d8363f39b442851"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
 version = "2.7.2"
 
+[[deps.Pidfile]]
+deps = ["FileWatching", "Test"]
+git-tree-sha1 = "2d8aaf8ee10df53d0dfb9b8ee44ae7c04ced2b03"
+uuid = "fa939f87-e72e-5be4-a000-7fc836dbe307"
+version = "1.3.0"
+
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 version = "1.9.0"
+
+[[deps.PlotlyBase]]
+deps = ["ColorSchemes", "Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "LaTeXStrings", "Logging", "Parameters", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
+git-tree-sha1 = "56baf69781fc5e61607c3e46227ab17f7040ffa2"
+uuid = "a03496cd-edff-5a9b-9e67-9cda94a718b5"
+version = "0.8.19"
+
+[[deps.PlotlyJS]]
+deps = ["Base64", "Blink", "DelimitedFiles", "JSExpr", "JSON", "Kaleido_jll", "Markdown", "Pkg", "PlotlyBase", "REPL", "Reexport", "Requires", "WebIO"]
+git-tree-sha1 = "3db9e7724e299684bf0ca8f245c0265c4bdd8dc6"
+uuid = "f0f68f2c-4968-5e81-91da-67840de0976a"
+version = "0.18.11"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
@@ -925,6 +1012,12 @@ deps = ["ArgTools", "SHA"]
 uuid = "a4e569a6-e804-4fa4-b0f3-eef7a1d5b13e"
 version = "1.10.0"
 
+[[deps.TensorCore]]
+deps = ["LinearAlgebra"]
+git-tree-sha1 = "1feb45f88d133a655e001435632f019a9a1bcdb6"
+uuid = "62fd8b95-f654-4bbd-a8a5-9c27f68ccd50"
+version = "0.1.1"
+
 [[deps.Test]]
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
@@ -970,6 +1063,11 @@ version = "1.5.1"
 deps = ["Random", "SHA"]
 uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 
+[[deps.UnPack]]
+git-tree-sha1 = "387c1f73762231e86e0c9c5443ce3b4a0a9a0c2b"
+uuid = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
+version = "1.0.2"
+
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 
@@ -978,6 +1076,24 @@ deps = ["DataAPI", "InlineStrings", "Parsers"]
 git-tree-sha1 = "b1be2855ed9ed8eac54e5caff2afcdb442d52c23"
 uuid = "ea10d353-3f73-51f8-a26c-33c1cb351aa5"
 version = "1.4.2"
+
+[[deps.WebIO]]
+deps = ["AssetRegistry", "Base64", "Distributed", "FunctionalCollections", "JSON", "Logging", "Observables", "Pkg", "Random", "Requires", "Sockets", "UUIDs", "WebSockets", "Widgets"]
+git-tree-sha1 = "0eef0765186f7452e52236fa42ca8c9b3c11c6e3"
+uuid = "0f1e0344-ec1d-5b48-a673-e5cf874b6c29"
+version = "0.8.21"
+
+[[deps.WebSockets]]
+deps = ["Base64", "Dates", "HTTP", "Logging", "Sockets"]
+git-tree-sha1 = "4162e95e05e79922e44b9952ccbc262832e4ad07"
+uuid = "104b5d7c-a370-577a-8038-80a2059c5097"
+version = "1.6.0"
+
+[[deps.Widgets]]
+deps = ["Colors", "Dates", "Observables", "OrderedCollections"]
+git-tree-sha1 = "fcdae142c1cfc7d89de2d11e08721d0f2f86c98a"
+uuid = "cc8bc4a8-27d6-5769-a93b-9d913e69aa62"
+version = "0.6.6"
 
 [[deps.WordTokenizers]]
 deps = ["DataDeps", "HTML_Entities", "StrTables", "Unicode"]
@@ -1013,7 +1129,6 @@ version = "17.4.0+0"
 
 # ╔═╡ Cell order:
 # ╟─0c6337e6-4de7-4e76-9589-42bc170a931a
-# ╠═fb7aa807-aef3-424b-b6cd-c05233cac80b
 # ╟─6d24ec36-6d02-11ee-24af-7f32effe1a76
 # ╟─e2ea0057-9a4c-4ddf-985a-e107fb3b0b38
 # ╟─fcef1df7-4cac-4be1-9e98-67b835d81fb8
@@ -1022,48 +1137,38 @@ version = "17.4.0+0"
 # ╟─60af1314-1b94-43af-954e-f1f984582144
 # ╟─df880285-50a9-4a18-9203-0971b3e45924
 # ╟─dceb616c-e86d-40f9-815b-d8acbf2744f0
-# ╟─99b012eb-6f17-403e-b541-c1497ee1e7e5
-# ╟─3044d17c-b365-402a-a276-f3d4ae807cb5
 # ╟─423c2f39-5e1a-4751-989f-b68003d061d4
 # ╟─94672682-2e7e-4f70-b335-01f09f603add
+# ╟─3044d17c-b365-402a-a276-f3d4ae807cb5
+# ╟─99b012eb-6f17-403e-b541-c1497ee1e7e5
 # ╟─2733adb5-8dfd-4df9-8e28-5aa6dae9c175
 # ╟─2350681e-861a-4f51-b4ca-1d0e29311b1f
-# ╟─5c30d252-9e76-4209-b47f-d85ed5f38e5b
-# ╟─5236cd42-cf50-4dee-8660-b626278fd639
-# ╟─7c90c208-f329-4eb7-be28-08379eb7eaf3
+# ╟─8d5f6c03-a776-4304-9b5f-dfd9c235edbd
 # ╟─4b742534-045e-43ce-96c1-9ad1587fba80
 # ╟─1fbd8ebc-adaa-4d42-b65f-291faac7633e
+# ╟─1bce7141-c7db-4a86-ac1a-36bff54edc86
+# ╟─0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
+# ╟─084082de-30f5-43a6-9a78-a4e7d2ec99e7
 # ╟─7d740f6c-9430-4367-90a6-32933c3b4cd7
-# ╟─23606996-1d87-444f-b29a-908f35177b0a
 # ╟─0aad525c-1a6d-4a33-a046-1704fb0cbc36
 # ╟─952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
-# ╟─b11cee00-80e1-4e8e-9b65-5fee473d9091
-# ╟─3e7a2779-1a28-476a-b665-afed3cd6846c
 # ╟─0e1fc056-c946-4c53-a046-69c6edec3044
 # ╟─8a2f14b8-6fb3-49f3-b161-e06ffe32108a
-# ╟─b4359e0f-351c-4b40-a95f-00f607c12609
-# ╟─5e68da71-5eb4-4e14-b117-52e3b063c96c
-# ╟─b820a2ab-f4ab-46cd-9819-b96dae1b7b06
-# ╠═341d9af1-b120-49f7-9b8a-0f2dae0e098a
-# ╟─df619570-048c-40c9-aa07-7686bbe52300
-# ╟─73e82fc2-8fa1-4645-bafd-d26807ecea1b
-# ╟─4c27b02a-222c-431a-9d00-7b022795efde
-# ╟─2542845b-4409-404b-8a5c-cb26fb9131b7
-# ╠═b0ed7772-7872-439c-b444-5d6f937ff1f6
-# ╟─f85d3875-abf0-45cd-bac4-9260a6f1498b
 # ╟─f50104d7-1c06-4813-bc86-1a6d4167d309
 # ╟─d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
 # ╟─543080bf-fa45-42ba-89db-1ba06f2c0f41
-# ╟─d6f842b6-d55f-4705-8dcf-7a1d2c91f616
-# ╟─2e0e0119-32b5-46f3-aea7-7a447878ce33
 # ╟─e57a1d64-d14a-44ea-92b5-bd7d73c61aed
+# ╟─d6f842b6-d55f-4705-8dcf-7a1d2c91f616
+# ╟─89d1bd74-3e0b-4ef7-b4ed-d0923c00845f
+# ╟─2547227f-99f2-49c6-a8d6-c1dbdda24fd9
+# ╟─2e0e0119-32b5-46f3-aea7-7a447878ce33
 # ╟─dbab6c6e-8016-487a-887a-255c2f25b02e
 # ╟─f59dba8a-03d4-4a85-a994-de832e8ddf5f
 # ╟─863fd7c4-5460-4de0-b422-fa38350f7545
 # ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
 # ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
-# ╠═a7917f32-8d08-4d3e-a34d-4cedbb5b9649
+# ╟─a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 # ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
 # ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8
 # ╟─5827632f-bd27-4658-a42b-d8fb7ff3e8bb

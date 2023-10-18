@@ -29,6 +29,9 @@ begin
 	md"*Unhide this cell to see the Julia environment.*"
 end
 
+# ╔═╡ fb7aa807-aef3-424b-b6cd-c05233cac80b
+fromcex("https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.cex", CitableTextCorpus, UrlReader)
+
 # ╔═╡ 6d24ec36-6d02-11ee-24af-7f32effe1a76
 md"""# LDA with Julia `TextAnalysis`"""
 
@@ -1010,6 +1013,7 @@ version = "17.4.0+0"
 
 # ╔═╡ Cell order:
 # ╟─0c6337e6-4de7-4e76-9589-42bc170a931a
+# ╠═fb7aa807-aef3-424b-b6cd-c05233cac80b
 # ╟─6d24ec36-6d02-11ee-24af-7f32effe1a76
 # ╟─e2ea0057-9a4c-4ddf-985a-e107fb3b0b38
 # ╟─fcef1df7-4cac-4be1-9e98-67b835d81fb8

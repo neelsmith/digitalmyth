@@ -17,22 +17,40 @@ end
 # ╔═╡ 0c6337e6-4de7-4e76-9589-42bc170a931a
 # ╠═╡ show_logs = false
 begin
-	using TextAnalysis
 	using PlutoUI, Markdown
 	using Downloads 
-
-	using StatsBase
-	using OrderedCollections
 	
 	using CitableBase, CitableCorpus, CitableText
 	using Orthography
-
+	
+	using StatsBase
+	using OrderedCollections
+	
+	using TextAnalysis
+	
 	using PlotlyJS
 	md"*Unhide this cell to see the Julia environment.*"
 end
 
+# ╔═╡ c0543064-597c-4104-b26a-333437ddf4d8
+nbversion = "1.0"
+
 # ╔═╡ 6d24ec36-6d02-11ee-24af-7f32effe1a76
-md"""# LDA topic modeling with the Julia `TextAnalysis` package"""
+md"""# LDA topic modeling with the Julia `TextAnalysis` package
+
+*Notebook version* **$(nbversion)**.
+
+"""
+
+# ╔═╡ 082b0f1f-12b2-4f09-be8f-4e2cbf35d714
+md"""*See release notes* $(@bind history CheckBox())"""
+
+# ╔═╡ f0bd2768-68bd-4535-b90e-34359b3030f9
+if history
+md"""
+- **1.0**: initial release
+"""
+end
 
 # ╔═╡ e2ea0057-9a4c-4ddf-985a-e107fb3b0b38
 md"""
@@ -1250,8 +1268,11 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
+# ╟─c0543064-597c-4104-b26a-333437ddf4d8
 # ╟─0c6337e6-4de7-4e76-9589-42bc170a931a
 # ╟─6d24ec36-6d02-11ee-24af-7f32effe1a76
+# ╟─082b0f1f-12b2-4f09-be8f-4e2cbf35d714
+# ╟─f0bd2768-68bd-4535-b90e-34359b3030f9
 # ╟─e2ea0057-9a4c-4ddf-985a-e107fb3b0b38
 # ╟─fcef1df7-4cac-4be1-9e98-67b835d81fb8
 # ╟─0e6f70dc-2da6-43f1-9ded-66dcaa92877d
@@ -1299,7 +1320,7 @@ version = "17.4.0+0"
 # ╟─863fd7c4-5460-4de0-b422-fa38350f7545
 # ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
-# ╠═fd23b519-3d5f-4a88-931c-a3118fbc256e
+# ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
 # ╟─a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 # ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
 # ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8

@@ -19,6 +19,8 @@ has_children: true
 
 ## Helpful code
 
+
+- Resources from [extending previous assignments](./julia/extending/) (now including [topic modeling Pluto notebook](./julia/extending/lda-textanalysis.html))
 - A [template Pluto notebook](./text_template_nb.html) with just the code you need to select the URL for a text of Apollodorus or Hyginus from a menu.
 - A Pluto notebook for [searching canonically citable text of Apollodorus](./search-apollodorus.html)
 

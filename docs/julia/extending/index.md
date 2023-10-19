@@ -9,6 +9,7 @@ has_children: true
 
 # Extending assignments: resources from presentations
 
-- [Using Markdown](./Markdown.html) (a Julia notebook)
-- [Working with canonically citable texts](./search-citable-text.html): a Julia notebook implementing simple full-text search
-- ["Fuzzy" matching](./fuzzy-matching.html): Levenshtein edit distance (a Julia notebook)
+- [Using Markdown](./Markdown.html) (a Pluto notebook)
+- [Working with canonically citable texts](./search-citable-text.html): a Pluto notebook implementing simple full-text search
+- ["Fuzzy" matching](./fuzzy-matching.html): Levenshtein edit distance (a Pluto notebook)
+- [Topic modeling with LDA](./lda-textanalysis.html) (a Pluto notebook)

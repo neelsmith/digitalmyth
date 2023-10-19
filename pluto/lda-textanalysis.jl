@@ -29,12 +29,12 @@ begin
 	using TextAnalysis
 	
 	using PlotlyJS
-	using TSne
+	
 	md"*Unhide this cell to see the Julia environment.*"
 end
 
 # ╔═╡ c0543064-597c-4104-b26a-333437ddf4d8
-nbversion = "1.1.0"
+nbversion = "2.0.0"
 
 # ╔═╡ 6d24ec36-6d02-11ee-24af-7f32effe1a76
 md"""# LDA topic modeling with the Julia `TextAnalysis` package
@@ -49,6 +49,7 @@ md"""*See release notes* $(@bind release_history CheckBox())"""
 # ╔═╡ f0bd2768-68bd-4535-b90e-34359b3030f9
 if release_history
 md"""
+- **2.0.0**: remove TSne reduction of documents in topic space in anctipation of switch to using UMAP for dimensionality reduction; fixes bug in plotting of topic distribution per document; supports labelling of Gettysburg address versions.
 - **1.1.0**: add plotting of TSne reduction of documents in topic space
 - **1.0.0**: initial release
 """
@@ -88,10 +89,10 @@ md"""
 """
 
 # ╔═╡ 4b742534-045e-43ce-96c1-9ad1587fba80
-md"""*View top terms for each topic* $(@bind toptermcount confirm(Slider(1:30, default = 8, show_value = true)))"""
+md"""*View top terms for each topic*: $( @bind toptermcount confirm(Slider(1:30, default =10, show_value = true)))"""
 
 # ╔═╡ 1bce7141-c7db-4a86-ac1a-36bff54edc86
-md"""*Plot topic weights for topic:*"""
+md"""*Plot term weights for topic:*"""
 
 # ╔═╡ 0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
 @bind topicdetail Slider(1:k, show_value = true)
@@ -129,11 +130,12 @@ md"""> **Find document data in theta**
 """
 
 # ╔═╡ e8ef7ca6-5910-421d-9892-c3d999937875
-docxs = begin
+docys = begin
 	ycol = []
 	for i in 1:k
 		push!(ycol, "Topic $(i)")
 	end
+	ycol
 end
 
 # ╔═╡ f50104d7-1c06-4813-bc86-1a6d4167d309
@@ -253,7 +255,16 @@ function ta_structs_from_corpus(citecorp; lc = true, stoplist = [])
 end
 
 # ╔═╡ 9c3ce649-4b24-476b-9798-386b5712000b
-md"""> **UI widgets and canonical references**"""
+md"""> **UI widgets, URLs and canonical references**"""
+
+# ╔═╡ cdb90b88-a4f1-4669-a2fc-abfef3a78933
+bancroft = "https://raw.githubusercontent.com/neelsmith/CitableCorpusAnalysis.jl/main/test/data/gettysburg/bancroft.cex"
+
+# ╔═╡ 359e8801-9361-43a1-a0de-dbebb572437c
+hay = "https://raw.githubusercontent.com/neelsmith/CitableCorpusAnalysis.jl/main/test/data/gettysburg/hay.cex"
+
+# ╔═╡ cd4b1dc2-3b5f-4b27-9db8-7890c2ad7e07
+bliss = "https://raw.githubusercontent.com/neelsmith/CitableCorpusAnalysis.jl/main/test/data/gettysburg/bliss.cex"
 
 # ╔═╡ 8eff85fd-02ce-46ec-ba59-3208e73400fb
 hyginus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.cex"
@@ -262,7 +273,7 @@ hyginus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts
 apollodorus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/main/texts/apollodorus.cex"
 
 # ╔═╡ 623099bd-d8fa-452c-b9f2-52e2940a0fb8
-menu = [[] => "Choose a text", [hyginus_url] => "Hyginus", [apollodorus_url] => "Apollodorus", [apollodorus_url, hyginus_url] => "Both"]
+menu = [[] => "Choose a text", [hyginus_url] => "Hyginus", [apollodorus_url] => "Apollodorus", [apollodorus_url, hyginus_url] => "Both mythographers", [bliss, hay] => "Two versions of the Gettsyburg address"]
 
 # ╔═╡ fcef1df7-4cac-4be1-9e98-67b835d81fb8
 @bind text_url Select(menu)
@@ -277,8 +288,13 @@ apwork = "tlg0548.tlg001"
 """Strip work abbreviations off of brief string references."""
 function stripref(s)
 	s1 = replace(s, "Ap. " => "" )
-	replace(s1, "Hyg. " => "")
+	s2 = replace(s1, "Hyg. " => "")
+	s3 = replace(s2, "Bliss " => "")
+	s4 = replace(s3, "Hay " => "")
 end
+
+# ╔═╡ d0a12142-20fa-42ac-b220-cf7bca4a5be4
+md"""> **Combining citable corpora**"""
 
 # ╔═╡ 54bb7773-bd62-4cc0-9e19-35fc088a1a1f
 """
@@ -387,7 +403,7 @@ isnothing(dtmatrix) ? nothing : topterms_md(ϕ, dtmatrix.terms, toptermcount) |>
 if isnothing(ϕ)
 else
 	layout = Layout(
-		title = "Topic $(topicdetail)",
+		title = "Top $(toptermcount) terms for topic $(topicdetail)",
 		xaxis_title = "Term score",
 		yaxis_title = "Term",
 		height = 300
@@ -408,6 +424,10 @@ else
 			workabbr = "Hyg. "
 		elseif contains(workcomponent(psg.urn), apwork)
 			workabbr = "Ap. "
+		elseif contains(workcomponent(psg.urn), "bliss")
+			workabbr = "Bliss "
+		elseif contains(workcomponent(psg.urn), "hay")
+			workabbr = "Hay "
 		end
 		push!(briefreff, workabbr * passagecomponent(psg.urn))
 	end
@@ -444,48 +464,13 @@ end
 docidx = findfirst(r -> r == psgref, reff)
 
 # ╔═╡ 280de380-2dd0-4a88-b042-9767921a67d6
-docys = isnothing(θ) | isempty(psgref) ? [] : θ[:,docidx]
+docxs = isnothing(θ) | isempty(psgref) ? [] : θ[:,docidx]
 
 # ╔═╡ 57779e81-b2c9-4067-a675-4de47646556d
 if isnothing(ϕ)
 else
-	Plot(bar(y=docxs, x = docys, orientation = "h"), Layout(title = "Topic scores for passage (document) $(psgref)", height = 200, yaxis_title = "Topic number", xaxis_title = "Score for topic" ))
+	Plot(bar(y=docys, x = docxs, orientation = "h"), Layout(title = "Topic scores for passage (document) $(psgref)", height = 200, yaxis_title = "Topic number", xaxis_title = "Score for topic" ))
 end
-
-# ╔═╡ 0b32cc4f-3263-4c26-8591-a385fdcbbcd8
-md"""> **TSne reduction**"""
-
-# ╔═╡ 3484f277-83b8-4924-8b13-243b284386b6
-"""Scale data for plotting with TSne.
-This is voodoo from the TSne docs.
-"""
-rescale(A; dims=1) = (A .- mean(A, dims=dims)) ./ max.(std(A, dims=dims), eps())
-
-# ╔═╡ d9938322-6a16-475b-b276-f98768088ceb
-rescaled = rescale(θ, dims=1)
-
-# ╔═╡ 071d771b-6549-4991-a237-087b1f5a7480
-# ╠═╡ show_logs = false
-# Final TSne reduction:
-reduced = tsne(transpose(rescaled))
-
-# ╔═╡ a5cac246-3efe-4362-bf49-8163698bf313
-xs = reduced[:,1]
-
-# ╔═╡ c73318ff-c281-401a-8824-6c8890a88f6e
-ys = reduced[:,2]
-
-# ╔═╡ e753de93-c464-4642-adb3-46eda45df8bf
-tsneplot = scatter(x = xs, y = ys, mode = "markers")
-
-# ╔═╡ 8d52220a-3ab5-4428-b1e3-65afa3485666
-tsnelayout = Layout(
-	title = "Plot of documents in topic space",
-	height = 300
-)
-
-# ╔═╡ 553174fd-3b15-4a0b-b083-b103dc9e982e
-Plot(tsneplot, tsnelayout)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -500,20 +485,7 @@ Orthography = "0b4c9448-09b0-4e78-95ea-3eb3328be36d"
 PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-TSne = "24678dba-d5e9-5843-a4c6-250288b04835"
 TextAnalysis = "a2db99b7-8b79-58f8-94bf-bbc811eef33d"
-
-[compat]
-CitableBase = "~10.3.0"
-CitableCorpus = "~0.13.4"
-CitableText = "~0.16.0"
-OrderedCollections = "~1.6.2"
-Orthography = "~0.21.2"
-PlotlyJS = "~0.18.11"
-PlutoUI = "~0.7.52"
-StatsBase = "~0.34.2"
-TSne = "~1.3.0"
-TextAnalysis = "~0.7.5"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -522,7 +494,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "dd6b4dba4f0cae5c34c46cc87747af6f8728bf01"
+project_hash = "23f2a37e74604d0f4d72077d21fb92a1668ce470"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -606,9 +578,9 @@ version = "0.10.1"
 
 [[deps.CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
-git-tree-sha1 = "cd67fc487743b2f0fd4380d4cbd3a24660d0eec8"
+git-tree-sha1 = "02aa26a4cf76381be7f66e020a3eddeb27b0a092"
 uuid = "944b1d66-785c-5afd-91f1-9de20f533193"
-version = "0.7.3"
+version = "0.7.2"
 
 [[deps.ColorSchemes]]
 deps = ["ColorTypes", "ColorVectorSpace", "Colors", "FixedPointNumbers", "PrecompileTools", "Random"]
@@ -703,20 +675,6 @@ deps = ["Indexing", "Random", "Serialization"]
 git-tree-sha1 = "e82c3c97b5b4ec111f3c1b55228cebc7510525a2"
 uuid = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
 version = "0.3.25"
-
-[[deps.Distances]]
-deps = ["LinearAlgebra", "Statistics", "StatsAPI"]
-git-tree-sha1 = "5225c965635d8c21168e32a12954675e7bea1151"
-uuid = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
-version = "0.10.10"
-
-    [deps.Distances.extensions]
-    DistancesChainRulesCoreExt = "ChainRulesCore"
-    DistancesSparseArraysExt = "SparseArrays"
-
-    [deps.Distances.weakdeps]
-    ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
-    SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
@@ -919,9 +877,9 @@ uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
 [[deps.LoggingExtras]]
 deps = ["Dates", "Logging"]
-git-tree-sha1 = "c1dd6d7978c12545b4179fb6153b9250c96b0075"
+git-tree-sha1 = "0d097476b6c381ab7906460ef1ef1638fbce1d91"
 uuid = "e6f89c97-d47a-5376-807f-9c37f3926c36"
-version = "1.0.3"
+version = "1.0.2"
 
 [[deps.MIMEs]]
 git-tree-sha1 = "65f28ad4b594aebe22157d6fac869786a255b7eb"
@@ -1042,9 +1000,9 @@ version = "0.8.19"
 
 [[deps.PlotlyJS]]
 deps = ["Base64", "Blink", "DelimitedFiles", "JSExpr", "JSON", "Kaleido_jll", "Markdown", "Pkg", "PlotlyBase", "REPL", "Reexport", "Requires", "WebIO"]
-git-tree-sha1 = "3db9e7724e299684bf0ca8f245c0265c4bdd8dc6"
+git-tree-sha1 = "7452869933cd5af22f59557390674e8679ab2338"
 uuid = "f0f68f2c-4968-5e81-91da-67840de0976a"
-version = "0.18.11"
+version = "0.18.10"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
@@ -1095,9 +1053,9 @@ version = "1.2.2"
 
 [[deps.RelocatableFolders]]
 deps = ["SHA", "Scratch"]
-git-tree-sha1 = "ffdaf70d81cf6ff22c2b6e733c900c3321cab864"
+git-tree-sha1 = "90bc7a7c96410424509e4263e277e43250c05691"
 uuid = "05181044-ff0b-4ac5-8273-598c1e38db00"
-version = "1.0.1"
+version = "1.0.0"
 
 [[deps.Requires]]
 deps = ["UUIDs"]
@@ -1193,12 +1151,6 @@ deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 version = "1.0.3"
 
-[[deps.TSne]]
-deps = ["Distances", "LinearAlgebra", "Printf", "ProgressMeter", "Statistics"]
-git-tree-sha1 = "6f1dfbf9dad6958439816fa9c5fa20898203fdf4"
-uuid = "24678dba-d5e9-5843-a4c6-250288b04835"
-version = "1.3.0"
-
 [[deps.TableTraits]]
 deps = ["IteratorInterfaceExtensions"]
 git-tree-sha1 = "c06b2f539df1c6efa794486abfb6ed2022561a39"
@@ -1239,18 +1191,15 @@ uuid = "a2db99b7-8b79-58f8-94bf-bbc811eef33d"
 version = "0.7.5"
 
 [[deps.TranscodingStreams]]
-git-tree-sha1 = "7c9196c8c83802d7b8ca7a6551a0236edd3bf731"
+deps = ["Random", "Test"]
+git-tree-sha1 = "9a6ae7ed916312b41236fcef7e0af564ef934769"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.10.0"
-weakdeps = ["Random", "Test"]
-
-    [deps.TranscodingStreams.extensions]
-    TestExt = ["Test", "Random"]
+version = "0.9.13"
 
 [[deps.Tricks]]
-git-tree-sha1 = "eae1bb484cd63b36999ee58be2de6c178105112f"
+git-tree-sha1 = "aadb748be58b492045b4f56166b5188aa63ce549"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
-version = "0.1.8"
+version = "0.1.7"
 
 [[deps.TypedTables]]
 deps = ["Adapt", "Dictionaries", "Indexing", "SplitApplyCombine", "Tables", "Unicode"]
@@ -1259,9 +1208,9 @@ uuid = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"
 version = "1.4.3"
 
 [[deps.URIs]]
-git-tree-sha1 = "67db6cc7b3821e19ebe75791a9dd19c9b1188f2b"
+git-tree-sha1 = "b7a5e99f24892b6824a954199a45e9ffcc1c70f0"
 uuid = "5c2747f8-b7ea-4ff2-ba2e-563bfd36b1d4"
-version = "1.5.1"
+version = "1.5.0"
 
 [[deps.UUIDs]]
 deps = ["Random", "SHA"]
@@ -1357,7 +1306,6 @@ version = "17.4.0+0"
 # ╟─0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
 # ╟─084082de-30f5-43a6-9a78-a4e7d2ec99e7
 # ╟─7d740f6c-9430-4367-90a6-32933c3b4cd7
-# ╠═553174fd-3b15-4a0b-b083-b103dc9e982e
 # ╟─0aad525c-1a6d-4a33-a046-1704fb0cbc36
 # ╟─952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
 # ╟─45c8ba32-fda0-41e4-9c76-528d191fc298
@@ -1387,27 +1335,23 @@ version = "17.4.0+0"
 # ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
 # ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
-# ╟─a7917f32-8d08-4d3e-a34d-4cedbb5b9649
+# ╠═a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 # ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
 # ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8
 # ╟─5827632f-bd27-4658-a42b-d8fb7ff3e8bb
 # ╟─0439bf2f-69a1-4aa8-a71a-dd058ebf5bfe
 # ╟─9c3ce649-4b24-476b-9798-386b5712000b
-# ╠═623099bd-d8fa-452c-b9f2-52e2940a0fb8
+# ╟─623099bd-d8fa-452c-b9f2-52e2940a0fb8
+# ╠═cdb90b88-a4f1-4669-a2fc-abfef3a78933
+# ╠═359e8801-9361-43a1-a0de-dbebb572437c
+# ╠═cd4b1dc2-3b5f-4b27-9db8-7890c2ad7e07
 # ╠═8eff85fd-02ce-46ec-ba59-3208e73400fb
 # ╠═b34d675c-9f1a-49da-a4e1-54c1c1d1dcf0
 # ╠═4ae018f9-2e20-474b-a99a-964e5d3d6887
 # ╟─22cc0a3f-bbd6-483e-b407-ef56c8dba75f
 # ╟─7be14d53-9eaa-482f-b9f8-870154ab7c52
+# ╟─d0a12142-20fa-42ac-b220-cf7bca4a5be4
 # ╟─54bb7773-bd62-4cc0-9e19-35fc088a1a1f
 # ╟─a1db21b6-6d6f-4dcd-a0e2-f538d3a25a13
-# ╟─0b32cc4f-3263-4c26-8591-a385fdcbbcd8
-# ╟─3484f277-83b8-4924-8b13-243b284386b6
-# ╠═d9938322-6a16-475b-b276-f98768088ceb
-# ╟─071d771b-6549-4991-a237-087b1f5a7480
-# ╠═a5cac246-3efe-4362-bf49-8163698bf313
-# ╠═c73318ff-c281-401a-8824-6c8890a88f6e
-# ╠═e753de93-c464-4642-adb3-46eda45df8bf
-# ╠═8d52220a-3ab5-4428-b1e3-65afa3485666
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

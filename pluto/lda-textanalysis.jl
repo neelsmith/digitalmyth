@@ -105,6 +105,9 @@ md"""
 # ╔═╡ 0aad525c-1a6d-4a33-a046-1704fb0cbc36
 md"""*View highest scoring passages (documents) for each topic* $(@bind topdocscount confirm(Slider(1:30, default = 8, show_value = true)))"""
 
+# ╔═╡ 3b2de685-4c97-4b1b-808c-4110a0e4c4c2
+
+
 # ╔═╡ 0e1fc056-c946-4c53-a046-69c6edec3044
 md"""
 !!! note "View details for a given passage (\"document\")"
@@ -1307,6 +1310,7 @@ version = "17.4.0+0"
 # ╟─084082de-30f5-43a6-9a78-a4e7d2ec99e7
 # ╟─7d740f6c-9430-4367-90a6-32933c3b4cd7
 # ╟─0aad525c-1a6d-4a33-a046-1704fb0cbc36
+# ╠═3b2de685-4c97-4b1b-808c-4110a0e4c4c2
 # ╟─952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
 # ╟─45c8ba32-fda0-41e4-9c76-528d191fc298
 # ╟─0e1fc056-c946-4c53-a046-69c6edec3044
@@ -1335,7 +1339,7 @@ version = "17.4.0+0"
 # ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
 # ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
-# ╠═a7917f32-8d08-4d3e-a34d-4cedbb5b9649
+# ╟─a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 # ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
 # ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8
 # ╟─5827632f-bd27-4658-a42b-d8fb7ff3e8bb

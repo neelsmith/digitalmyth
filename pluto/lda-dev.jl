@@ -53,7 +53,7 @@ md"""*See release notes* $(@bind release_history CheckBox())"""
 # ╔═╡ f0bd2768-68bd-4535-b90e-34359b3030f9
 if release_history
 md"""
-- **2.1.0**: add UMAP for dimensionality reduction.
+- **2.1.0**: add UMAP for dimensionality reduction; improve variable names and documentation of functions looking up LDA data values; improve UI with labelling of topics by top terms.
 - **2.0.0**: remove TSne reduction of documents in topic space in anctipation of switch to using UMAP for dimensionality reduction; fixes bug in plotting of topic distribution per document; supports labelling of Gettysburg address versions.
 - **1.1.0**: add plotting of TSne reduction of documents in topic space
 - **1.0.0**: initial release
@@ -99,9 +99,6 @@ md"""*View top terms for each topic*: $( @bind toptermcount confirm(Slider(1:30,
 # ╔═╡ 1bce7141-c7db-4a86-ac1a-36bff54edc86
 md"""*Plot term weights for topic:*"""
 
-# ╔═╡ 0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
-@bind topicdetail Slider(1:k, show_value = true)
-
 # ╔═╡ 7d740f6c-9430-4367-90a6-32933c3b4cd7
 md"""
 !!! note "View most significant documents for each topic"
@@ -133,15 +130,6 @@ md"""
 # ╔═╡ fc12e5a6-6451-4b1e-8300-6d115c94cf66
 md"""> **Find document data in theta**
 """
-
-# ╔═╡ e8ef7ca6-5910-421d-9892-c3d999937875
-docys = begin
-	ycol = []
-	for i in 1:k
-		push!(ycol, "Topic $(i)")
-	end
-	ycol
-end
 
 # ╔═╡ f50104d7-1c06-4813-bc86-1a6d4167d309
 md"""> **Computing LDA**"""
@@ -175,12 +163,23 @@ end
 
 
 # ╔═╡ e57a1d64-d14a-44ea-92b5-bd7d73c61aed
-"""Find terms in `termlist` corresponding to top `n` values in a row of
-topic-to-term values.
+"""Find top `n` scores in `row`, and return corresponding values from `labelslist`.
+Parameters:
+- `datalist`: a single row or column of scores (for terms or documents)
+- `labelslist`: ordered list of values corresponding to columns of scores (string for term, or ID for document)
 """
-function top_terms(row, termlist; n = 10)
-	raw = raw_pairs(row, termlist; n = n)
+function top_scores(datalist, labelslist; n = 10)
+	raw = raw_pairs(datalist, labelslist; n = n)
 	isolatescores(raw, n)
+end
+
+# ╔═╡ b2f4f562-63e7-4055-90d5-cc0d3f5c75ab
+"""Compose a human-readable label for a topic by catting together
+the top `count` term values.
+"""
+function labeltopic(rowdata, termlist; count = 4)
+	pairs = top_scores(rowdata, termlist)
+	join(map(pr -> pr[1], pairs)[1:count], "_")
 end
 
 # ╔═╡ 89d1bd74-3e0b-4ef7-b4ed-d0923c00845f
@@ -188,11 +187,12 @@ md"""> **Markdown display**"""
 
 # ╔═╡ 2547227f-99f2-49c6-a8d6-c1dbdda24fd9
 """Compose horizontal bar plot of term scores for a topic."""
-function termsbar(termscores, termlist, numterms)
-	termscorepairs = top_terms(termscores, termlist; n = numterms)
-	xs = map(pr -> pr[2], termscorepairs)
-	ys = map(pr -> pr[1], termscorepairs)
+function ldabar(scores, termlist, numterms)
+	scorepairs = top_scores(scores, termlist; n = numterms)
+	xs = map(pr -> pr[2], scorepairs)
+	ys = map(pr -> pr[1], scorepairs)
 	bplot = bar(x = xs, y = ys, orientation = "h")
+	bplot
 end
 
 # ╔═╡ f59dba8a-03d4-4a85-a994-de832e8ddf5f
@@ -227,7 +227,7 @@ function topterms_md(topictotermscores, termlist, termcount)
 	push!(lines, repeat("| --- ", termcount + 1) * "|")
 	
 	for i in 1:k
-		bigterms = top_terms(topictotermscores[i,:], termlist; n = termcount)
+		bigterms = top_scores(topictotermscores[i,:], termlist; n = termcount)
 		push!(lines, "| topic $(i) |" * join(map(pr -> pr[1], bigterms), " |"))
 	end
 	join(lines,"\n")
@@ -404,6 +404,32 @@ end
 # ╔═╡ 1fbd8ebc-adaa-4d42-b65f-291faac7633e
 isnothing(dtmatrix) ? nothing : topterms_md(ϕ, dtmatrix.terms, toptermcount) |> Markdown.parse
 
+# ╔═╡ e8ef7ca6-5910-421d-9892-c3d999937875
+docys = begin
+	ycol = []
+	for i in 1:k
+		push!(ycol, labeltopic(ϕ[i,:], dtmatrix.terms))
+	end
+	ycol
+end
+
+# ╔═╡ 7c3d0dfc-6bf2-4b1a-848e-ecb07a298048
+top_scores(θ[:, 1], map(x -> labeltopic(ϕ[x,:], dtmatrix.terms), collect(1:k)))
+
+# ╔═╡ cb07ecaa-f7f1-4495-a51b-9308d7b5ddf5
+topicmenu = begin
+	tmenuitems = Pair{Int, String}[]
+	for i in 1:k
+		lbl = labeltopic(ϕ[i, :],  dtmatrix.terms)
+		push!(tmenuitems,  i => lbl)
+	end
+	tmenuitems
+
+end
+
+# ╔═╡ 5fc19dbc-3f3b-41fb-b560-c67c04a3190b
+@bind topicdetail Select(topicmenu)
+
 # ╔═╡ 084082de-30f5-43a6-9a78-a4e7d2ec99e7
 if isnothing(ϕ)
 else
@@ -413,7 +439,7 @@ else
 		yaxis_title = "Term",
 		height = 300
 	)
-	barview = termsbar(ϕ[topicdetail,:], dtmatrix.terms, toptermcount)
+	barview = ldabar(ϕ[topicdetail,:], dtmatrix.terms, toptermcount)
 	Plot(barview, layout)
 end
 
@@ -451,7 +477,7 @@ else
 		xaxis_title = "Document score",
 		height = 300
 	)
-	docbarview = termsbar(θ[topicdetail,:], reff, topdocscount)
+	docbarview = ldabar(θ[topicdetail,:], reff, topdocscount)
 	Plot(docbarview, doclayout)
 end
 
@@ -474,7 +500,9 @@ docxs = isnothing(θ) | isempty(psgref) ? [] : θ[:,docidx]
 # ╔═╡ 57779e81-b2c9-4067-a675-4de47646556d
 if isnothing(ϕ)
 else
-	Plot(bar(y=docys, x = docxs, orientation = "h"), Layout(title = "Topic scores for passage (document) $(psgref)", height = 200, yaxis_title = "Topic number", xaxis_title = "Score for topic" ))
+	#Plot(bar(y=docys, x = docxs), Layout(title = "Topic scores for passage (document) $(psgref)", height = 600, yaxis_title = "Topic number", xaxis_title = "Score for topic" ))
+
+	Plot(bar(y=docys, x = docxs, orientation = "h"), Layout(title = "Topic scores for passage (document) $(psgref)", height = 400))
 end
 
 # ╔═╡ 0ef282af-f9a3-43c4-85c4-5e6478d0906b
@@ -497,7 +525,7 @@ if isnothing(reduced)
 	nothing 
 else
 	# check limits on minimal data...
-	plottopics(reduced, ht = 300)
+	plottopics(reduced, ht = 450)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1642,7 +1670,7 @@ version = "17.4.0+0"
 # ╟─4b742534-045e-43ce-96c1-9ad1587fba80
 # ╟─1fbd8ebc-adaa-4d42-b65f-291faac7633e
 # ╟─1bce7141-c7db-4a86-ac1a-36bff54edc86
-# ╟─0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
+# ╟─5fc19dbc-3f3b-41fb-b560-c67c04a3190b
 # ╟─084082de-30f5-43a6-9a78-a4e7d2ec99e7
 # ╟─7d740f6c-9430-4367-90a6-32933c3b4cd7
 # ╟─2aa13650-2854-4f12-b150-1551fc276594
@@ -1663,7 +1691,9 @@ version = "17.4.0+0"
 # ╟─f50104d7-1c06-4813-bc86-1a6d4167d309
 # ╟─d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
 # ╟─543080bf-fa45-42ba-89db-1ba06f2c0f41
+# ╟─b2f4f562-63e7-4055-90d5-cc0d3f5c75ab
 # ╟─e57a1d64-d14a-44ea-92b5-bd7d73c61aed
+# ╠═7c3d0dfc-6bf2-4b1a-848e-ecb07a298048
 # ╟─ab7df6f8-2f79-4ee2-bf94-dcba9a1cfe3a
 # ╟─2ee1af26-c722-4874-a497-3dcd2d9d39fd
 # ╟─89d1bd74-3e0b-4ef7-b4ed-d0923c00845f
@@ -1675,13 +1705,14 @@ version = "17.4.0+0"
 # ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
 # ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
-# ╠═a7917f32-8d08-4d3e-a34d-4cedbb5b9649
+# ╟─a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 # ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
 # ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8
 # ╟─5827632f-bd27-4658-a42b-d8fb7ff3e8bb
 # ╟─0439bf2f-69a1-4aa8-a71a-dd058ebf5bfe
 # ╟─9c3ce649-4b24-476b-9798-386b5712000b
 # ╟─623099bd-d8fa-452c-b9f2-52e2940a0fb8
+# ╟─cb07ecaa-f7f1-4495-a51b-9308d7b5ddf5
 # ╠═cdb90b88-a4f1-4669-a2fc-abfef3a78933
 # ╠═359e8801-9361-43a1-a0de-dbebb572437c
 # ╠═cd4b1dc2-3b5f-4b27-9db8-7890c2ad7e07

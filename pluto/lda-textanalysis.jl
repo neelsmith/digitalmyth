@@ -255,7 +255,7 @@ function ta_structs_from_corpus(citecorp; lc = true, stoplist = [])
 end
 
 # ╔═╡ 9c3ce649-4b24-476b-9798-386b5712000b
-md"""> **UI widgets and canonical references**"""
+md"""> **UI widgets, URLs and canonical references**"""
 
 # ╔═╡ cdb90b88-a4f1-4669-a2fc-abfef3a78933
 bancroft = "https://raw.githubusercontent.com/neelsmith/CitableCorpusAnalysis.jl/main/test/data/gettysburg/bancroft.cex"
@@ -273,7 +273,7 @@ hyginus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts
 apollodorus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/main/texts/apollodorus.cex"
 
 # ╔═╡ 623099bd-d8fa-452c-b9f2-52e2940a0fb8
-menu = [[] => "Choose a text", [hyginus_url] => "Hyginus", [apollodorus_url] => "Apollodorus", [apollodorus_url, hyginus_url] => "Both mythographers", [bliss, hay] => "Gettsyburg address"]
+menu = [[] => "Choose a text", [hyginus_url] => "Hyginus", [apollodorus_url] => "Apollodorus", [apollodorus_url, hyginus_url] => "Both mythographers", [bliss, hay] => "Two versions of the Gettsyburg address"]
 
 # ╔═╡ fcef1df7-4cac-4be1-9e98-67b835d81fb8
 @bind text_url Select(menu)
@@ -294,7 +294,7 @@ function stripref(s)
 end
 
 # ╔═╡ d0a12142-20fa-42ac-b220-cf7bca4a5be4
-md"""> **Managing citable corpora**"""
+md"""> **Combining citable corpora**"""
 
 # ╔═╡ 54bb7773-bd62-4cc0-9e19-35fc088a1a1f
 """

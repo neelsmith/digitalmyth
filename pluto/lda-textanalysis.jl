@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.27
+# v0.19.29
 
 using Markdown
 using InteractiveUtils
@@ -29,12 +29,12 @@ begin
 	using TextAnalysis
 	
 	using PlotlyJS
-	using TSne
+	
 	md"*Unhide this cell to see the Julia environment.*"
 end
 
 # ╔═╡ c0543064-597c-4104-b26a-333437ddf4d8
-nbversion = "1.1.0"
+nbversion = "2.0.0"
 
 # ╔═╡ 6d24ec36-6d02-11ee-24af-7f32effe1a76
 md"""# LDA topic modeling with the Julia `TextAnalysis` package
@@ -49,6 +49,7 @@ md"""*See release notes* $(@bind release_history CheckBox())"""
 # ╔═╡ f0bd2768-68bd-4535-b90e-34359b3030f9
 if release_history
 md"""
+- **2.0.0**: remove TSne reduction of documents in topic space in anctipation of switch to using UMAP for dimensionality reduction; fixes bug in plotting of topic distribution per document; supports labelling of Gettysburg address versions.
 - **1.1.0**: add plotting of TSne reduction of documents in topic space
 - **1.0.0**: initial release
 """
@@ -88,10 +89,10 @@ md"""
 """
 
 # ╔═╡ 4b742534-045e-43ce-96c1-9ad1587fba80
-md"""*View top terms for each topic* $(@bind toptermcount confirm(Slider(1:30, default = 8, show_value = true)))"""
+md"""*View top terms for each topic*: $( @bind toptermcount confirm(Slider(1:30, default =10, show_value = true)))"""
 
 # ╔═╡ 1bce7141-c7db-4a86-ac1a-36bff54edc86
-md"""*Plot topic weights for topic:*"""
+md"""*Plot term weights for topic:*"""
 
 # ╔═╡ 0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
 @bind topicdetail Slider(1:k, show_value = true)
@@ -129,11 +130,12 @@ md"""> **Find document data in theta**
 """
 
 # ╔═╡ e8ef7ca6-5910-421d-9892-c3d999937875
-docxs = begin
+docys = begin
 	ycol = []
 	for i in 1:k
 		push!(ycol, "Topic $(i)")
 	end
+	ycol
 end
 
 # ╔═╡ f50104d7-1c06-4813-bc86-1a6d4167d309
@@ -258,9 +260,6 @@ md"""> **UI widgets and canonical references**"""
 # ╔═╡ cdb90b88-a4f1-4669-a2fc-abfef3a78933
 bancroft = "https://raw.githubusercontent.com/neelsmith/CitableCorpusAnalysis.jl/main/test/data/gettysburg/bancroft.cex"
 
-# ╔═╡ 7bfc92b9-6eb1-4ccb-aebf-af2d195a73cf
-fromcex(bancroft, CitableTextCorpus, UrlReader)
-
 # ╔═╡ 359e8801-9361-43a1-a0de-dbebb572437c
 hay = "https://raw.githubusercontent.com/neelsmith/CitableCorpusAnalysis.jl/main/test/data/gettysburg/hay.cex"
 
@@ -274,7 +273,7 @@ hyginus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts
 apollodorus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/main/texts/apollodorus.cex"
 
 # ╔═╡ 623099bd-d8fa-452c-b9f2-52e2940a0fb8
-menu = [[] => "Choose a text", [hyginus_url] => "Hyginus", [apollodorus_url] => "Apollodorus", [apollodorus_url, hyginus_url] => "Both mythogrpahers", [bliss] => "Gettsyburg address"]
+menu = [[] => "Choose a text", [hyginus_url] => "Hyginus", [apollodorus_url] => "Apollodorus", [apollodorus_url, hyginus_url] => "Both mythographers", [bliss, hay] => "Gettsyburg address"]
 
 # ╔═╡ fcef1df7-4cac-4be1-9e98-67b835d81fb8
 @bind text_url Select(menu)
@@ -289,8 +288,13 @@ apwork = "tlg0548.tlg001"
 """Strip work abbreviations off of brief string references."""
 function stripref(s)
 	s1 = replace(s, "Ap. " => "" )
-	replace(s1, "Hyg. " => "")
+	s2 = replace(s1, "Hyg. " => "")
+	s3 = replace(s2, "Bliss " => "")
+	s4 = replace(s3, "Hay " => "")
 end
+
+# ╔═╡ d0a12142-20fa-42ac-b220-cf7bca4a5be4
+md"""> **Managing citable corpora**"""
 
 # ╔═╡ 54bb7773-bd62-4cc0-9e19-35fc088a1a1f
 """
@@ -399,7 +403,7 @@ isnothing(dtmatrix) ? nothing : topterms_md(ϕ, dtmatrix.terms, toptermcount) |>
 if isnothing(ϕ)
 else
 	layout = Layout(
-		title = "Topic $(topicdetail)",
+		title = "Top $(toptermcount) terms for topic $(topicdetail)",
 		xaxis_title = "Term score",
 		yaxis_title = "Term",
 		height = 300
@@ -420,6 +424,10 @@ else
 			workabbr = "Hyg. "
 		elseif contains(workcomponent(psg.urn), apwork)
 			workabbr = "Ap. "
+		elseif contains(workcomponent(psg.urn), "bliss")
+			workabbr = "Bliss "
+		elseif contains(workcomponent(psg.urn), "hay")
+			workabbr = "Hay "
 		end
 		push!(briefreff, workabbr * passagecomponent(psg.urn))
 	end
@@ -456,48 +464,13 @@ end
 docidx = findfirst(r -> r == psgref, reff)
 
 # ╔═╡ 280de380-2dd0-4a88-b042-9767921a67d6
-docys = isnothing(θ) | isempty(psgref) ? [] : θ[:,docidx]
+docxs = isnothing(θ) | isempty(psgref) ? [] : θ[:,docidx]
 
 # ╔═╡ 57779e81-b2c9-4067-a675-4de47646556d
 if isnothing(ϕ)
 else
-	Plot(bar(y=docxs, x = docys, orientation = "h"), Layout(title = "Topic scores for passage (document) $(psgref)", height = 200, yaxis_title = "Topic number", xaxis_title = "Score for topic" ))
+	Plot(bar(y=docys, x = docxs, orientation = "h"), Layout(title = "Topic scores for passage (document) $(psgref)", height = 200, yaxis_title = "Topic number", xaxis_title = "Score for topic" ))
 end
-
-# ╔═╡ 0b32cc4f-3263-4c26-8591-a385fdcbbcd8
-md"""> **TSne reduction**"""
-
-# ╔═╡ 3484f277-83b8-4924-8b13-243b284386b6
-"""Scale data for plotting with TSne.
-This is voodoo from the TSne docs.
-"""
-rescale(A; dims=1) = (A .- mean(A, dims=dims)) ./ max.(std(A, dims=dims), eps())
-
-# ╔═╡ d9938322-6a16-475b-b276-f98768088ceb
-rescaled = rescale(θ, dims=1)
-
-# ╔═╡ 071d771b-6549-4991-a237-087b1f5a7480
-# ╠═╡ show_logs = false
-# Final TSne reduction:
-reduced = tsne(transpose(rescaled))
-
-# ╔═╡ a5cac246-3efe-4362-bf49-8163698bf313
-xs = reduced[:,1]
-
-# ╔═╡ c73318ff-c281-401a-8824-6c8890a88f6e
-ys = reduced[:,2]
-
-# ╔═╡ e753de93-c464-4642-adb3-46eda45df8bf
-tsneplot = scatter(x = xs, y = ys, mode = "markers")
-
-# ╔═╡ 8d52220a-3ab5-4428-b1e3-65afa3485666
-tsnelayout = Layout(
-	title = "Plot of documents in topic space",
-	height = 300
-)
-
-# ╔═╡ 553174fd-3b15-4a0b-b083-b103dc9e982e
-Plot(tsneplot, tsnelayout)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -512,7 +485,6 @@ Orthography = "0b4c9448-09b0-4e78-95ea-3eb3328be36d"
 PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-TSne = "24678dba-d5e9-5843-a4c6-250288b04835"
 TextAnalysis = "a2db99b7-8b79-58f8-94bf-bbc811eef33d"
 """
 
@@ -520,9 +492,9 @@ TextAnalysis = "a2db99b7-8b79-58f8-94bf-bbc811eef33d"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.3"
+julia_version = "1.9.1"
 manifest_format = "2.0"
-project_hash = "aa3ac7a48debf3113bbe8265852ea13b9a8638fc"
+project_hash = "23f2a37e74604d0f4d72077d21fb92a1668ce470"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -653,7 +625,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+0"
+version = "1.0.2+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -703,16 +675,6 @@ deps = ["Indexing", "Random", "Serialization"]
 git-tree-sha1 = "e82c3c97b5b4ec111f3c1b55228cebc7510525a2"
 uuid = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
 version = "0.3.25"
-
-[[deps.Distances]]
-deps = ["LinearAlgebra", "Statistics", "StatsAPI"]
-git-tree-sha1 = "b6def76ffad15143924a2199f72a5cd883a2e8a9"
-uuid = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
-version = "0.10.9"
-weakdeps = ["SparseArrays"]
-
-    [deps.Distances.extensions]
-    DistancesSparseArraysExt = "SparseArrays"
 
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
@@ -1028,7 +990,7 @@ version = "1.3.0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.2"
+version = "1.9.0"
 
 [[deps.PlotlyBase]]
 deps = ["ColorSchemes", "Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "LaTeXStrings", "Logging", "Parameters", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
@@ -1189,12 +1151,6 @@ deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
 version = "1.0.3"
 
-[[deps.TSne]]
-deps = ["Distances", "LinearAlgebra", "Printf", "ProgressMeter", "Statistics"]
-git-tree-sha1 = "6f1dfbf9dad6958439816fa9c5fa20898203fdf4"
-uuid = "24678dba-d5e9-5843-a4c6-250288b04835"
-version = "1.3.0"
-
 [[deps.TableTraits]]
 deps = ["IteratorInterfaceExtensions"]
 git-tree-sha1 = "c06b2f539df1c6efa794486abfb6ed2022561a39"
@@ -1350,7 +1306,6 @@ version = "17.4.0+0"
 # ╟─0bf343c8-2e17-4ec4-8dd4-28e3f61e1749
 # ╟─084082de-30f5-43a6-9a78-a4e7d2ec99e7
 # ╟─7d740f6c-9430-4367-90a6-32933c3b4cd7
-# ╠═553174fd-3b15-4a0b-b083-b103dc9e982e
 # ╟─0aad525c-1a6d-4a33-a046-1704fb0cbc36
 # ╟─952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
 # ╟─45c8ba32-fda0-41e4-9c76-528d191fc298
@@ -1380,14 +1335,13 @@ version = "17.4.0+0"
 # ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
 # ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
-# ╟─a7917f32-8d08-4d3e-a34d-4cedbb5b9649
+# ╠═a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 # ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
 # ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8
 # ╟─5827632f-bd27-4658-a42b-d8fb7ff3e8bb
 # ╟─0439bf2f-69a1-4aa8-a71a-dd058ebf5bfe
 # ╟─9c3ce649-4b24-476b-9798-386b5712000b
-# ╠═623099bd-d8fa-452c-b9f2-52e2940a0fb8
-# ╠═7bfc92b9-6eb1-4ccb-aebf-af2d195a73cf
+# ╟─623099bd-d8fa-452c-b9f2-52e2940a0fb8
 # ╠═cdb90b88-a4f1-4669-a2fc-abfef3a78933
 # ╠═359e8801-9361-43a1-a0de-dbebb572437c
 # ╠═cd4b1dc2-3b5f-4b27-9db8-7890c2ad7e07
@@ -1396,15 +1350,8 @@ version = "17.4.0+0"
 # ╠═4ae018f9-2e20-474b-a99a-964e5d3d6887
 # ╟─22cc0a3f-bbd6-483e-b407-ef56c8dba75f
 # ╟─7be14d53-9eaa-482f-b9f8-870154ab7c52
+# ╟─d0a12142-20fa-42ac-b220-cf7bca4a5be4
 # ╟─54bb7773-bd62-4cc0-9e19-35fc088a1a1f
 # ╟─a1db21b6-6d6f-4dcd-a0e2-f538d3a25a13
-# ╟─0b32cc4f-3263-4c26-8591-a385fdcbbcd8
-# ╟─3484f277-83b8-4924-8b13-243b284386b6
-# ╠═d9938322-6a16-475b-b276-f98768088ceb
-# ╟─071d771b-6549-4991-a237-087b1f5a7480
-# ╠═a5cac246-3efe-4362-bf49-8163698bf313
-# ╠═c73318ff-c281-401a-8824-6c8890a88f6e
-# ╠═e753de93-c464-4642-adb3-46eda45df8bf
-# ╠═8d52220a-3ab5-4428-b1e3-65afa3485666
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

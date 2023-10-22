@@ -134,6 +134,9 @@ md"""> **Find document data in theta**
 # ╔═╡ f50104d7-1c06-4813-bc86-1a6d4167d309
 md"""> **Computing LDA**"""
 
+# ╔═╡ 7c3d0dfc-6bf2-4b1a-848e-ecb07a298048
+# top_scores(θ[:, 1], map(x -> labeltopic(ϕ[x,:], dtmatrix.terms), collect(1:k)))
+
 # ╔═╡ ab7df6f8-2f79-4ee2-bf94-dcba9a1cfe3a
 """Given one row of a topic index, find top `n` scores,
 and return a Vector of `n` pairs of topic relations and scores."""
@@ -355,10 +358,8 @@ if isnothing(c)
 else
 md"""
 *Number of stop-word candidates to review* $(@bind top_n confirm(Slider(10:300, default = 100, show_value = true)))
-
-
-*Any **unchecked** terms will be treated as stop words.  **Check** any terms to include in the topic model.*
 """
+
 
 end
 
@@ -405,7 +406,9 @@ end
 isnothing(dtmatrix) ? nothing : topterms_md(ϕ, dtmatrix.terms, toptermcount) |> Markdown.parse
 
 # ╔═╡ e8ef7ca6-5910-421d-9892-c3d999937875
-docys = begin
+docys = if isnothing(dtmatrix)
+	[]
+else
 	ycol = []
 	for i in 1:k
 		push!(ycol, labeltopic(ϕ[i,:], dtmatrix.terms))
@@ -413,11 +416,10 @@ docys = begin
 	ycol
 end
 
-# ╔═╡ 7c3d0dfc-6bf2-4b1a-848e-ecb07a298048
-top_scores(θ[:, 1], map(x -> labeltopic(ϕ[x,:], dtmatrix.terms), collect(1:k)))
-
 # ╔═╡ cb07ecaa-f7f1-4495-a51b-9308d7b5ddf5
-topicmenu = begin
+topicmenu = if isnothing(dtmatrix)
+	["No text choosen yet"]
+else
 	tmenuitems = Pair{Int, String}[]
 	for i in 1:k
 		lbl = labeltopic(ϕ[i, :],  dtmatrix.terms)
@@ -1666,18 +1668,18 @@ version = "17.4.0+0"
 # ╟─99b012eb-6f17-403e-b541-c1497ee1e7e5
 # ╟─2733adb5-8dfd-4df9-8e28-5aa6dae9c175
 # ╠═2350681e-861a-4f51-b4ca-1d0e29311b1f
-# ╟─8d5f6c03-a776-4304-9b5f-dfd9c235edbd
-# ╟─4b742534-045e-43ce-96c1-9ad1587fba80
-# ╟─1fbd8ebc-adaa-4d42-b65f-291faac7633e
+# ╠═8d5f6c03-a776-4304-9b5f-dfd9c235edbd
+# ╠═4b742534-045e-43ce-96c1-9ad1587fba80
+# ╠═1fbd8ebc-adaa-4d42-b65f-291faac7633e
 # ╟─1bce7141-c7db-4a86-ac1a-36bff54edc86
 # ╟─5fc19dbc-3f3b-41fb-b560-c67c04a3190b
 # ╟─084082de-30f5-43a6-9a78-a4e7d2ec99e7
-# ╟─7d740f6c-9430-4367-90a6-32933c3b4cd7
+# ╠═7d740f6c-9430-4367-90a6-32933c3b4cd7
 # ╟─2aa13650-2854-4f12-b150-1551fc276594
-# ╟─0aad525c-1a6d-4a33-a046-1704fb0cbc36
+# ╠═0aad525c-1a6d-4a33-a046-1704fb0cbc36
 # ╟─952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
 # ╟─45c8ba32-fda0-41e4-9c76-528d191fc298
-# ╟─0e1fc056-c946-4c53-a046-69c6edec3044
+# ╠═0e1fc056-c946-4c53-a046-69c6edec3044
 # ╟─ec514c67-d35a-42aa-b2c0-cd56ba105c51
 # ╟─c9e0e222-200f-400e-9831-780133df3253
 # ╟─57779e81-b2c9-4067-a675-4de47646556d
@@ -1689,8 +1691,8 @@ version = "17.4.0+0"
 # ╟─280de380-2dd0-4a88-b042-9767921a67d6
 # ╟─e8ef7ca6-5910-421d-9892-c3d999937875
 # ╟─f50104d7-1c06-4813-bc86-1a6d4167d309
-# ╟─d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
-# ╟─543080bf-fa45-42ba-89db-1ba06f2c0f41
+# ╠═d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
+# ╠═543080bf-fa45-42ba-89db-1ba06f2c0f41
 # ╟─b2f4f562-63e7-4055-90d5-cc0d3f5c75ab
 # ╟─e57a1d64-d14a-44ea-92b5-bd7d73c61aed
 # ╠═7c3d0dfc-6bf2-4b1a-848e-ecb07a298048
@@ -1703,15 +1705,15 @@ version = "17.4.0+0"
 # ╟─f59dba8a-03d4-4a85-a994-de832e8ddf5f
 # ╟─863fd7c4-5460-4de0-b422-fa38350f7545
 # ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
-# ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
-# ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
+# ╠═3fede1f1-4bf3-48e0-82ec-203fd936199e
+# ╠═fd23b519-3d5f-4a88-931c-a3118fbc256e
 # ╟─a7917f32-8d08-4d3e-a34d-4cedbb5b9649
-# ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
-# ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8
-# ╟─5827632f-bd27-4658-a42b-d8fb7ff3e8bb
+# ╠═68dc297d-ccd0-4dd1-a652-f19cfcd3c111
+# ╠═1623909b-1c27-4cac-8cbe-4287ed3e30e8
+# ╠═5827632f-bd27-4658-a42b-d8fb7ff3e8bb
 # ╟─0439bf2f-69a1-4aa8-a71a-dd058ebf5bfe
-# ╟─9c3ce649-4b24-476b-9798-386b5712000b
-# ╟─623099bd-d8fa-452c-b9f2-52e2940a0fb8
+# ╠═9c3ce649-4b24-476b-9798-386b5712000b
+# ╠═623099bd-d8fa-452c-b9f2-52e2940a0fb8
 # ╟─cb07ecaa-f7f1-4495-a51b-9308d7b5ddf5
 # ╠═cdb90b88-a4f1-4669-a2fc-abfef3a78933
 # ╠═359e8801-9361-43a1-a0de-dbebb572437c
@@ -1719,11 +1721,11 @@ version = "17.4.0+0"
 # ╠═8eff85fd-02ce-46ec-ba59-3208e73400fb
 # ╠═b34d675c-9f1a-49da-a4e1-54c1c1d1dcf0
 # ╠═4ae018f9-2e20-474b-a99a-964e5d3d6887
-# ╟─22cc0a3f-bbd6-483e-b407-ef56c8dba75f
+# ╠═22cc0a3f-bbd6-483e-b407-ef56c8dba75f
 # ╟─7be14d53-9eaa-482f-b9f8-870154ab7c52
 # ╟─d0a12142-20fa-42ac-b220-cf7bca4a5be4
-# ╟─54bb7773-bd62-4cc0-9e19-35fc088a1a1f
-# ╟─a1db21b6-6d6f-4dcd-a0e2-f538d3a25a13
+# ╠═54bb7773-bd62-4cc0-9e19-35fc088a1a1f
+# ╠═a1db21b6-6d6f-4dcd-a0e2-f538d3a25a13
 # ╟─0ef282af-f9a3-43c4-85c4-5e6478d0906b
 # ╟─599af10b-51ee-40a2-a69d-5338e596a3a7
 # ╟─1dddb425-2577-43f9-b4c8-9b5dd2dd912e

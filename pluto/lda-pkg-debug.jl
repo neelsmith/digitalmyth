@@ -70,10 +70,10 @@ md"""
 """
 
 # ╔═╡ d389bd5c-eb0a-4866-ae8a-06c1af672066
-md"""*Any **unchecked** terms will be treated as stop words.  **Check** any terms to include in the topic model.  When editing of stop-word list is complete, check "Stopword list complete".*"""
+md"""*Any **unchecked** terms will be treated as stop words.  **Check** any terms to include in the topic model.  When editing of stop-word list is complete, check "Compute topic model".*"""
 
 # ╔═╡ a261fbd8-6b0b-43e7-a3a6-0fc6afcffc9d
-md"""*Stopword list complete* $(@bind stopwordsok CheckBox())"""
+md"""*Compute topic model* $(@bind stopwordsok CheckBox())"""
 
 # ╔═╡ 6eb13aa6-7fce-4c63-9d46-33280c3a8b90
 md"""*Number of topics (`k`)* $(@bind k confirm(Slider(2:40, default = 12, show_value = true)))"""
@@ -82,6 +82,9 @@ md"""*Number of topics (`k`)* $(@bind k confirm(Slider(2:40, default = 12, show_
 md"""
 !!! note "Review results: highest term scores for each topic"
 """
+
+# ╔═╡ b3267b0d-53df-4364-bba3-eda46bf972c0
+md"""*Number of iterations*: $( @bind iters confirm(Slider(100:100:2500, default =1000, show_value = true)))"""
 
 # ╔═╡ 83af2891-bfca-41da-86ef-5c590a7a2353
 md"""*View top terms for each topic*: $( @bind toptermcount confirm(Slider(1:30, default =10, show_value = true)))"""
@@ -231,7 +234,7 @@ stopwordsok ? md"""*Length of stopword list: $(length(stopwords)) words*""" : no
 
 # ╔═╡ 9ce81c26-03a3-4d17-8b3a-ce88aeae48a5
 # ╠═╡ show_logs = false
-tm = stopwordsok & ! isempty(text_url) ? lda_tm(c, k; stopwords = stopwords) : nothing
+tm = stopwordsok & ! isempty(text_url) ? lda_tm(c, k; stopwords = stopwords, iters = iters) : nothing
 
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1388,6 +1391,7 @@ version = "17.4.0+0"
 # ╟─a261fbd8-6b0b-43e7-a3a6-0fc6afcffc9d
 # ╟─004a09db-8478-4a35-bb7c-8fd3a1289ce8
 # ╟─6eb13aa6-7fce-4c63-9d46-33280c3a8b90
+# ╟─b3267b0d-53df-4364-bba3-eda46bf972c0
 # ╟─9ce81c26-03a3-4d17-8b3a-ce88aeae48a5
 # ╟─9f247ffd-b68a-4e78-8081-932ffe9123c3
 # ╟─83af2891-bfca-41da-86ef-5c590a7a2353

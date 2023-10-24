@@ -286,9 +286,6 @@ end
 # ╔═╡ 3bf8df46-0374-4679-816a-1e54e320698f
 isempty(topicmenu) ? nothing : @bind topicdetail Select(topicmenu)
 
-# ╔═╡ b42f7e71-d411-4523-bdf1-b211a0cb3073
-topicdetail
-
 # ╔═╡ 295cdfb5-fd89-4b6a-ac65-cf175fefdad4
 topdoclabel = topdocs(tm, topicdetail, n = 1)[1][1]
 
@@ -317,6 +314,9 @@ else
 
 	Plot(bar(y=reverse(docys), x = reverse(docxs), orientation = "h"), Layout(title = "Topic scores for passage (document) $(labels[docidx])", height = 400))
 end
+
+# ╔═╡ 56d6a6b8-8779-4a0b-b45f-f98ea364c46b
+isnothing(c) ? nothing : string("*Text of* **", labels[docidx], "**: ", c.passages[docidx].text) |> Markdown.parse
 
 # ╔═╡ 55398956-05a9-4e02-96ea-07f0221ca736
 md"""> **Markdown formatting**
@@ -378,7 +378,7 @@ function tophits(tm, topicnum, docscount)
 end
 
 # ╔═╡ 4149aeb6-1857-46e0-afe9-776f550ed98a
-tophits(tm,topicdetail, topdocscount)
+isnothing(tm) ? nothing : tophits(tm,topicdetail, topdocscount)
 
 # ╔═╡ 36b3c216-a18e-4c2d-ae00-41dc3819b32f
 md"""> **Dimensionality reduction and plotting**"""
@@ -2294,10 +2294,10 @@ version = "17.4.0+0"
 # ╟─31a6f7eb-f618-4e59-88b4-a53b7b8cb7ce
 # ╟─4149aeb6-1857-46e0-afe9-776f550ed98a
 # ╟─164fdf43-2149-4bc4-a762-ba3063192cad
-# ╠═b42f7e71-d411-4523-bdf1-b211a0cb3073
 # ╟─c4e06ce5-4ea9-427c-b6fc-95cc8b850fbd
 # ╟─b9d4b933-e3ee-4eef-854f-e0f392041c22
 # ╟─55e8e4a6-60d9-41b0-972b-e24e982ed6dc
+# ╟─56d6a6b8-8779-4a0b-b45f-f98ea364c46b
 # ╟─a17ced36-577e-4812-b34f-2bc6cc322dde
 # ╟─187f5780-9611-41ed-82ba-ec1cd0c576f9
 # ╟─7e4e9921-238b-4a15-84bc-dd7b28678061

@@ -39,7 +39,7 @@ end
 md"""> ## DEV VERSION USING NEW `CitableCorpusAnalysis` PKG"""
 
 # ╔═╡ c0543064-597c-4104-b26a-333437ddf4d8
-nbversion = "3.0.0"
+nbversion = "X"
 
 # ╔═╡ 6d24ec36-6d02-11ee-24af-7f32effe1a76
 md"""# LDA topic modeling with the Julia `TextAnalysis` package
@@ -90,6 +90,10 @@ md"""*Number of topics (`k`)* $(@bind k confirm(Slider(2:40, default = 6, show_v
 # ╔═╡ 2733adb5-8dfd-4df9-8e28-5aa6dae9c175
 md"""*Computation of ϕ and θ using LDA algorithm*:"""
 
+# ╔═╡ 2350681e-861a-4f51-b4ca-1d0e29311b1f
+# ╠═╡ show_logs = false
+ϕ, θ  = isnothing(dtmatrix) ? (nothing, nothing) : lda(dtmatrix, k, iters, α, β)
+
 # ╔═╡ 8d5f6c03-a776-4304-9b5f-dfd9c235edbd
 md"""
 !!! note "Review results: highest term scores for each topic"
@@ -132,6 +136,17 @@ md"""
 # ╔═╡ fc12e5a6-6451-4b1e-8300-6d115c94cf66
 md"""> **Find document data in theta**
 """
+
+# ╔═╡ e8ef7ca6-5910-421d-9892-c3d999937875
+docys = if isnothing(dtmatrix)
+	[]
+else
+	ycol = []
+	for i in 1:k
+		push!(ycol, labeltopic(ϕ[i,:], dtmatrix.terms))
+	end
+	ycol
+end
 
 # ╔═╡ f50104d7-1c06-4813-bc86-1a6d4167d309
 md"""> **Computing LDA**"""
@@ -187,8 +202,23 @@ function topterms_md(topictotermscores, termlist, termcount)
 	join(lines,"\n")
 end
 
+# ╔═╡ 1fbd8ebc-adaa-4d42-b65f-291faac7633e
+isnothing(dtmatrix) ? nothing : topterms_md(ϕ, dtmatrix.terms, toptermcount) |> Markdown.parse
+
 # ╔═╡ 863fd7c4-5460-4de0-b422-fa38350f7545
 md"""> **Load data**"""
+
+# ╔═╡ 3fede1f1-4bf3-48e0-82ec-203fd936199e
+#lextokens = isnothing(c) ? [] :  filter(t -> t.tokentype == LexicalToken(), Orthography.tokenize(c, simpleAscii()))
+
+# ╔═╡ 68dc297d-ccd0-4dd1-a652-f19cfcd3c111
+counts = countmap(map( t -> t.passage.text, lextokens)) |> OrderedDict
+
+# ╔═╡ 1623909b-1c27-4cac-8cbe-4287ed3e30e8
+#sorteddict = sort(counts, rev=true, byvalue = true)
+
+# ╔═╡ 5827632f-bd27-4658-a42b-d8fb7ff3e8bb
+#sorted = keys(sorteddict) |> collect
 
 # ╔═╡ 0439bf2f-69a1-4aa8-a71a-dd058ebf5bfe
 """Downloads a text corpus from URL `u`, removes all punctuation, and optionally makes case-insensitive (the default). Returns three fundamental structures
@@ -215,6 +245,35 @@ end
 
 # ╔═╡ 9c3ce649-4b24-476b-9798-386b5712000b
 md"""> **UI widgets, URLs and canonical references**"""
+
+# ╔═╡ cb07ecaa-f7f1-4495-a51b-9308d7b5ddf5
+topicmenu = if isnothing(dtmatrix)
+	[]
+else
+	tmenuitems = Pair{Int, String}[]
+	for i in 1:k
+		lbl = labeltopic(ϕ[i, :],  dtmatrix.terms)
+		push!(tmenuitems,  i => lbl)
+	end
+	tmenuitems
+
+end
+
+# ╔═╡ 5fc19dbc-3f3b-41fb-b560-c67c04a3190b
+isempty(topicmenu) ? nothing : @bind topicdetail Select(topicmenu)
+
+# ╔═╡ 084082de-30f5-43a6-9a78-a4e7d2ec99e7
+if isnothing(ϕ)
+else
+	layout = Layout(
+		title = "Top $(toptermcount) terms for topic $(topicdetail)",
+		xaxis_title = "Term score",
+		yaxis_title = "Term",
+		height = 300
+	)
+	barview = ldabar(ϕ[topicdetail,:], dtmatrix.terms, toptermcount)
+	Plot(barview, layout)
+end
 
 # ╔═╡ cdb90b88-a4f1-4669-a2fc-abfef3a78933
 bancroft = "https://raw.githubusercontent.com/neelsmith/CitableCorpusAnalysis.jl/main/test/data/gettysburg/bancroft.cex"
@@ -316,18 +375,6 @@ md"""
 
 end
 
-# ╔═╡ 3fede1f1-4bf3-48e0-82ec-203fd936199e
-lextokens = isnothing(c) ? [] :  filter(t -> t.tokentype == LexicalToken(), Orthography.tokenize(c, simpleAscii()))
-
-# ╔═╡ 68dc297d-ccd0-4dd1-a652-f19cfcd3c111
-counts = countmap(map( t -> t.passage.text, lextokens)) |> OrderedDict
-
-# ╔═╡ 1623909b-1c27-4cac-8cbe-4287ed3e30e8
-sorteddict = sort(counts, rev=true, byvalue = true)
-
-# ╔═╡ 5827632f-bd27-4658-a42b-d8fb7ff3e8bb
-sorted = keys(sorteddict) |> collect
-
 # ╔═╡ 543080bf-fa45-42ba-89db-1ba06f2c0f41
 	most_freq = isempty(sorted) ? [] : sorted[1:top_n]
 
@@ -344,59 +391,8 @@ stopwords = filter(w -> ! (w in keepers), most_freq)
 # ╔═╡ df880285-50a9-4a18-9203-0971b3e45924
 md"""*Length of stopword list: $(length(stopwords)) words*"""
 
-# ╔═╡ 42ae6aed-d949-47fa-8aa2-ae35eb79c29e
-(ta_corpus, lex,  dtmatrix) =   if isnothing(c)
-	(nothing, nothing, nothing)
-else
-	ta_structs_from_corpus(c; lc = case_insensitive, stoplist = stopwords)
-end
-
-# ╔═╡ 2350681e-861a-4f51-b4ca-1d0e29311b1f
-# ╠═╡ show_logs = false
-ϕ, θ  = isnothing(dtmatrix) ? (nothing, nothing) : lda(dtmatrix, k, iters, α, β)
-
-# ╔═╡ 1fbd8ebc-adaa-4d42-b65f-291faac7633e
-isnothing(dtmatrix) ? nothing : topterms_md(ϕ, dtmatrix.terms, toptermcount) |> Markdown.parse
-
-# ╔═╡ e8ef7ca6-5910-421d-9892-c3d999937875
-docys = if isnothing(dtmatrix)
-	[]
-else
-	ycol = []
-	for i in 1:k
-		push!(ycol, labeltopic(ϕ[i,:], dtmatrix.terms))
-	end
-	ycol
-end
-
-# ╔═╡ cb07ecaa-f7f1-4495-a51b-9308d7b5ddf5
-topicmenu = if isnothing(dtmatrix)
-	[]
-else
-	tmenuitems = Pair{Int, String}[]
-	for i in 1:k
-		lbl = labeltopic(ϕ[i, :],  dtmatrix.terms)
-		push!(tmenuitems,  i => lbl)
-	end
-	tmenuitems
-
-end
-
-# ╔═╡ 5fc19dbc-3f3b-41fb-b560-c67c04a3190b
-isempty(topicmenu) ? nothing : @bind topicdetail Select(topicmenu)
-
-# ╔═╡ 084082de-30f5-43a6-9a78-a4e7d2ec99e7
-if isnothing(ϕ)
-else
-	layout = Layout(
-		title = "Top $(toptermcount) terms for topic $(topicdetail)",
-		xaxis_title = "Term score",
-		yaxis_title = "Term",
-		height = 300
-	)
-	barview = ldabar(ϕ[topicdetail,:], dtmatrix.terms, toptermcount)
-	Plot(barview, layout)
-end
+# ╔═╡ 91c8f5cb-090b-47fe-8edb-a37074b4e1c2
+tm = lda_tm(c, k)
 
 # ╔═╡ a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 reff = if isnothing(c)  
@@ -1578,9 +1574,9 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─ffb548e0-71b5-4ead-9033-9c44ca70b22a
+# ╠═ffb548e0-71b5-4ead-9033-9c44ca70b22a
 # ╟─c0543064-597c-4104-b26a-333437ddf4d8
-# ╟─0c6337e6-4de7-4e76-9589-42bc170a931a
+# ╠═0c6337e6-4de7-4e76-9589-42bc170a931a
 # ╟─6d24ec36-6d02-11ee-24af-7f32effe1a76
 # ╟─082b0f1f-12b2-4f09-be8f-4e2cbf35d714
 # ╟─f0bd2768-68bd-4535-b90e-34359b3030f9
@@ -1588,7 +1584,7 @@ version = "17.4.0+0"
 # ╟─fcef1df7-4cac-4be1-9e98-67b835d81fb8
 # ╟─0e6f70dc-2da6-43f1-9ded-66dcaa92877d
 # ╟─c6b5a24b-3f29-49e2-b64b-8761854ec503
-# ╟─60af1314-1b94-43af-954e-f1f984582144
+# ╠═60af1314-1b94-43af-954e-f1f984582144
 # ╟─df880285-50a9-4a18-9203-0971b3e45924
 # ╟─dceb616c-e86d-40f9-815b-d8acbf2744f0
 # ╟─423c2f39-5e1a-4751-989f-b68003d061d4
@@ -1600,17 +1596,17 @@ version = "17.4.0+0"
 # ╟─8d5f6c03-a776-4304-9b5f-dfd9c235edbd
 # ╟─4b742534-045e-43ce-96c1-9ad1587fba80
 # ╟─1fbd8ebc-adaa-4d42-b65f-291faac7633e
-# ╟─1bce7141-c7db-4a86-ac1a-36bff54edc86
+# ╠═1bce7141-c7db-4a86-ac1a-36bff54edc86
 # ╟─5fc19dbc-3f3b-41fb-b560-c67c04a3190b
 # ╟─084082de-30f5-43a6-9a78-a4e7d2ec99e7
 # ╟─7d740f6c-9430-4367-90a6-32933c3b4cd7
 # ╟─2aa13650-2854-4f12-b150-1551fc276594
-# ╟─0aad525c-1a6d-4a33-a046-1704fb0cbc36
+# ╠═0aad525c-1a6d-4a33-a046-1704fb0cbc36
 # ╟─952ff6a6-b67b-4e0b-b80d-93d10a1d9a86
 # ╟─45c8ba32-fda0-41e4-9c76-528d191fc298
 # ╟─0e1fc056-c946-4c53-a046-69c6edec3044
-# ╟─ec514c67-d35a-42aa-b2c0-cd56ba105c51
-# ╟─c9e0e222-200f-400e-9831-780133df3253
+# ╠═ec514c67-d35a-42aa-b2c0-cd56ba105c51
+# ╠═c9e0e222-200f-400e-9831-780133df3253
 # ╟─57779e81-b2c9-4067-a675-4de47646556d
 # ╟─d6c59846-88d1-48d8-9405-67bac12c5eeb
 # ╟─8a2f14b8-6fb3-49f3-b161-e06ffe32108a
@@ -1623,14 +1619,14 @@ version = "17.4.0+0"
 # ╟─d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
 # ╟─543080bf-fa45-42ba-89db-1ba06f2c0f41
 # ╟─89d1bd74-3e0b-4ef7-b4ed-d0923c00845f
-# ╟─2547227f-99f2-49c6-a8d6-c1dbdda24fd9
-# ╟─2e0e0119-32b5-46f3-aea7-7a447878ce33
-# ╟─dbab6c6e-8016-487a-887a-255c2f25b02e
-# ╟─f59dba8a-03d4-4a85-a994-de832e8ddf5f
+# ╠═2547227f-99f2-49c6-a8d6-c1dbdda24fd9
+# ╠═2e0e0119-32b5-46f3-aea7-7a447878ce33
+# ╠═dbab6c6e-8016-487a-887a-255c2f25b02e
+# ╠═f59dba8a-03d4-4a85-a994-de832e8ddf5f
 # ╟─863fd7c4-5460-4de0-b422-fa38350f7545
-# ╟─42ae6aed-d949-47fa-8aa2-ae35eb79c29e
 # ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
 # ╠═fd23b519-3d5f-4a88-931c-a3118fbc256e
+# ╠═91c8f5cb-090b-47fe-8edb-a37074b4e1c2
 # ╟─a7917f32-8d08-4d3e-a34d-4cedbb5b9649
 # ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
 # ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8
@@ -1652,6 +1648,6 @@ version = "17.4.0+0"
 # ╠═a1db21b6-6d6f-4dcd-a0e2-f538d3a25a13
 # ╟─0ef282af-f9a3-43c4-85c4-5e6478d0906b
 # ╟─599af10b-51ee-40a2-a69d-5338e596a3a7
-# ╟─1dddb425-2577-43f9-b4c8-9b5dd2dd912e
+# ╠═1dddb425-2577-43f9-b4c8-9b5dd2dd912e
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

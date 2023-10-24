@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.29
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -36,11 +36,15 @@ begin
 end
 
 
-# ╔═╡ bbb12a20-6245-42c6-98e8-a9b486fe7674
-md"""> ## UPDATED NOTEBOOK VERSION USING NEW `CitableCorpusAnalysis` PKG"""
-
 # ╔═╡ 852147da-b8e1-40cc-b89b-cfae3e3f3680
-nbversion = "3.0.0"
+nbversion = "3.0.0";
+
+# ╔═╡ bbb12a20-6245-42c6-98e8-a9b486fe7674
+md""" ## Topic modelling of a citable corpus with LDA
+
+
+*Notebook version*: **$(nbversion)**.
+"""
 
 # ╔═╡ c1873e3e-d906-4bc5-ae35-b7c11335298e
 md"""*See release notes* $(@bind release_history CheckBox())"""
@@ -64,13 +68,16 @@ md"""
 # ╔═╡ 8969c875-ad42-4278-bd6f-8fc028c34299
 md"""*Case-insensitive*: $(@bind case_insensitive CheckBox(default = true))"""
 
+# ╔═╡ d389bd5c-eb0a-4866-ae8a-06c1af672066
+md"""*Any **unchecked** terms will be treated as stop words.  **Check** any terms to include in the topic model.*"""
+
 # ╔═╡ bb0c7580-c64b-446d-a18a-e1714bcf6d0c
 md"""
 !!! note "Compute topic model"
 """
 
-# ╔═╡ d389bd5c-eb0a-4866-ae8a-06c1af672066
-md"""*Any **unchecked** terms will be treated as stop words.  **Check** any terms to include in the topic model.  When editing of stop-word list is complete, check "Compute topic model".*"""
+# ╔═╡ e6e0285c-2328-4216-ab83-a54dd8b6bcba
+  md"""*When editing of stop-word list is complete, check "Compute topic model".*"""
 
 # ╔═╡ a261fbd8-6b0b-43e7-a3a6-0fc6afcffc9d
 md"""*Compute topic model* $(@bind stopwordsok CheckBox())"""
@@ -78,24 +85,24 @@ md"""*Compute topic model* $(@bind stopwordsok CheckBox())"""
 # ╔═╡ 6eb13aa6-7fce-4c63-9d46-33280c3a8b90
 md"""*Number of topics (`k`)* $(@bind k confirm(Slider(2:40, default = 12, show_value = true)))"""
 
+# ╔═╡ b3267b0d-53df-4364-bba3-eda46bf972c0
+md"""*Number of iterations*: $( @bind iters confirm(Slider(100:100:2500, default =1000, show_value = true)))"""
+
 # ╔═╡ 9f247ffd-b68a-4e78-8081-932ffe9123c3
 md"""
 !!! note "Review results: highest term scores for each topic"
 """
 
-# ╔═╡ b3267b0d-53df-4364-bba3-eda46bf972c0
-md"""*Number of iterations*: $( @bind iters confirm(Slider(100:100:2500, default =1000, show_value = true)))"""
-
 # ╔═╡ 83af2891-bfca-41da-86ef-5c590a7a2353
 md"""*View top terms for each topic*: $( @bind toptermcount confirm(Slider(1:30, default =10, show_value = true)))"""
+
+# ╔═╡ f6137862-e232-4c8b-892b-13fd977dc9f7
+md"""*See plot of term weights for topic:*"""
 
 # ╔═╡ 46f76684-0ee6-41bf-9c68-c6f52c180916
 md"""
 !!! note "View most significant documents for each topic"
 """
-
-# ╔═╡ ce4f4866-8572-4aae-9ae6-021a4facf72a
-md"""> **GRAPH DOCS IN TOPIC SPACE here**"""
 
 # ╔═╡ d1af6c74-074c-4655-bd96-f470de8dd4df
 md"""*View highest scoring passages (documents) for each topic* $(@bind topdocscount confirm(Slider(1:30, default = 8, show_value = true)))"""
@@ -104,6 +111,9 @@ md"""*View highest scoring passages (documents) for each topic* $(@bind topdocsc
 md"""
 !!! note "View details for a given passage (\"document\")"
 """
+
+# ╔═╡ c4e06ce5-4ea9-427c-b6fc-95cc8b850fbd
+md"""*Select a passage*:"""
 
 # ╔═╡ a17ced36-577e-4812-b34f-2bc6cc322dde
 html"""
@@ -145,6 +155,19 @@ hygwork = "stoa1263.stoa001"
 
 # ╔═╡ 75fe8c72-3ac9-434e-a202-7a60f54ac98b
 apwork = "tlg0548.tlg001"
+
+# ╔═╡ fecde438-27d9-4658-b170-445b3cb29c81
+"""Abbreviate URNs for Apollodorus or Hyginus.
+Use full URN string for other texts."""
+function abbr(u)
+	if namespace(u) == "greekLit"
+		"Ap. " * passagecomponent(u)
+	elseif namespace(u) == "latinLit"
+		"Hyg. " * passagecomponent(u)
+	else
+		string(u)
+	end
+end
 
 # ╔═╡ c5b1be33-ecab-4337-9e49-40347ada1acc
 md"""> **Load corpus, compute term frequencies, and build topic model**"""
@@ -232,10 +255,137 @@ stopwords = filter(w -> ! (w in keepers), most_freq)
 # ╔═╡ 004a09db-8478-4a35-bb7c-8fd3a1289ce8
 stopwordsok ? md"""*Length of stopword list: $(length(stopwords)) words*""" : nothing
 
+# ╔═╡ f4c5261f-6cf5-435b-a199-29420ff298b8
+	labels = isnothing(c) ? [] : map(psg -> abbr(psg.urn), c.passages)
+
 # ╔═╡ 9ce81c26-03a3-4d17-8b3a-ce88aeae48a5
 # ╠═╡ show_logs = false
-tm = stopwordsok & ! isempty(text_url) ? lda_tm(c, k; stopwords = stopwords, iters = iters) : nothing
+tm = stopwordsok & ! isempty(text_url) ?  lda_tm(c, k; stopwords = stopwords, iters = iters, doclabels = labels) : nothing
 
+# ╔═╡ 7bebc3bf-21fa-42c5-8ae9-420b6d5200a6
+topicmenu = if isnothing(tm)
+	[]
+else
+	menuprs = Pair{Int64, String}[]
+	for (i, t) in enumerate(topiclabels(tm))
+		push!(menuprs, i => string(i, ". ", t))
+	end
+	menuprs
+end
+
+# ╔═╡ 3bf8df46-0374-4679-816a-1e54e320698f
+isempty(topicmenu) ? nothing : @bind topicdetail Select(topicmenu)
+
+# ╔═╡ b9d4b933-e3ee-4eef-854f-e0f392041c22
+if isnothing(c) 
+	@bind docidx Select([""])
+else
+	indexedpsgs = Pair{Int, String}[]
+	for (i, p) in enumerate(labels)
+		push!(indexedpsgs, i => p)
+	end
+	@bind docidx Select(indexedpsgs)
+end
+
+# ╔═╡ 55e8e4a6-60d9-41b0-972b-e24e982ed6dc
+if isnothing(tm)
+else
+	docys = []
+	for (i, lbl) in enumerate(topiclabels(tm))
+		push!(docys, string(i, ". ", lbl))
+	end
+	docxs = tm.topic_docs[:, docidx]
+
+	Plot(bar(y=docys, x = docxs, orientation = "h"), Layout(title = "Topic scores for passage (document) $(labels[docidx])", height = 400))
+end
+
+# ╔═╡ 55398956-05a9-4e02-96ea-07f0221ca736
+md"""> **Markdown formatting**
+"""
+
+# ╔═╡ 954f9b09-6d40-4c99-97c1-0a76493acbb4
+"""Compose markdown string to separate table header and body for a table with `n` columns."""
+function hdr(n)
+	rowval = ["| topic "]
+	for i in 1:n
+		push!(rowval, "| $(i) ")
+	end
+	join(rowval) * "|" 
+end
+
+# ╔═╡ 3daf5f5d-888f-44fe-b80b-59389e06192c
+"""Make a Markdown table to display top ranked documents for a given topic.
+"""
+function topdocs_md(topmod, doccount)
+	lines = [hdr(doccount)]
+	push!(lines, repeat("| --- ", doccount + 1) * "|")
+	
+	for i in 1:k
+		push!(lines, "| topic $(i) |" * join(map(pr -> pr[1], topdocs(topmod, i)), " |"))
+	end
+	join(lines,"\n")
+end
+
+# ╔═╡ 31a6f7eb-f618-4e59-88b4-a53b7b8cb7ce
+isnothing(tm) ? nothing : topdocs_md(tm, topdocscount) |> Markdown.parse
+
+# ╔═╡ c9727ef1-5c39-43b3-9d73-51973813a590
+"""Make a Markdown table to display list of top terms for a topic.
+"""
+function topterms_md(topmod, termcount)
+	lines = [hdr(termcount)]
+	push!(lines, repeat("| --- ", termcount + 1) * "|")
+	
+	for i in 1:k
+		push!(lines, "| topic $(i) |" * join(map(pr -> pr[1], topterms(topmod, i)), " |"))
+	end
+	join(lines,"\n")
+end
+
+# ╔═╡ ba8753a8-07c4-4ee2-8fe7-d70500a78a0b
+isnothing(tm) ? nothing : topterms_md(tm, toptermcount) |> Markdown.parse
+
+# ╔═╡ 36b3c216-a18e-4c2d-ae00-41dc3819b32f
+md"""> **Dimensionality reduction**"""
+
+# ╔═╡ 908ff965-9dbd-40cc-b6f4-8c228a1a7757
+reduced = isnothing(tm) ? nothing : umap(tm.topic_docs, 3)
+
+# ╔═╡ 81b3f1a1-d8f1-4685-80e8-89029e808170
+"""Create a 3D scatter plot for documents in the topic-document  matrix."""
+function plottopics(data3d; ht = 500)
+	lyt = Layout(title = "Documents in topics space reduced to 3 dimensions",
+	height  = ht)
+	plot3 = scatter(x = data3d[1,:], y = data3d[2,:], z = data3d[3,:], mode = "markers", type = "scatter3d")
+	Plot(plot3, lyt)
+end
+
+# ╔═╡ 213665be-d224-4553-8634-5dec9c63fd9a
+isnothing(tm) ? nothing : plottopics(reduced)
+
+# ╔═╡ 05db8829-3e34-4ff0-acf3-88e60fceced4
+"""Compose horizontal bar plot of term scores for a topic."""
+function topictermbar(tm, topicnum; rows = 5)
+	scorepairs = CitableCorpusAnalysis.top_scores(tm.topic_terms[topicnum, :], tm.terms; n = rows)
+	xs = map(pr -> pr[2], scorepairs)
+	ys = map(pr -> pr[1], scorepairs)
+	bplot = bar(x = xs, y = ys, orientation = "h")
+	bplot
+	
+end
+
+# ╔═╡ de927f05-ee40-4a9e-ab8e-ee8f2f57b196
+if isnothing(tm)
+else
+	layout = Layout(
+		title = "Top $(toptermcount) terms for topic $(topicdetail), $(topiclabel(tm, topicdetail))",
+		xaxis_title = "Term score",
+		yaxis_title = "Term",
+		height = 300
+	)
+	barview = topictermbar(tm, topicdetail)
+	Plot(barview, layout)
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -272,7 +422,7 @@ UMAP = "~0.1.10"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.1"
+julia_version = "1.9.3"
 manifest_format = "2.0"
 project_hash = "458431783eba10b732ade9be265a2e933dd5e4ee"
 
@@ -471,7 +621,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.2+0"
+version = "1.0.5+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -997,7 +1147,7 @@ version = "1.3.0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.0"
+version = "1.9.2"
 
 [[deps.PlotlyBase]]
 deps = ["ColorSchemes", "Dates", "DelimitedFiles", "DocStringExtensions", "JSON", "LaTeXStrings", "Logging", "Parameters", "Pkg", "REPL", "Requires", "Statistics", "UUIDs"]
@@ -1376,29 +1526,38 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
+# ╟─852147da-b8e1-40cc-b89b-cfae3e3f3680
 # ╟─5f8972a0-7035-11ee-3002-53a5c348568d
 # ╟─bbb12a20-6245-42c6-98e8-a9b486fe7674
-# ╟─852147da-b8e1-40cc-b89b-cfae3e3f3680
 # ╟─c1873e3e-d906-4bc5-ae35-b7c11335298e
 # ╟─71a1bf81-cb9f-4b36-b144-1dbd512c366c
 # ╟─acb20337-1bea-488a-b73c-89e38e9bbdc6
 # ╟─d3446dfd-4dd5-4b16-9f64-caa60c5e8588
 # ╟─8969c875-ad42-4278-bd6f-8fc028c34299
-# ╟─bb0c7580-c64b-446d-a18a-e1714bcf6d0c
 # ╟─1fca35f6-4668-42e3-b26a-025351ac30d6
 # ╟─d389bd5c-eb0a-4866-ae8a-06c1af672066
 # ╟─39a2e407-7f39-484f-b281-1d73e574143a
-# ╟─a261fbd8-6b0b-43e7-a3a6-0fc6afcffc9d
 # ╟─004a09db-8478-4a35-bb7c-8fd3a1289ce8
+# ╟─bb0c7580-c64b-446d-a18a-e1714bcf6d0c
+# ╟─e6e0285c-2328-4216-ab83-a54dd8b6bcba
+# ╟─a261fbd8-6b0b-43e7-a3a6-0fc6afcffc9d
 # ╟─6eb13aa6-7fce-4c63-9d46-33280c3a8b90
 # ╟─b3267b0d-53df-4364-bba3-eda46bf972c0
 # ╟─9ce81c26-03a3-4d17-8b3a-ce88aeae48a5
 # ╟─9f247ffd-b68a-4e78-8081-932ffe9123c3
 # ╟─83af2891-bfca-41da-86ef-5c590a7a2353
+# ╟─ba8753a8-07c4-4ee2-8fe7-d70500a78a0b
+# ╟─f6137862-e232-4c8b-892b-13fd977dc9f7
+# ╟─3bf8df46-0374-4679-816a-1e54e320698f
+# ╟─de927f05-ee40-4a9e-ab8e-ee8f2f57b196
 # ╟─46f76684-0ee6-41bf-9c68-c6f52c180916
-# ╟─ce4f4866-8572-4aae-9ae6-021a4facf72a
 # ╟─d1af6c74-074c-4655-bd96-f470de8dd4df
+# ╟─31a6f7eb-f618-4e59-88b4-a53b7b8cb7ce
+# ╟─213665be-d224-4553-8634-5dec9c63fd9a
 # ╟─164fdf43-2149-4bc4-a762-ba3063192cad
+# ╟─c4e06ce5-4ea9-427c-b6fc-95cc8b850fbd
+# ╟─b9d4b933-e3ee-4eef-854f-e0f392041c22
+# ╟─55e8e4a6-60d9-41b0-972b-e24e982ed6dc
 # ╟─a17ced36-577e-4812-b34f-2bc6cc322dde
 # ╟─187f5780-9611-41ed-82ba-ec1cd0c576f9
 # ╟─7e4e9921-238b-4a15-84bc-dd7b28678061
@@ -1410,15 +1569,26 @@ version = "17.4.0+0"
 # ╟─5bd76ff8-63a4-4ff1-99d5-37fa3cb32fc7
 # ╟─a48551ee-5c10-4a36-b819-7941644cf02d
 # ╟─75fe8c72-3ac9-434e-a202-7a60f54ac98b
+# ╟─fecde438-27d9-4658-b170-445b3cb29c81
+# ╟─7bebc3bf-21fa-42c5-8ae9-420b6d5200a6
 # ╟─c5b1be33-ecab-4337-9e49-40347ada1acc
 # ╟─f61cfe04-1444-41c7-9c5c-813ba790e6d2
 # ╟─6ac955e3-2a37-413b-b065-0ae84995febb
 # ╟─b2271a55-396c-4348-839d-301940a6c5b6
 # ╟─3e887443-e24c-460e-bb29-266b80fd8105
 # ╟─028c61e1-88b6-4db0-a2dc-a4bdda35268f
-# ╠═6407abf2-e664-4574-b7b9-5ed5bb4fff4b
+# ╟─6407abf2-e664-4574-b7b9-5ed5bb4fff4b
 # ╟─14564857-1b56-4710-9d7e-cadd82a5032d
 # ╟─db98086a-ee1a-4252-a1d9-402e58f4321a
-# ╠═360f2e77-34e2-48bb-bced-41eec778cf06
+# ╟─360f2e77-34e2-48bb-bced-41eec778cf06
+# ╟─f4c5261f-6cf5-435b-a199-29420ff298b8
+# ╟─55398956-05a9-4e02-96ea-07f0221ca736
+# ╟─3daf5f5d-888f-44fe-b80b-59389e06192c
+# ╟─c9727ef1-5c39-43b3-9d73-51973813a590
+# ╟─954f9b09-6d40-4c99-97c1-0a76493acbb4
+# ╟─36b3c216-a18e-4c2d-ae00-41dc3819b32f
+# ╟─908ff965-9dbd-40cc-b6f4-8c228a1a7757
+# ╟─81b3f1a1-d8f1-4685-80e8-89029e808170
+# ╟─05db8829-3e34-4ff0-acf3-88e60fceced4
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

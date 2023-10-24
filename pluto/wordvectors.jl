@@ -1,15 +1,27 @@
 ### A Pluto.jl notebook ###
-# v0.19.29
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
+
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+end
 
 # ╔═╡ ea9ea968-f3f8-4c4b-9c11-64729a8c8589
 begin
 	using PlutoUI
 	using Downloads
+	using CitableBase
 
 	using TextAnalysis
+
 	
 	md"""*To see the Julia environment, unhide this cell.*"""
 end
@@ -20,6 +32,62 @@ TableOfContents()
 # ╔═╡ a24e2a34-71ae-11ee-1bbe-f92f23764276
 md"""# Word vectors in Julia"""
 
+# ╔═╡ 107df972-14d6-4dce-a3f7-fa6943a0e7e1
+md"""Now trying to follow [this from-scratch impementation](https://jaketae.github.io/study/word2vec/)."""
+
+# ╔═╡ 625d810d-6775-45bc-86b5-5f58da3acc9e
+md"""## Tokenization
+
+This part is easy!
+
+We need to index token<->index.
+"""
+
+# ╔═╡ 2df52020-0b1c-4ca8-8cac-c080873b5377
+"""Find position of `s` in vector `v`."""
+function indexof(s,v)::Union{Nothing, Int}
+	i = findfirst(entry -> entry == s,v)
+end
+
+# ╔═╡ 5b974200-4c2a-44e3-b612-de19522bec5f
+md"""Indexing a term:"""
+
+# ╔═╡ 7b7bc51d-d3b4-46ed-bcce-ee77fc9b53a0
+md"""The other direction is a no-brainer:"""
+
+# ╔═╡ 1237b88d-e066-4fdd-ac2e-77bd3edae0aa
+
+
+# ╔═╡ 3ef9d6a3-ea1c-4f3a-bb8d-04601bd11a3a
+md"""## For each center word, get one-hot vectors of context words"""
+
+# ╔═╡ ff71d2a9-e5c1-47ba-b582-4b1d91c6911d
+@bind windowsize Slider(2:6, show_value=true)
+
+# ╔═╡ a5a29dca-b36b-4169-86ab-ec41652c3183
+md"""!!! note "Map from tokenization of text to one-hot encoded *context* "
+"""
+
+# ╔═╡ c28cf9ba-2774-42f0-bb24-c7e5804966c9
+"""One-hot encode a row of length `len` with 1 at position `n`."""
+function onehotencode(n, len)
+	nada = fill(0, len)
+	nada[n] = 1
+	nada
+end
+
+# ╔═╡ 806a65af-3f34-4325-97e1-c42245fd27f8
+md"""## Maybe use softmax to get probabilities"""
+
+# ╔═╡ b7cfac17-cf3b-4af8-9aa9-d0f8be396b77
+md"""## The embedding model"""
+
+# ╔═╡ e98a003b-8a57-48df-8dda-806acb983c3b
+html"""
+<br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/>
+"""
+
 # ╔═╡ b0013b92-6523-4b90-859b-6d6fe4c6eec6
 md"""
 Closely following this blog post: on [Word vectors with Dracula](https://spcman.github.io/getting-to-know-julia/nlp/word-embeddings/).
@@ -27,30 +95,8 @@ Closely following this blog post: on [Word vectors with Dracula](https://spcman.
 
 """
 
-# ╔═╡ 7db4227c-62e7-4bd9-a365-c7d4f90a2614
-function sentvec(s) 
-    local arr=[]
-    for w in split(s)
-        if vec(w) != nothing
-            push!(arr, vec(w))
-        end
-    end
-    if length(arr)==0
-        ones(Float32, (50,1))*999
-    else
-        mean(arr)
-    end
-end
-
-
-# ╔═╡ 1add4369-89b3-4eca-aff1-59438a38ec06
-vec
-
-# ╔═╡ e98a003b-8a57-48df-8dda-806acb983c3b
-html"""
-<br/><br/><br/><br/><br/>
-<br/><br/><br/><br/><br/>
-"""
+# ╔═╡ 1ab2518a-a80c-4665-9a3c-68287138b3d7
+md"""> Not so helpful after all"""
 
 # ╔═╡ eb6c14a6-caa8-4559-b856-570fd92f9a13
 md"""!!! warn "Under the hood"
@@ -62,28 +108,55 @@ function tidy(s)
 	filter(c -> ! ispunct(c) & ! isnumeric(c), s) |> lowercase
 end
 
+# ╔═╡ 5727e8c7-00b4-4824-9782-4fbfbd81f0d4
+sample = """Machine learning is the study of computer algorithms that improve automatically through experience. It is seen as a subset of artificial intelligence. Machine learning algorithms build a mathematical model based on sample data, known as training data, in order to make predictions or decisions without being explicitly programmed to do so. Machine learning algorithms are used in a wide variety of applications, such as email filtering and computer vision, where it is difficult or infeasible to develop conventional algorithms to perform the needed tasks""" |> tidy
+
+# ╔═╡ 65884e0e-2def-46b6-be4f-8dea8e79be2b
+lexicon = split(sample) |> unique |> sort
+
+# ╔═╡ f1a69ac6-2b07-4748-bb08-8721eef29f17
+indexof("algorithms", lexicon)
+
+# ╔═╡ 9c8dcffb-4892-4557-b595-e6193baf07c1
+lexicon[2]
+
+# ╔═╡ dc9bd02d-1b8a-414a-b65c-9811c83d2a10
+indexof("algorithms", lexicon)
+
+# ╔═╡ b0dcd1bb-5f72-4988-970e-807b47a2b67e
+onehotencode(2, length(lexicon)) |> length
+
+# ╔═╡ a6e0b9da-eee9-4b5d-ae04-fe5f939c003d
+length(lexicon)
+
+# ╔═╡ bb80a33a-d9cb-44cf-8578-d13b96132f60
+slices = slidingwindow(split(sample); n = 5, pad = true)
+
+# ╔═╡ dba40f0e-753a-49d2-a6f1-87fb8e74c9a6
+slices
+
 # ╔═╡ 0020e894-41b9-49f4-b765-8abf937ebf5e
 apollodorus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/apollodorus-topos.txt"
 
 # ╔═╡ 2b40ad65-4fc2-4c0a-86f4-b6a67d2bc2f0
 ap = begin
-	tmp = Downloads.download(apollodorus_url)
-	lines = readlines(tmp)
-	rm(tmp)
-	map(l -> tidy(l), lines)
+	f = Downloads.download(apollodorus_url)
+	txt = f |> read |> String
+	rm(f)
+	txt |> tidy
 end
 
-# ╔═╡ 678cf9d5-d3e0-4d64-a875-da0ebe619be7
-map(psg -> sentvec(psg), ap)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
+CitableBase = "d6f014bd-995c-41bd-9893-703339864534"
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 TextAnalysis = "a2db99b7-8b79-58f8-94bf-bbc811eef33d"
 
 [compat]
+CitableBase = "~10.3.1"
 PlutoUI = "~0.7.52"
 TextAnalysis = "~0.7.5"
 """
@@ -92,15 +165,25 @@ TextAnalysis = "~0.7.5"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.1"
+julia_version = "1.9.3"
 manifest_format = "2.0"
-project_hash = "e3bc6b8609fdea167797529e349a82ce023ab92e"
+project_hash = "77ce5fea22d6dafc7bcf1f9b0659064dff7f17ea"
+
+[[deps.ANSIColoredPrinters]]
+git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
+uuid = "a4c015fc-c6ff-483c-b24f-f7ea428134e9"
+version = "0.0.1"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
 git-tree-sha1 = "91bd53c39b9cbfb5ef4b015e8b582d344532bd0a"
 uuid = "6e696c72-6542-2067-7265-42206c756150"
 version = "1.2.0"
+
+[[deps.AbstractTrees]]
+git-tree-sha1 = "faa260e4cb5aba097a73fab382dd4b5819d8ec8c"
+uuid = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
+version = "0.4.4"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -116,6 +199,12 @@ uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 git-tree-sha1 = "43b1a4a8f797c1cddadf60499a8a077d4af2cd2d"
 uuid = "d1d4a3ce-64b1-5f1a-9ba4-7e7e69966f35"
 version = "0.1.7"
+
+[[deps.CitableBase]]
+deps = ["DocStringExtensions", "Documenter", "Test", "TestSetExtensions"]
+git-tree-sha1 = "cc4f1e1db392c4a05eb29026774d6f26ae8ca457"
+uuid = "d6f014bd-995c-41bd-9893-703339864534"
+version = "10.3.1"
 
 [[deps.CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
@@ -142,7 +231,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.2+0"
+version = "1.0.5+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -176,6 +265,11 @@ version = "1.0.0"
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
 
+[[deps.DeepDiffs]]
+git-tree-sha1 = "9824894295b62a6a4ab6adf1c7bf337b3a9ca34c"
+uuid = "ab62b9b5-e342-54a8-a765-a90f495de1a6"
+version = "1.2.0"
+
 [[deps.DelimitedFiles]]
 deps = ["Mmap"]
 git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
@@ -191,6 +285,12 @@ deps = ["LibGit2"]
 git-tree-sha1 = "2fb1e02f2b635d0845df5d7c167fec4dd739b00d"
 uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 version = "0.9.3"
+
+[[deps.Documenter]]
+deps = ["ANSIColoredPrinters", "AbstractTrees", "Base64", "Dates", "DocStringExtensions", "Downloads", "IOCapture", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "MarkdownAST", "Pkg", "PrecompileTools", "REPL", "RegistryInstances", "SHA", "Test", "Unicode"]
+git-tree-sha1 = "147a3cbb6ddcd9448fe5e6c426b347efc68f9c86"
+uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+version = "1.1.1"
 
 [[deps.Downloads]]
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
@@ -274,6 +374,11 @@ git-tree-sha1 = "85b0221304a723f3fc5221f33b471675e5f64e74"
 uuid = "8ef0a80b-9436-5d2c-a485-80b904378c43"
 version = "0.4.4"
 
+[[deps.LazilyInitializedFields]]
+git-tree-sha1 = "410fe4739a4b092f2ffe36fcb0dcc3ab12648ce1"
+uuid = "0e77f7df-68c5-4e49-93ce-4cd80f5598bf"
+version = "1.2.1"
+
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
 uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
@@ -334,6 +439,12 @@ version = "0.1.4"
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
+[[deps.MarkdownAST]]
+deps = ["AbstractTrees", "Markdown"]
+git-tree-sha1 = "465a70f0fc7d443a00dcdc3267a497397b8a3899"
+uuid = "d0879d2d-cac2-40c8-9cee-1863dc0c7391"
+version = "0.1.2"
+
 [[deps.MbedTLS]]
 deps = ["Dates", "MbedTLS_jll", "MozillaCACerts_jll", "Random", "Sockets"]
 git-tree-sha1 = "03a9b9718f5682ecb107ac9f7308991db4ce395b"
@@ -393,7 +504,7 @@ version = "2.7.2"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.0"
+version = "1.9.2"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
@@ -435,6 +546,12 @@ uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
 version = "1.2.2"
+
+[[deps.RegistryInstances]]
+deps = ["LazilyInitializedFields", "Pkg", "TOML", "Tar"]
+git-tree-sha1 = "ffd19052caf598b8653b99404058fce14828be51"
+uuid = "2792f1a3-b283-48e8-9a74-f99dce5104f3"
+version = "0.1.0"
 
 [[deps.RelocatableFolders]]
 deps = ["SHA", "Scratch"]
@@ -539,6 +656,12 @@ version = "1.10.0"
 deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
+[[deps.TestSetExtensions]]
+deps = ["DeepDiffs", "Distributed", "Test"]
+git-tree-sha1 = "3a2919a78b04c29a1a57b05e1618e473162b15d0"
+uuid = "98d24dd4-01ad-11ea-1b02-c9a08f80db04"
+version = "2.0.0"
+
 [[deps.TextAnalysis]]
 deps = ["DataStructures", "DelimitedFiles", "JSON", "Languages", "LinearAlgebra", "Printf", "ProgressMeter", "Random", "Serialization", "Snowball", "SparseArrays", "Statistics", "StatsBase", "Tables", "WordTokenizers"]
 git-tree-sha1 = "c9d2672253ef9196769e2931efb57fd768d24158"
@@ -602,12 +725,31 @@ version = "17.4.0+0"
 # ╠═ea9ea968-f3f8-4c4b-9c11-64729a8c8589
 # ╟─9fd4e0e4-f586-4de1-acc6-ffa6cc2732e7
 # ╟─a24e2a34-71ae-11ee-1bbe-f92f23764276
-# ╟─b0013b92-6523-4b90-859b-6d6fe4c6eec6
+# ╟─107df972-14d6-4dce-a3f7-fa6943a0e7e1
+# ╟─5727e8c7-00b4-4824-9782-4fbfbd81f0d4
 # ╟─2b40ad65-4fc2-4c0a-86f4-b6a67d2bc2f0
-# ╠═7db4227c-62e7-4bd9-a365-c7d4f90a2614
-# ╠═678cf9d5-d3e0-4d64-a875-da0ebe619be7
-# ╠═1add4369-89b3-4eca-aff1-59438a38ec06
+# ╟─625d810d-6775-45bc-86b5-5f58da3acc9e
+# ╠═65884e0e-2def-46b6-be4f-8dea8e79be2b
+# ╟─2df52020-0b1c-4ca8-8cac-c080873b5377
+# ╟─5b974200-4c2a-44e3-b612-de19522bec5f
+# ╠═f1a69ac6-2b07-4748-bb08-8721eef29f17
+# ╟─7b7bc51d-d3b4-46ed-bcce-ee77fc9b53a0
+# ╠═9c8dcffb-4892-4557-b595-e6193baf07c1
+# ╠═1237b88d-e066-4fdd-ac2e-77bd3edae0aa
+# ╟─3ef9d6a3-ea1c-4f3a-bb8d-04601bd11a3a
+# ╟─ff71d2a9-e5c1-47ba-b582-4b1d91c6911d
+# ╠═bb80a33a-d9cb-44cf-8578-d13b96132f60
+# ╠═dba40f0e-753a-49d2-a6f1-87fb8e74c9a6
+# ╠═dc9bd02d-1b8a-414a-b65c-9811c83d2a10
+# ╠═b0dcd1bb-5f72-4988-970e-807b47a2b67e
+# ╠═a6e0b9da-eee9-4b5d-ae04-fe5f939c003d
+# ╠═a5a29dca-b36b-4169-86ab-ec41652c3183
+# ╟─c28cf9ba-2774-42f0-bb24-c7e5804966c9
+# ╟─806a65af-3f34-4325-97e1-c42245fd27f8
+# ╟─b7cfac17-cf3b-4af8-9aa9-d0f8be396b77
 # ╟─e98a003b-8a57-48df-8dda-806acb983c3b
+# ╟─b0013b92-6523-4b90-859b-6d6fe4c6eec6
+# ╟─1ab2518a-a80c-4665-9a3c-68287138b3d7
 # ╟─eb6c14a6-caa8-4559-b856-570fd92f9a13
 # ╟─bd29c88f-fcda-4048-b446-30b7eb4fb407
 # ╟─0020e894-41b9-49f4-b765-8abf937ebf5e

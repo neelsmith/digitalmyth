@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.29
+# v0.19.27
 
 using Markdown
 using InteractiveUtils
@@ -14,320 +14,150 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 0c6337e6-4de7-4e76-9589-42bc170a931a
-# ╠═╡ show_logs = false
+# ╔═╡ ea9ea968-f3f8-4c4b-9c11-64729a8c8589
 begin
+	using PlutoUI
+	using Downloads
+	using CitableBase
+
 	using TextAnalysis
-	using PlutoUI, Markdown
-	using Downloads 
 
-	using StatsBase
-	using OrderedCollections
 	
-	using CitableBase, CitableCorpus, CitableText
-	using Orthography
-	md"*Unhide this cell to see the Julia environment.*"
+	md"""*To see the Julia environment, unhide this cell.*"""
 end
 
-# ╔═╡ 6d24ec36-6d02-11ee-24af-7f32effe1a76
-md"""# LDA with Julia `TextAnalysis`"""
+# ╔═╡ 9fd4e0e4-f586-4de1-acc6-ffa6cc2732e7
+TableOfContents()
 
-# ╔═╡ e2ea0057-9a4c-4ddf-985a-e107fb3b0b38
-md"""
-!!! note "Load corpus and edit stop words"
+# ╔═╡ a24e2a34-71ae-11ee-1bbe-f92f23764276
+md"""# Word vectors in Julia"""
+
+# ╔═╡ 107df972-14d6-4dce-a3f7-fa6943a0e7e1
+md"""Now trying to follow [this from-scratch impementation](https://jaketae.github.io/study/word2vec/)."""
+
+# ╔═╡ 625d810d-6775-45bc-86b5-5f58da3acc9e
+md"""## Tokenization
+
+This part is easy!
+
+We need to index token<->index.
 """
 
-# ╔═╡ 0e6f70dc-2da6-43f1-9ded-66dcaa92877d
-md"""*Case-insensitive*: $(@bind case_insensitive CheckBox(default = true))"""
-
-# ╔═╡ dceb616c-e86d-40f9-815b-d8acbf2744f0
-md"""
-!!! note "Compute topic model"
-"""
-
-# ╔═╡ 99b012eb-6f17-403e-b541-c1497ee1e7e5
-md"""*Number of topics (`k`)* $(@bind k confirm(Slider(2:40, default = 6, show_value = true)))"""
-
-# ╔═╡ 3044d17c-b365-402a-a276-f3d4ae807cb5
-md"""*Number of iterations* $(@bind iters confirm(Slider(1000:200:4000, show_value = true)))"""
-
-# ╔═╡ 423c2f39-5e1a-4751-989f-b68003d061d4
-md"""*α* $(@bind α confirm(Slider(0:0.1:1.0, default = 0.1, show_value = true)))"""
-
-# ╔═╡ 94672682-2e7e-4f70-b335-01f09f603add
-md"""*β* $(@bind β confirm(Slider(0:0.1:1.0, default = 0.1, show_value = true)))"""
-
-# ╔═╡ 5c30d252-9e76-4209-b47f-d85ed5f38e5b
-md"""
-!!! note "Interpret topic model"
-"""
-
-# ╔═╡ 4b742534-045e-43ce-96c1-9ad1587fba80
-md"""*View top terms for each topic* $(@bind toptermcount confirm(Slider(1:30, default = 8, show_value = true)))"""
-
-# ╔═╡ f59dba8a-03d4-4a85-a994-de832e8ddf5f
-function hdr(n)
-	rowval = ["| topic "]
-	for i in 1:n
-		push!(rowval, "| $(i) ")
-	end
-	join(rowval) * "|" 
+# ╔═╡ 2df52020-0b1c-4ca8-8cac-c080873b5377
+"""Find position of `s` in vector `v`."""
+function indexof(s,v)::Union{Nothing, Int}
+	i = findfirst(entry -> entry == s,v)
 end
 
-# ╔═╡ e57a1d64-d14a-44ea-92b5-bd7d73c61aed
-"""Find terms in `termlist` corresponding to top `n` values in a row of
-topic-to-term values.
+# ╔═╡ 5b974200-4c2a-44e3-b612-de19522bec5f
+md"""Indexing a term:"""
+
+# ╔═╡ 7b7bc51d-d3b4-46ed-bcce-ee77fc9b53a0
+md"""The other direction is a no-brainer:"""
+
+# ╔═╡ 1237b88d-e066-4fdd-ac2e-77bd3edae0aa
+
+
+# ╔═╡ 3ef9d6a3-ea1c-4f3a-bb8d-04601bd11a3a
+md"""## For each center word, get one-hot vectors of context words"""
+
+# ╔═╡ ff71d2a9-e5c1-47ba-b582-4b1d91c6911d
+@bind windowsize Slider(2:6, show_value=true)
+
+# ╔═╡ a5a29dca-b36b-4169-86ab-ec41652c3183
+md"""!!! note "Map from tokenization of text to one-hot encoded *context* "
 """
-function top_terms(row, termlist; n = 10)
-	sorted = sort(row, rev = true)
-	termvalpairs = []
-	for val in sorted[1:n]
-		
-		rowidx = findfirst(col -> col == val, row)
-		push!(termvalpairs, (termlist[rowidx], val))
-	end
-	termvalpairs
+
+# ╔═╡ c28cf9ba-2774-42f0-bb24-c7e5804966c9
+"""One-hot encode a row of length `len` with 1 at position `n`."""
+function onehotencode(n, len)
+	nada = fill(0, len)
+	nada[n] = 1
+	nada
 end
 
-# ╔═╡ dbab6c6e-8016-487a-887a-255c2f25b02e
-"""Make a Markdown table to display top terms.
-"""
-function topterms_md(topictotermscores, termlist, termcount)
-	lines = [hdr(termcount)]
-		#repeat("| --- ", toptermcount + 1) * "|"
-	push!(lines, repeat("| --- ", toptermcount + 1) * "|")
-	
-	for i in 1:k
-		bigterms = top_terms(topictotermscores[i,:], termlist; n = termcount)
-		push!(lines, "| topic $(i) |" * join(map(pr -> pr[1], bigterms), " |"))
-	end
-	join(lines,"\n")
-end
+# ╔═╡ 806a65af-3f34-4325-97e1-c42245fd27f8
+md"""## Maybe use softmax to get probabilities"""
 
-# ╔═╡ 5e68da71-5eb4-4e14-b117-52e3b063c96c
-md"""### Topic-to-terms scores"""
+# ╔═╡ b7cfac17-cf3b-4af8-9aa9-d0f8be396b77
+md"""## The embedding model"""
 
-# ╔═╡ b820a2ab-f4ab-46cd-9819-b96dae1b7b06
-md"""Each *row* of ϕ is a topic.  Each column is the score for a term.  The sum of each *row* == 1.0. 
-"""
-
-# ╔═╡ df619570-048c-40c9-aa07-7686bbe52300
-md"""
-From the docs:
-
-`ϕ: ntopics × nwords Sparse matrix of probabilities s.t. sum(ϕ, 1) == 1`
-
-
-"""
-
-# ╔═╡ 4c27b02a-222c-431a-9d00-7b022795efde
-md"""### Topics-to-documents scores"""
-
-# ╔═╡ 2542845b-4409-404b-8a5c-cb26fb9131b7
-md"""Each *row* is a topic. Each column is the score for a document.
-The sum of each *column* == 1.0.
-"""
-
-# ╔═╡ f85d3875-abf0-45cd-bac4-9260a6f1498b
-md"""From the docs:
-
-`θ: ntopics × ndocs Dense matrix of probabilities s.t. sum(θ, 1) == 1`
-"""
-
-# ╔═╡ e8588ce7-26ac-42f7-9e04-bbb1ed0575f1
-md"""## Learn the package"""
-
-# ╔═╡ 7c90c208-f329-4eb7-be28-08379eb7eaf3
-md"""
-!!! notes "Use the DT Matrix's `terms` member to convert numbers to term strings"
-"""
-
-# ╔═╡ 624bd0ae-df61-4b78-b88f-ed7bf6409d40
-dummycorp, dummym = begin
-	tempcorp= Corpus([StringDocument("Banks  finance  interest rates"),
-              StringDocument("Banks jams backboards")])
-	update_lexicon!(tempcorp)
-	(tempcorp, DocumentTermMatrix(tempcorp))
-end
-
-# ╔═╡ 446b0896-0380-4d04-8907-06f6b907d840
-lexkeys = lexicon(dummycorp) |> keys |> collect
-
-# ╔═╡ 31adf8e3-1302-4ba6-a462-63e52d194aaa
-phi,theta = lda(dummym, 2, iters, α, β)
-
-# ╔═╡ 050bd8b1-720b-4912-8f69-8a642ebf8320
-dummym.terms
-
-# ╔═╡ ebfcc2f8-f8f2-4a10-84aa-14647a63343d
-phi
-
-# ╔═╡ 77f71a07-fd9d-49aa-a274-19049bd8cb15
-phi[2,:]
-
-# ╔═╡ 2baf5a68-f34f-4acb-8d39-18ed1e4d3d22
-phi[1,:]
-
-# ╔═╡ dd7705a8-3f7d-4e4f-8f87-6c4e53c15f01
-theta
-
-# ╔═╡ 8a2f14b8-6fb3-49f3-b161-e06ffe32108a
+# ╔═╡ e98a003b-8a57-48df-8dda-806acb983c3b
 html"""
-<br/><br/><br/><br/>
-<br/><br/><br/><br/>
-<br/><br/><br/><br/>
+<br/><br/><br/><br/><br/>
+<br/><br/><br/><br/><br/>
 """
 
-# ╔═╡ f50104d7-1c06-4813-bc86-1a6d4167d309
-md"""> **LDA**"""
-
-# ╔═╡ 863fd7c4-5460-4de0-b422-fa38350f7545
-md"""> **Load data**"""
-
-# ╔═╡ 0439bf2f-69a1-4aa8-a71a-dd058ebf5bfe
-"""Downloads a text corpus from URL `u`, removes all punctuation, and optionally makes case-insensitive (the default). Returns three fundamental structures
-from the `TextAnalysis` package:
-
-1. a text corpus
-2. a "lexicon"
-3. the document-term matrix
-"""
-function ta_structs_from_corpus(citecorp; lc = true, stoplist = [])
-
-	
-	corp = map(psg -> StringDocument(psg.text), citecorp.passages) |> Corpus
-    
-	prepare!(corp, strip_punctuation)
-	remove_words!(corp, stoplist)
-
-    update_inverse_index!(corp)
-	update_lexicon!(corp)
-	
-	
-	(corp,  lexicon(corp), DocumentTermMatrix(corp))
-end
-
-# ╔═╡ 9c3ce649-4b24-476b-9798-386b5712000b
-md"""> **UI widgets**"""
-
-# ╔═╡ 8eff85fd-02ce-46ec-ba59-3208e73400fb
-hyginus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/grant-hyginus.cex"
-
-# ╔═╡ b34d675c-9f1a-49da-a4e1-54c1c1d1dcf0
-apollodorus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/main/texts/apollodorus.cex"
-
-# ╔═╡ 623099bd-d8fa-452c-b9f2-52e2940a0fb8
-menu = ["" => "Choose a text", hyginus_url => "Hyginus", apollodorus_url => "Apollodorus"]
-
-# ╔═╡ fcef1df7-4cac-4be1-9e98-67b835d81fb8
-@bind text_url Select(menu)
-
-# ╔═╡ fd23b519-3d5f-4a88-931c-a3118fbc256e
-c = if isempty(text_url) 
-	nothing 
-else
-
-	if case_insensitive
-		map(psg -> CitablePassage(psg.urn, lowercase(psg.text)), fromcex(text_url, CitableTextCorpus, UrlReader).passages) |> CitableTextCorpus
-	else
-		fromcex(text_url, CitableTextCorpus, UrlReader)
-	end
-end
-
-# ╔═╡ c6b5a24b-3f29-49e2-b64b-8761854ec503
-if isnothing(c) 
-	
-else
+# ╔═╡ b0013b92-6523-4b90-859b-6d6fe4c6eec6
 md"""
-*Number of stop-word candidates to review* $(@bind top_n confirm(Slider(20:300, default = 100, show_value = true)))
+Closely following this blog post: on [Word vectors with Dracula](https://spcman.github.io/getting-to-know-julia/nlp/word-embeddings/).
 
 
-*Any **unchecked** terms will be treated as stop words.  **Check** any terms to include in the topic model.*
 """
 
+# ╔═╡ 1ab2518a-a80c-4665-9a3c-68287138b3d7
+md"""> Not so helpful after all"""
+
+# ╔═╡ eb6c14a6-caa8-4559-b856-570fd92f9a13
+md"""!!! warn "Under the hood"
+"""
+
+# ╔═╡ bd29c88f-fcda-4048-b446-30b7eb4fb407
+"""Tidy string by making it lower-case alphabetic."""
+function tidy(s)
+	filter(c -> ! ispunct(c) & ! isnumeric(c), s) |> lowercase
 end
 
-# ╔═╡ 3fede1f1-4bf3-48e0-82ec-203fd936199e
-lextokens = isnothing(c) ? [] :  filter(t -> t.tokentype == LexicalToken(), Orthography.tokenize(c, simpleAscii()))
+# ╔═╡ 5727e8c7-00b4-4824-9782-4fbfbd81f0d4
+sample = """Machine learning is the study of computer algorithms that improve automatically through experience. It is seen as a subset of artificial intelligence. Machine learning algorithms build a mathematical model based on sample data, known as training data, in order to make predictions or decisions without being explicitly programmed to do so. Machine learning algorithms are used in a wide variety of applications, such as email filtering and computer vision, where it is difficult or infeasible to develop conventional algorithms to perform the needed tasks""" |> tidy
 
-# ╔═╡ 68dc297d-ccd0-4dd1-a652-f19cfcd3c111
-counts = countmap(map( t -> t.passage.text, lextokens)) |> OrderedDict
+# ╔═╡ 65884e0e-2def-46b6-be4f-8dea8e79be2b
+lexicon = split(sample) |> unique |> sort
 
-# ╔═╡ 1623909b-1c27-4cac-8cbe-4287ed3e30e8
-sorteddict = sort(counts, rev=true, byvalue = true)
+# ╔═╡ f1a69ac6-2b07-4748-bb08-8721eef29f17
+indexof("algorithms", lexicon)
 
-# ╔═╡ 5827632f-bd27-4658-a42b-d8fb7ff3e8bb
-sorted = keys(sorteddict) |> collect
+# ╔═╡ 9c8dcffb-4892-4557-b595-e6193baf07c1
+lexicon[2]
 
-# ╔═╡ 543080bf-fa45-42ba-89db-1ba06f2c0f41
-	most_freq = isempty(sorted) ? [] : sorted[1:top_n]
+# ╔═╡ dc9bd02d-1b8a-414a-b65c-9811c83d2a10
+indexof("algorithms", lexicon)
 
-# ╔═╡ 60af1314-1b94-43af-954e-f1f984582144
-if isnothing(c)
-else
-	@bind keepers MultiCheckBox(most_freq)
+# ╔═╡ b0dcd1bb-5f72-4988-970e-807b47a2b67e
+onehotencode(2, length(lexicon)) |> length
+
+# ╔═╡ a6e0b9da-eee9-4b5d-ae04-fe5f939c003d
+length(lexicon)
+
+# ╔═╡ bb80a33a-d9cb-44cf-8578-d13b96132f60
+slices = slidingwindow(split(sample); n = 5, pad = true)
+
+# ╔═╡ dba40f0e-753a-49d2-a6f1-87fb8e74c9a6
+slices
+
+# ╔═╡ 0020e894-41b9-49f4-b765-8abf937ebf5e
+apollodorus_url = "https://raw.githubusercontent.com/neelsmith/digitalmyth/dev/texts/apollodorus-topos.txt"
+
+# ╔═╡ 2b40ad65-4fc2-4c0a-86f4-b6a67d2bc2f0
+ap = begin
+	f = Downloads.download(apollodorus_url)
+	txt = f |> read |> String
+	rm(f)
+	txt |> tidy
 end
 
-
-# ╔═╡ d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
-stopwords = filter(w -> ! (w in keepers), most_freq)
-
-# ╔═╡ df880285-50a9-4a18-9203-0971b3e45924
-md"""*Length of stopword list: $(length(stopwords)) words*"""
-
-# ╔═╡ 42ae6aed-d949-47fa-8aa2-ae35eb79c29e
-(ta_corpus, lex,  dtmatrix) =   if isnothing(c)
-	(nothing, nothing, nothing)
-else
-	ta_structs_from_corpus(c; lc = case_insensitive, stoplist = stopwords)
-end
-
-# ╔═╡ 2350681e-861a-4f51-b4ca-1d0e29311b1f
-# ╠═╡ show_logs = false
-ϕ, θ  = isnothing(dtmatrix) ? (nothing, nothing) : lda(dtmatrix, k, iters, α, β)
-
-# ╔═╡ 341d9af1-b120-49f7-9b8a-0f2dae0e098a
-ϕ
-
-# ╔═╡ 73e82fc2-8fa1-4645-bafd-d26807ecea1b
-θ
-
-
-# ╔═╡ b0ed7772-7872-439c-b444-5d6f937ff1f6
-θ
-
-# ╔═╡ 8542080a-efb9-4084-a7a5-6314bd1f39dc
-isnothing(dtmatrix) ? nothing : top_terms(ϕ[1,:], dtmatrix.terms; n = toptermcount)
-
-
-# ╔═╡ 1fbd8ebc-adaa-4d42-b65f-291faac7633e
-isnothing(dtmatrix) ? nothing : topterms_md(ϕ, dtmatrix.terms, toptermcount) |> Markdown.parse
-
-# ╔═╡ a7917f32-8d08-4d3e-a34d-4cedbb5b9649
-reff = isnothing(c) ? [] : map(psg -> passagecomponent(psg.urn), c.passages)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 CitableBase = "d6f014bd-995c-41bd-9893-703339864534"
-CitableCorpus = "cf5ac11a-93ef-4a1a-97a3-f6af101603b5"
-CitableText = "41e66566-473b-49d4-85b7-da83b66615d8"
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
-Markdown = "d6f4376e-aef5-505a-96c1-9c027394607a"
-OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
-Orthography = "0b4c9448-09b0-4e78-95ea-3eb3328be36d"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 TextAnalysis = "a2db99b7-8b79-58f8-94bf-bbc811eef33d"
 
 [compat]
-CitableBase = "~10.3.0"
-CitableCorpus = "~0.13.4"
-CitableText = "~0.16.0"
-OrderedCollections = "~1.6.2"
-Orthography = "~0.21.2"
+CitableBase = "~10.3.1"
 PlutoUI = "~0.7.52"
-StatsBase = "~0.34.2"
 TextAnalysis = "~0.7.5"
 """
 
@@ -335,9 +165,9 @@ TextAnalysis = "~0.7.5"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.1"
+julia_version = "1.9.3"
 manifest_format = "2.0"
-project_hash = "806032ebdc75547ebd399b7a4429adbc796d7b75"
+project_hash = "77ce5fea22d6dafc7bcf1f9b0659064dff7f17ea"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -350,17 +180,10 @@ git-tree-sha1 = "91bd53c39b9cbfb5ef4b015e8b582d344532bd0a"
 uuid = "6e696c72-6542-2067-7265-42206c756150"
 version = "1.2.0"
 
-[[deps.Adapt]]
-deps = ["LinearAlgebra", "Requires"]
-git-tree-sha1 = "76289dc51920fdc6e0013c872ba9551d54961c24"
-uuid = "79e6a3ab-5dfb-504d-930d-738a2a938a0e"
-version = "3.6.2"
-
-    [deps.Adapt.extensions]
-    AdaptStaticArraysExt = "StaticArrays"
-
-    [deps.Adapt.weakdeps]
-    StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+[[deps.AbstractTrees]]
+git-tree-sha1 = "faa260e4cb5aba097a73fab382dd4b5819d8ec8c"
+uuid = "1520ce14-60c1-5f80-bbc7-55ef81b5835c"
+version = "0.4.4"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -377,35 +200,11 @@ git-tree-sha1 = "43b1a4a8f797c1cddadf60499a8a077d4af2cd2d"
 uuid = "d1d4a3ce-64b1-5f1a-9ba4-7e7e69966f35"
 version = "0.1.7"
 
-[[deps.CSV]]
-deps = ["CodecZlib", "Dates", "FilePathsBase", "InlineStrings", "Mmap", "Parsers", "PooledArrays", "PrecompileTools", "SentinelArrays", "Tables", "Unicode", "WeakRefStrings", "WorkerUtilities"]
-git-tree-sha1 = "44dbf560808d49041989b8a96cae4cffbeb7966a"
-uuid = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
-version = "0.10.11"
-
 [[deps.CitableBase]]
 deps = ["DocStringExtensions", "Documenter", "Test", "TestSetExtensions"]
-git-tree-sha1 = "f6d5a0fa5a98895d06a805e09505988496da56ea"
+git-tree-sha1 = "cc4f1e1db392c4a05eb29026774d6f26ae8ca457"
 uuid = "d6f014bd-995c-41bd-9893-703339864534"
-version = "10.3.0"
-
-[[deps.CitableCorpus]]
-deps = ["CitableBase", "CitableText", "CiteEXchange", "DocStringExtensions", "Documenter", "HTTP", "Tables", "Test"]
-git-tree-sha1 = "4a330dfda89fd43fe9f70827fb143695be64c42f"
-uuid = "cf5ac11a-93ef-4a1a-97a3-f6af101603b5"
-version = "0.13.4"
-
-[[deps.CitableText]]
-deps = ["CitableBase", "DocStringExtensions", "Documenter", "Test", "TestSetExtensions"]
-git-tree-sha1 = "79b2268cf41f03087e9fc9cd71f7e7cf9397cc90"
-uuid = "41e66566-473b-49d4-85b7-da83b66615d8"
-version = "0.16.0"
-
-[[deps.CiteEXchange]]
-deps = ["CSV", "CitableBase", "DocStringExtensions", "Documenter", "HTTP", "Test"]
-git-tree-sha1 = "8637a7520d7692d68cdebec69740d84e50da5750"
-uuid = "e2e9ead3-1b6c-4e96-b95f-43e6ab899178"
-version = "0.10.1"
+version = "10.3.1"
 
 [[deps.CodecZlib]]
 deps = ["TranscodingStreams", "Zlib_jll"]
@@ -432,7 +231,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.2+0"
+version = "1.0.5+0"
 
 [[deps.ConcurrentUtilities]]
 deps = ["Serialization", "Sockets"]
@@ -477,12 +276,6 @@ git-tree-sha1 = "9e2f36d3c96a820c678f2f1f1782582fcf685bae"
 uuid = "8bb1440f-4735-579b-a4ab-409b98df4dab"
 version = "1.9.1"
 
-[[deps.Dictionaries]]
-deps = ["Indexing", "Random", "Serialization"]
-git-tree-sha1 = "e82c3c97b5b4ec111f3c1b55228cebc7510525a2"
-uuid = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
-version = "0.3.25"
-
 [[deps.Distributed]]
 deps = ["Random", "Serialization", "Sockets"]
 uuid = "8ba89e20-285c-5b6f-9357-94700520ee1b"
@@ -494,10 +287,10 @@ uuid = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 version = "0.9.3"
 
 [[deps.Documenter]]
-deps = ["ANSIColoredPrinters", "Base64", "Dates", "DocStringExtensions", "IOCapture", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "REPL", "Test", "Unicode"]
-git-tree-sha1 = "39fd748a73dce4c05a9655475e437170d8fb1b67"
+deps = ["ANSIColoredPrinters", "AbstractTrees", "Base64", "Dates", "DocStringExtensions", "Downloads", "IOCapture", "InteractiveUtils", "JSON", "LibGit2", "Logging", "Markdown", "MarkdownAST", "Pkg", "PrecompileTools", "REPL", "RegistryInstances", "SHA", "Test", "Unicode"]
+git-tree-sha1 = "147a3cbb6ddcd9448fe5e6c426b347efc68f9c86"
 uuid = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-version = "0.27.25"
+version = "1.1.1"
 
 [[deps.Downloads]]
 deps = ["ArgTools", "FileWatching", "LibCURL", "NetworkOptions"]
@@ -510,12 +303,6 @@ git-tree-sha1 = "e90caa41f5a86296e014e148ee061bd6c3edec96"
 uuid = "460bff9d-24e4-43bc-9d9f-a8973cb893f4"
 version = "0.1.9"
 
-[[deps.FilePathsBase]]
-deps = ["Compat", "Dates", "Mmap", "Printf", "Test", "UUIDs"]
-git-tree-sha1 = "9f00e42f8d99fdde64d40c8ea5d14269a2e2c1aa"
-uuid = "48062228-2e41-5def-b9a4-89aafe57970f"
-version = "0.9.21"
-
 [[deps.FileWatching]]
 uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
@@ -524,10 +311,6 @@ deps = ["Statistics"]
 git-tree-sha1 = "335bfdceacc84c5cdf16aadc768aa5ddfc5383cc"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
 version = "0.8.4"
-
-[[deps.Future]]
-deps = ["Random"]
-uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
 [[deps.HTML_Entities]]
 deps = ["StrTables"]
@@ -558,17 +341,6 @@ deps = ["Logging", "Random"]
 git-tree-sha1 = "d75853a0bdbfb1ac815478bacd89cd27b550ace6"
 uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
 version = "0.2.3"
-
-[[deps.Indexing]]
-git-tree-sha1 = "ce1566720fd6b19ff3411404d4b977acd4814f9f"
-uuid = "313cdc1a-70c2-5d6a-ae34-0150d3930a38"
-version = "1.1.1"
-
-[[deps.InlineStrings]]
-deps = ["Parsers"]
-git-tree-sha1 = "9cc2baf75c6d09f9da536ddf58eb2f29dedaf461"
-uuid = "842dd82b-1e85-43dc-bf29-5d0ee9dffc48"
-version = "1.4.0"
 
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
@@ -601,6 +373,11 @@ deps = ["InteractiveUtils", "JSON", "RelocatableFolders"]
 git-tree-sha1 = "85b0221304a723f3fc5221f33b471675e5f64e74"
 uuid = "8ef0a80b-9436-5d2c-a485-80b904378c43"
 version = "0.4.4"
+
+[[deps.LazilyInitializedFields]]
+git-tree-sha1 = "410fe4739a4b092f2ffe36fcb0dcc3ab12648ce1"
+uuid = "0e77f7df-68c5-4e49-93ce-4cd80f5598bf"
+version = "1.2.1"
 
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
@@ -662,6 +439,12 @@ version = "0.1.4"
 deps = ["Base64"]
 uuid = "d6f4376e-aef5-505a-96c1-9c027394607a"
 
+[[deps.MarkdownAST]]
+deps = ["AbstractTrees", "Markdown"]
+git-tree-sha1 = "465a70f0fc7d443a00dcdc3267a497397b8a3899"
+uuid = "d0879d2d-cac2-40c8-9cee-1863dc0c7391"
+version = "0.1.2"
+
 [[deps.MbedTLS]]
 deps = ["Dates", "MbedTLS_jll", "MozillaCACerts_jll", "Random", "Sockets"]
 git-tree-sha1 = "03a9b9718f5682ecb107ac9f7308991db4ce395b"
@@ -712,12 +495,6 @@ git-tree-sha1 = "2e73fe17cac3c62ad1aebe70d44c963c3cfdc3e3"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 version = "1.6.2"
 
-[[deps.Orthography]]
-deps = ["CitableBase", "CitableCorpus", "CitableText", "Compat", "DocStringExtensions", "Documenter", "OrderedCollections", "StatsBase", "Test", "TestSetExtensions", "TypedTables", "Unicode"]
-git-tree-sha1 = "2c7ad8379d41a57687b95d8e21a48a7145c6b77a"
-uuid = "0b4c9448-09b0-4e78-95ea-3eb3328be36d"
-version = "0.21.2"
-
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
 git-tree-sha1 = "716e24b21538abc91f6205fd1d8363f39b442851"
@@ -727,19 +504,13 @@ version = "2.7.2"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.0"
+version = "1.9.2"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
 git-tree-sha1 = "e47cd150dbe0443c3a3651bc5b9cbd5576ab75b7"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 version = "0.7.52"
-
-[[deps.PooledArrays]]
-deps = ["DataAPI", "Future"]
-git-tree-sha1 = "36d8b4b899628fb92c2749eb488d884a926614d3"
-uuid = "2dfb63ee-cc39-5dd5-95bd-886bf059d720"
-version = "1.4.3"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
@@ -776,17 +547,17 @@ git-tree-sha1 = "45e428421666073eab6f2da5c9d310d99bb12f9b"
 uuid = "189a3867-3050-52da-a836-e630ba90ab69"
 version = "1.2.2"
 
+[[deps.RegistryInstances]]
+deps = ["LazilyInitializedFields", "Pkg", "TOML", "Tar"]
+git-tree-sha1 = "ffd19052caf598b8653b99404058fce14828be51"
+uuid = "2792f1a3-b283-48e8-9a74-f99dce5104f3"
+version = "0.1.0"
+
 [[deps.RelocatableFolders]]
 deps = ["SHA", "Scratch"]
 git-tree-sha1 = "ffdaf70d81cf6ff22c2b6e733c900c3321cab864"
 uuid = "05181044-ff0b-4ac5-8273-598c1e38db00"
 version = "1.0.1"
-
-[[deps.Requires]]
-deps = ["UUIDs"]
-git-tree-sha1 = "838a3a4188e2ded87a4f9f184b4b0d78a1e91cb7"
-uuid = "ae029012-a4dd-5104-9daa-d747884805df"
-version = "1.3.0"
 
 [[deps.SHA]]
 uuid = "ea8e919c-243c-51af-8825-aaa63cd721ce"
@@ -797,12 +568,6 @@ deps = ["Dates"]
 git-tree-sha1 = "30449ee12237627992a99d5e30ae63e4d78cd24a"
 uuid = "6c6a2e73-6563-6170-7368-637461726353"
 version = "1.2.0"
-
-[[deps.SentinelArrays]]
-deps = ["Dates", "Random"]
-git-tree-sha1 = "04bdff0b09c65ff3e06a05e3eb7b120223da3d39"
-uuid = "91c51154-3ec4-41a3-a24f-3f23e20d615c"
-version = "1.4.0"
 
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
@@ -829,19 +594,13 @@ uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
 [[deps.SortingAlgorithms]]
 deps = ["DataStructures"]
-git-tree-sha1 = "c60ec5c62180f27efea3ba2908480f8055e17cee"
+git-tree-sha1 = "5165dfb9fd131cf0c6957a3a7605dede376e7b63"
 uuid = "a2af1166-a08f-5f64-846c-94a0d3cef48c"
-version = "1.1.1"
+version = "1.2.0"
 
 [[deps.SparseArrays]]
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
-
-[[deps.SplitApplyCombine]]
-deps = ["Dictionaries", "Indexing"]
-git-tree-sha1 = "48f393b0231516850e39f6c756970e7ca8b77045"
-uuid = "03a91e81-4c3e-53e1-a0a4-9c0c8f19dd66"
-version = "1.2.2"
 
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
@@ -884,9 +643,9 @@ version = "1.0.1"
 
 [[deps.Tables]]
 deps = ["DataAPI", "DataValueInterfaces", "IteratorInterfaceExtensions", "LinearAlgebra", "OrderedCollections", "TableTraits"]
-git-tree-sha1 = "a1f34829d5ac0ef499f6d84428bd6b4c71f02ead"
+git-tree-sha1 = "cb76cf677714c095e535e3501ac7954732aeea2d"
 uuid = "bd369af6-aec1-5ad0-b16a-f7cc5008161c"
-version = "1.11.0"
+version = "1.11.1"
 
 [[deps.Tar]]
 deps = ["ArgTools", "SHA"]
@@ -910,9 +669,9 @@ uuid = "a2db99b7-8b79-58f8-94bf-bbc811eef33d"
 version = "0.7.5"
 
 [[deps.TranscodingStreams]]
-git-tree-sha1 = "7c9196c8c83802d7b8ca7a6551a0236edd3bf731"
+git-tree-sha1 = "49cbf7c74fafaed4c529d47d48c8f7da6a19eb75"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.10.0"
+version = "0.10.1"
 weakdeps = ["Random", "Test"]
 
     [deps.TranscodingStreams.extensions]
@@ -922,12 +681,6 @@ weakdeps = ["Random", "Test"]
 git-tree-sha1 = "eae1bb484cd63b36999ee58be2de6c178105112f"
 uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
 version = "0.1.8"
-
-[[deps.TypedTables]]
-deps = ["Adapt", "Dictionaries", "Indexing", "SplitApplyCombine", "Tables", "Unicode"]
-git-tree-sha1 = "d911ae4e642cf7d56b1165d29ef0a96ba3444ca9"
-uuid = "9d95f2ec-7b3d-5a63-8d20-e2491e220bb9"
-version = "1.4.3"
 
 [[deps.URIs]]
 git-tree-sha1 = "67db6cc7b3821e19ebe75791a9dd19c9b1188f2b"
@@ -941,22 +694,11 @@ uuid = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
 [[deps.Unicode]]
 uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 
-[[deps.WeakRefStrings]]
-deps = ["DataAPI", "InlineStrings", "Parsers"]
-git-tree-sha1 = "b1be2855ed9ed8eac54e5caff2afcdb442d52c23"
-uuid = "ea10d353-3f73-51f8-a26c-33c1cb351aa5"
-version = "1.4.2"
-
 [[deps.WordTokenizers]]
 deps = ["DataDeps", "HTML_Entities", "StrTables", "Unicode"]
 git-tree-sha1 = "01dd4068c638da2431269f49a5964bf42ff6c9d2"
 uuid = "796a5d58-b03d-544a-977e-18100b691f6e"
 version = "0.5.6"
-
-[[deps.WorkerUtilities]]
-git-tree-sha1 = "cd1659ba0d57b71a464a29e64dbc67cfe83d54e7"
-uuid = "76eceee3-57b5-4d4a-8e66-0e911cebbf60"
-version = "1.6.1"
 
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
@@ -980,62 +722,36 @@ version = "17.4.0+0"
 """
 
 # ╔═╡ Cell order:
-# ╟─0c6337e6-4de7-4e76-9589-42bc170a931a
-# ╟─6d24ec36-6d02-11ee-24af-7f32effe1a76
-# ╟─e2ea0057-9a4c-4ddf-985a-e107fb3b0b38
-# ╟─fcef1df7-4cac-4be1-9e98-67b835d81fb8
-# ╟─0e6f70dc-2da6-43f1-9ded-66dcaa92877d
-# ╟─c6b5a24b-3f29-49e2-b64b-8761854ec503
-# ╟─60af1314-1b94-43af-954e-f1f984582144
-# ╟─df880285-50a9-4a18-9203-0971b3e45924
-# ╟─dceb616c-e86d-40f9-815b-d8acbf2744f0
-# ╟─99b012eb-6f17-403e-b541-c1497ee1e7e5
-# ╟─3044d17c-b365-402a-a276-f3d4ae807cb5
-# ╟─423c2f39-5e1a-4751-989f-b68003d061d4
-# ╟─94672682-2e7e-4f70-b335-01f09f603add
-# ╟─2350681e-861a-4f51-b4ca-1d0e29311b1f
-# ╟─5c30d252-9e76-4209-b47f-d85ed5f38e5b
-# ╟─4b742534-045e-43ce-96c1-9ad1587fba80
-# ╟─543080bf-fa45-42ba-89db-1ba06f2c0f41
-# ╟─8542080a-efb9-4084-a7a5-6314bd1f39dc
-# ╟─1fbd8ebc-adaa-4d42-b65f-291faac7633e
-# ╟─dbab6c6e-8016-487a-887a-255c2f25b02e
-# ╟─f59dba8a-03d4-4a85-a994-de832e8ddf5f
-# ╟─e57a1d64-d14a-44ea-92b5-bd7d73c61aed
-# ╟─5e68da71-5eb4-4e14-b117-52e3b063c96c
-# ╟─b820a2ab-f4ab-46cd-9819-b96dae1b7b06
-# ╠═341d9af1-b120-49f7-9b8a-0f2dae0e098a
-# ╟─df619570-048c-40c9-aa07-7686bbe52300
-# ╟─73e82fc2-8fa1-4645-bafd-d26807ecea1b
-# ╟─4c27b02a-222c-431a-9d00-7b022795efde
-# ╟─2542845b-4409-404b-8a5c-cb26fb9131b7
-# ╠═b0ed7772-7872-439c-b444-5d6f937ff1f6
-# ╟─f85d3875-abf0-45cd-bac4-9260a6f1498b
-# ╟─e8588ce7-26ac-42f7-9e04-bbb1ed0575f1
-# ╟─7c90c208-f329-4eb7-be28-08379eb7eaf3
-# ╠═624bd0ae-df61-4b78-b88f-ed7bf6409d40
-# ╠═446b0896-0380-4d04-8907-06f6b907d840
-# ╠═31adf8e3-1302-4ba6-a462-63e52d194aaa
-# ╠═050bd8b1-720b-4912-8f69-8a642ebf8320
-# ╠═ebfcc2f8-f8f2-4a10-84aa-14647a63343d
-# ╠═77f71a07-fd9d-49aa-a274-19049bd8cb15
-# ╠═2baf5a68-f34f-4acb-8d39-18ed1e4d3d22
-# ╠═dd7705a8-3f7d-4e4f-8f87-6c4e53c15f01
-# ╟─8a2f14b8-6fb3-49f3-b161-e06ffe32108a
-# ╟─f50104d7-1c06-4813-bc86-1a6d4167d309
-# ╟─d87e8ba9-2ff2-4bd5-b696-77af0e9b0303
-# ╟─863fd7c4-5460-4de0-b422-fa38350f7545
-# ╠═42ae6aed-d949-47fa-8aa2-ae35eb79c29e
-# ╟─3fede1f1-4bf3-48e0-82ec-203fd936199e
-# ╟─fd23b519-3d5f-4a88-931c-a3118fbc256e
-# ╠═a7917f32-8d08-4d3e-a34d-4cedbb5b9649
-# ╟─68dc297d-ccd0-4dd1-a652-f19cfcd3c111
-# ╟─1623909b-1c27-4cac-8cbe-4287ed3e30e8
-# ╟─5827632f-bd27-4658-a42b-d8fb7ff3e8bb
-# ╟─0439bf2f-69a1-4aa8-a71a-dd058ebf5bfe
-# ╟─9c3ce649-4b24-476b-9798-386b5712000b
-# ╠═623099bd-d8fa-452c-b9f2-52e2940a0fb8
-# ╠═8eff85fd-02ce-46ec-ba59-3208e73400fb
-# ╠═b34d675c-9f1a-49da-a4e1-54c1c1d1dcf0
+# ╠═ea9ea968-f3f8-4c4b-9c11-64729a8c8589
+# ╟─9fd4e0e4-f586-4de1-acc6-ffa6cc2732e7
+# ╟─a24e2a34-71ae-11ee-1bbe-f92f23764276
+# ╟─107df972-14d6-4dce-a3f7-fa6943a0e7e1
+# ╟─5727e8c7-00b4-4824-9782-4fbfbd81f0d4
+# ╟─2b40ad65-4fc2-4c0a-86f4-b6a67d2bc2f0
+# ╟─625d810d-6775-45bc-86b5-5f58da3acc9e
+# ╠═65884e0e-2def-46b6-be4f-8dea8e79be2b
+# ╟─2df52020-0b1c-4ca8-8cac-c080873b5377
+# ╟─5b974200-4c2a-44e3-b612-de19522bec5f
+# ╠═f1a69ac6-2b07-4748-bb08-8721eef29f17
+# ╟─7b7bc51d-d3b4-46ed-bcce-ee77fc9b53a0
+# ╠═9c8dcffb-4892-4557-b595-e6193baf07c1
+# ╠═1237b88d-e066-4fdd-ac2e-77bd3edae0aa
+# ╟─3ef9d6a3-ea1c-4f3a-bb8d-04601bd11a3a
+# ╟─ff71d2a9-e5c1-47ba-b582-4b1d91c6911d
+# ╠═bb80a33a-d9cb-44cf-8578-d13b96132f60
+# ╠═dba40f0e-753a-49d2-a6f1-87fb8e74c9a6
+# ╠═dc9bd02d-1b8a-414a-b65c-9811c83d2a10
+# ╠═b0dcd1bb-5f72-4988-970e-807b47a2b67e
+# ╠═a6e0b9da-eee9-4b5d-ae04-fe5f939c003d
+# ╠═a5a29dca-b36b-4169-86ab-ec41652c3183
+# ╟─c28cf9ba-2774-42f0-bb24-c7e5804966c9
+# ╟─806a65af-3f34-4325-97e1-c42245fd27f8
+# ╟─b7cfac17-cf3b-4af8-9aa9-d0f8be396b77
+# ╟─e98a003b-8a57-48df-8dda-806acb983c3b
+# ╟─b0013b92-6523-4b90-859b-6d6fe4c6eec6
+# ╟─1ab2518a-a80c-4665-9a3c-68287138b3d7
+# ╟─eb6c14a6-caa8-4559-b856-570fd92f9a13
+# ╟─bd29c88f-fcda-4048-b446-30b7eb4fb407
+# ╟─0020e894-41b9-49f4-b765-8abf937ebf5e
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

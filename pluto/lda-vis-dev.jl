@@ -91,30 +91,6 @@ md"""*Number of topics (`k`)* $(@bind k confirm(Slider(2:40, default = 12, show_
 # ╔═╡ b3267b0d-53df-4364-bba3-eda46bf972c0
 md"""*Number of iterations*: $( @bind iters confirm(Slider(100:100:2500, default =1000, show_value = true)))"""
 
-# ╔═╡ 02a7a052-b917-4b7f-9db1-eacac17151c1
-palette = distinguishable_colors(k, [RGB(1,1,1), RGB(0,0,0)], dropseed = true)
-
-# ╔═╡ 123da121-bc31-487b-8f0c-8eb0f17688d0
-c1 = palette[1] 
-
-# ╔═╡ 5e1f4d8a-08bc-4387-b73a-f6ed05756e92
-RGBA(c1, 0.5)
-
-# ╔═╡ b2b5d769-523c-4071-8a9c-6fb0722c2cd2
-md"""> ## TBA: colors
-> 
-> - get top scoring topic for each doc
-> - get value of top score for each doc
-> - construct RGBA color as `RGBA(palette[topic], SCORE_FOR_TOPIC)`
-> - push onto vector for plotting
-"""
-
-# ╔═╡ e938a93e-faa1-4773-9820-af452ed06be4
-md"""> ## TBA: labels
->
-> - pass document labels in to plotting function
-"""
-
 # ╔═╡ 9f247ffd-b68a-4e78-8081-932ffe9123c3
 md"""
 !!! note "Review results: highest term scores for each topic"
@@ -403,22 +379,10 @@ end
 isnothing(tm) ? nothing : topterms_md(tm, toptermcount) |> Markdown.parse
 
 # ╔═╡ 36b3c216-a18e-4c2d-ae00-41dc3819b32f
-md"""> **Dimensionality reduction**"""
+md"""> **Dimensionality reduction and plotting**"""
 
 # ╔═╡ 908ff965-9dbd-40cc-b6f4-8c228a1a7757
 reduced = isnothing(tm) ? nothing : umap(tm.topic_docs, 3)
-
-# ╔═╡ 81b3f1a1-d8f1-4685-80e8-89029e808170
-"""Create a 3D scatter plot for documents in the topic-document  matrix."""
-function plottopics(data3d; ht = 500)
-	lyt = Layout(title = "Documents in topics space reduced to 3 dimensions",
-	height  = ht)
-	plot3 = scatter(x = data3d[1,:], y = data3d[2,:], z = data3d[3,:], mode = "markers", type = "scatter3d")
-	Plot(plot3, lyt)
-end
-
-# ╔═╡ 213665be-d224-4553-8634-5dec9c63fd9a
-isnothing(tm) ? nothing : plottopics(reduced)
 
 # ╔═╡ 05db8829-3e34-4ff0-acf3-88e60fceced4
 """Compose horizontal bar plot of term scores for a topic."""
@@ -443,6 +407,39 @@ else
 	barview = topictermbar(tm, topicdetail)
 	Plot(barview, layout)
 end
+
+# ╔═╡ 02a7a052-b917-4b7f-9db1-eacac17151c1
+palette = distinguishable_colors(k, [RGB(1,1,1), RGB(0,0,0)], dropseed = true)
+
+# ╔═╡ 2429e607-e3a2-412b-909f-686152cfc5e5
+"""Map documents in the topic model to RGBA colors where the color value indicates the highest-scoring topic for that document, and the alpha value is the weight of the highest-scoring topic.
+"""
+function doc_colors(tm, sourcepalette, labellist)
+	lbls = topiclabels(tm)
+
+	colorvals = []
+	for i in 1:size(tm.topic_docs)[2]
+		pr = topicfordoc(tm, i)
+		topicidx = findfirst(lbl -> lbl == pr[1], lbls)
+		push!(colorvals, RGBA(sourcepalette[topicidx], pr[2]))
+	end
+	colorvals
+end
+
+# ╔═╡ e55902f5-54a5-4785-9bd9-2647ae8e4088
+colorvals = isnothing(tm) ? [] : doc_colors(tm, palette, labels)
+
+# ╔═╡ 81b3f1a1-d8f1-4685-80e8-89029e808170
+"""Create a 3D scatter plot for documents in the topic-document  matrix."""
+function plottopics(data3d, colorvals; ht = 500)
+	lyt = Layout(title = "Documents in topics space reduced to 3 dimensions",
+	height  = ht)
+	plot3 = scatter(x = data3d[1,:], y = data3d[2,:], z = data3d[3,:], mode = "markers", type = "scatter3d", text = labels, marker_color = colorvals )
+	Plot(plot3, lyt)
+end
+
+# ╔═╡ 213665be-d224-4553-8634-5dec9c63fd9a
+isnothing(tm) ? nothing : plottopics(reduced, colorvals)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -1603,11 +1600,6 @@ version = "17.4.0+0"
 # ╟─6eb13aa6-7fce-4c63-9d46-33280c3a8b90
 # ╟─b3267b0d-53df-4364-bba3-eda46bf972c0
 # ╟─9ce81c26-03a3-4d17-8b3a-ce88aeae48a5
-# ╠═02a7a052-b917-4b7f-9db1-eacac17151c1
-# ╠═123da121-bc31-487b-8f0c-8eb0f17688d0
-# ╠═5e1f4d8a-08bc-4387-b73a-f6ed05756e92
-# ╟─b2b5d769-523c-4071-8a9c-6fb0722c2cd2
-# ╟─e938a93e-faa1-4773-9820-af452ed06be4
 # ╟─213665be-d224-4553-8634-5dec9c63fd9a
 # ╟─9f247ffd-b68a-4e78-8081-932ffe9123c3
 # ╟─83af2891-bfca-41da-86ef-5c590a7a2353
@@ -1620,7 +1612,7 @@ version = "17.4.0+0"
 # ╟─46f76684-0ee6-41bf-9c68-c6f52c180916
 # ╟─d1af6c74-074c-4655-bd96-f470de8dd4df
 # ╟─31a6f7eb-f618-4e59-88b4-a53b7b8cb7ce
-# ╠═e5c14bba-1865-47ae-b7d7-1916bbca9f55
+# ╟─e5c14bba-1865-47ae-b7d7-1916bbca9f55
 # ╟─164fdf43-2149-4bc4-a762-ba3063192cad
 # ╟─8ed3545e-08a5-42ba-9a2b-1b757b95b309
 # ╟─c4e06ce5-4ea9-427c-b6fc-95cc8b850fbd
@@ -1657,7 +1649,10 @@ version = "17.4.0+0"
 # ╟─954f9b09-6d40-4c99-97c1-0a76493acbb4
 # ╟─36b3c216-a18e-4c2d-ae00-41dc3819b32f
 # ╟─908ff965-9dbd-40cc-b6f4-8c228a1a7757
-# ╟─81b3f1a1-d8f1-4685-80e8-89029e808170
 # ╟─05db8829-3e34-4ff0-acf3-88e60fceced4
+# ╟─02a7a052-b917-4b7f-9db1-eacac17151c1
+# ╠═e55902f5-54a5-4785-9bd9-2647ae8e4088
+# ╟─2429e607-e3a2-412b-909f-686152cfc5e5
+# ╟─81b3f1a1-d8f1-4685-80e8-89029e808170
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

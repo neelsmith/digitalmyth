@@ -109,12 +109,6 @@ md"""*View top terms for each topic*: $( @bind toptermcount confirm(Slider(1:30,
 # ╔═╡ f6137862-e232-4c8b-892b-13fd977dc9f7
 md"""*See plot of term weights for topic:*"""
 
-# ╔═╡ 03921811-9d7e-4056-bf59-c74104625de6
-md"""> ## TBA
->
-> Make bars go most frequent to least from top to bottom
-"""
-
 # ╔═╡ 46f76684-0ee6-41bf-9c68-c6f52c180916
 md"""
 !!! note "View most significant documents for each topic"
@@ -123,31 +117,13 @@ md"""
 # ╔═╡ d1af6c74-074c-4655-bd96-f470de8dd4df
 md"""*View highest scoring passages (documents) for each topic* $(@bind topdocscount confirm(Slider(1:30, default = 8, show_value = true)))"""
 
-# ╔═╡ e5c14bba-1865-47ae-b7d7-1916bbca9f55
-md"""> ## TBA
->
-> Add initial text of highest scoring documents.
-"""
-
 # ╔═╡ 164fdf43-2149-4bc4-a762-ba3063192cad
 md"""
 !!! note "View details for a given passage (\"document\")"
 """
 
-# ╔═╡ 8ed3545e-08a5-42ba-9a2b-1b757b95b309
-md"""## TBA
->
-> Default to use top left doc (top score for topic 1), instead of first passage in corpus
-"""
-
 # ╔═╡ c4e06ce5-4ea9-427c-b6fc-95cc8b850fbd
 md"""*Select a passage*:"""
-
-# ╔═╡ 56d988bd-bccc-41e3-8319-7639fd706dc3
-md"""> ## TBA
->
-> Make bars go most frequent to least from top to bottom
-"""
 
 # ╔═╡ a17ced36-577e-4812-b34f-2bc6cc322dde
 html"""
@@ -310,6 +286,15 @@ end
 # ╔═╡ 3bf8df46-0374-4679-816a-1e54e320698f
 isempty(topicmenu) ? nothing : @bind topicdetail Select(topicmenu)
 
+# ╔═╡ b42f7e71-d411-4523-bdf1-b211a0cb3073
+topicdetail
+
+# ╔═╡ 295cdfb5-fd89-4b6a-ac65-cf175fefdad4
+topdoclabel = topdocs(tm, topicdetail, n = 1)[1][1]
+
+# ╔═╡ 461ba6ab-e540-445d-ada4-1f55f52df67b
+topdocindex = documentindex(tm, topdoclabel)
+
 # ╔═╡ b9d4b933-e3ee-4eef-854f-e0f392041c22
 if isnothing(c) 
 	@bind docidx Select([""])
@@ -318,7 +303,7 @@ else
 	for (i, p) in enumerate(labels)
 		push!(indexedpsgs, i => p)
 	end
-	@bind docidx Select(indexedpsgs)
+	@bind docidx Select(indexedpsgs, default = topdocindex)
 end
 
 # ╔═╡ 55e8e4a6-60d9-41b0-972b-e24e982ed6dc
@@ -328,9 +313,9 @@ else
 	for (i, lbl) in enumerate(topiclabels(tm))
 		push!(docys, string(i, ". ", lbl))
 	end
-	docxs = tm.topic_docs[:, docidx]
+	docxs = tm.topic_docs[:, docidx] 
 
-	Plot(bar(y=docys, x = docxs, orientation = "h"), Layout(title = "Topic scores for passage (document) $(labels[docidx])", height = 400))
+	Plot(bar(y=reverse(docys), x = reverse(docxs), orientation = "h"), Layout(title = "Topic scores for passage (document) $(labels[docidx])", height = 400))
 end
 
 # ╔═╡ 55398956-05a9-4e02-96ea-07f0221ca736
@@ -379,6 +364,22 @@ end
 # ╔═╡ ba8753a8-07c4-4ee2-8fe7-d70500a78a0b
 isnothing(tm) ? nothing : topterms_md(tm, toptermcount) |> Markdown.parse
 
+# ╔═╡ c91aecb1-f632-4c68-9b96-7cc3d4fbee34
+"""Display beginning of text of top documents for a topic"""
+function tophits(tm, topicnum, docscount)
+	prs = topdocs(tm, topicnum; n = docscount)
+	docindices = map(pr -> documentindex(tm, pr[1]), prs)
+	mdlines = ["*Top **$(docscount)** scoring documents for topic $(topicnum)*"]
+	for i in docindices
+		quittintime = min(length(c.passages[i].text), 100)
+		push!(mdlines, string("- `", labels[i], "`. ", c.passages[i].text[1:quittintime],"..."), )
+	end
+	join(mdlines, "\n\n") |> Markdown.parse
+end
+
+# ╔═╡ 4149aeb6-1857-46e0-afe9-776f550ed98a
+tophits(tm,topicdetail, topdocscount)
+
 # ╔═╡ 36b3c216-a18e-4c2d-ae00-41dc3819b32f
 md"""> **Dimensionality reduction and plotting**"""
 
@@ -391,7 +392,7 @@ function topictermbar(tm, topicnum; rows = 5)
 	scorepairs = CitableCorpusAnalysis.top_scores(tm.topic_terms[topicnum, :], tm.terms; n = rows)
 	xs = map(pr -> pr[2], scorepairs)
 	ys = map(pr -> pr[1], scorepairs)
-	bplot = bar(x = xs, y = ys, orientation = "h")
+	bplot = bar(x = reverse(xs), y = reverse(ys), orientation = "h")
 	bplot
 	
 end
@@ -2287,17 +2288,15 @@ version = "17.4.0+0"
 # ╟─ba8753a8-07c4-4ee2-8fe7-d70500a78a0b
 # ╟─f6137862-e232-4c8b-892b-13fd977dc9f7
 # ╟─3bf8df46-0374-4679-816a-1e54e320698f
-# ╟─03921811-9d7e-4056-bf59-c74104625de6
 # ╟─de927f05-ee40-4a9e-ab8e-ee8f2f57b196
 # ╟─46f76684-0ee6-41bf-9c68-c6f52c180916
 # ╟─d1af6c74-074c-4655-bd96-f470de8dd4df
 # ╟─31a6f7eb-f618-4e59-88b4-a53b7b8cb7ce
-# ╟─e5c14bba-1865-47ae-b7d7-1916bbca9f55
+# ╟─4149aeb6-1857-46e0-afe9-776f550ed98a
 # ╟─164fdf43-2149-4bc4-a762-ba3063192cad
-# ╟─8ed3545e-08a5-42ba-9a2b-1b757b95b309
+# ╠═b42f7e71-d411-4523-bdf1-b211a0cb3073
 # ╟─c4e06ce5-4ea9-427c-b6fc-95cc8b850fbd
 # ╟─b9d4b933-e3ee-4eef-854f-e0f392041c22
-# ╟─56d988bd-bccc-41e3-8319-7639fd706dc3
 # ╟─55e8e4a6-60d9-41b0-972b-e24e982ed6dc
 # ╟─a17ced36-577e-4812-b34f-2bc6cc322dde
 # ╟─187f5780-9611-41ed-82ba-ec1cd0c576f9
@@ -2323,10 +2322,13 @@ version = "17.4.0+0"
 # ╟─db98086a-ee1a-4252-a1d9-402e58f4321a
 # ╟─360f2e77-34e2-48bb-bced-41eec778cf06
 # ╟─f4c5261f-6cf5-435b-a199-29420ff298b8
+# ╠═295cdfb5-fd89-4b6a-ac65-cf175fefdad4
+# ╠═461ba6ab-e540-445d-ada4-1f55f52df67b
 # ╟─55398956-05a9-4e02-96ea-07f0221ca736
 # ╟─3daf5f5d-888f-44fe-b80b-59389e06192c
 # ╟─c9727ef1-5c39-43b3-9d73-51973813a590
 # ╟─954f9b09-6d40-4c99-97c1-0a76493acbb4
+# ╟─c91aecb1-f632-4c68-9b96-7cc3d4fbee34
 # ╟─36b3c216-a18e-4c2d-ae00-41dc3819b32f
 # ╟─908ff965-9dbd-40cc-b6f4-8c228a1a7757
 # ╟─05db8829-3e34-4ff0-acf3-88e60fceced4

@@ -2,13 +2,18 @@
 title: "Modelling text contents"
 parent: "Main sections of course"
 layout: page
-nav_order: 2
+nav_order: 3
 has_children: true
 ---
 
 
 # Modelling text contents 
 
+
+## Week of Oct. 17 - Oct. 19
+
+- Tuesday: follow-up to your collaborative work: [close reading of a narrative](./classes/review-response/)
+- Thursday: text modelling and unsupervised classification
 
 
 ## Week of Oct. 10 - Oct. 12

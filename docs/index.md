@@ -12,22 +12,34 @@ has_children: true
 
 ## Announcements
 
-- Extending an assignment: in order to schedule a presentation in class, you must discuss an approved topic with me by **Oct. 19**
-- Please note schedule of [deadlines for multi-step (final) project](./deadlines/)
-- **Proposal for extending an assignment**: due **Oct 3**, extension to **Oct. 6** available on request (see [instructions for the assignment](./assignments/extended/))
-
-
-## Helpful code
-
-
-- Resources from [extending previous assignments](./julia/extending/) (now including [topic modeling Pluto notebook](./julia/extending/lda-textanalysis.html))
-- A [template Pluto notebook](./text_template_nb.html) with just the code you need to select the URL for a text of Apollodorus or Hyginus from a menu.
-- A Pluto notebook for [searching canonically citable text of Apollodorus](./search-apollodorus.html)
+Reminder for oral presentations:
+ 
+1. meet with me to plan and rehearse
+2. submit materials (slides, Julia notebooks) in your course Google drive for inclusion in shared collection
 
 
 
 
-## Week of Oct. 17 - Oct. 19
 
-- Tuesday: follow-up to your collaborative work: [close reading of a narrative](./classes/review-response/)
-- Thursday: text modelling and unsupervised classification
+## Week of Oct. 24 - Oct. 26
+
+- Tuesday: scheduling short presentations, submitting initial project idea
+- Thursday: 
+    - comparing lists using Julia `Set`s (Ilia)
+    - better tokenizing using optional parameters (Katie, Shane)
+    - reading and writing results of your work: file I/O
+
+
+
+## Week of Oct. 31 - Nov. 2
+
+- Tuesday:
+    - Google books and its n-gram viewer (Liam, Michael C.)
+    - fuzzy matching using edit-distance metrics (Luke, Chris,  Michael P.)
+    - measuring importance of terms using TF-IDF (Zach)
+- Thursday:  
+    - visualizing and interpreting a social network with Gephi (Sean, Sully, Truc)
+    - managing text and references (Al)
+    - topic to be specified (Cole, Emmy, Alexa)
+    - topic to be specified (Sarah)
+    

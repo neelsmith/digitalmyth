@@ -9,6 +9,14 @@ has_children: true
 # Older announcements
 
 
+
+- Some **helpful code**:
+    - Resources from [extending previous assignments](../julia/extending/) (now including [topic modeling Pluto notebook](../julia/extending/lda-textanalysis.html))
+    - A [template Pluto notebook](../text_template_nb.html) with just the code you need to select the URL for a text of Apollodorus or Hyginus from a menu.
+    - A Pluto notebook for [searching canonically citable text of Apollodorus](../search-apollodorus.html)
+- Extending an assignment: in order to schedule a presentation in class, you must discuss an approved topic with me by **Oct. 19**
+- Please note schedule of [deadlines for multi-step (final) project](./deadlines/)
+- **Proposal for extending an assignment**: due **Oct 3**, extension to **Oct. 6** available on request (see [instructions for the assignment](./assignments/extended/))
 - **Important note: the Classics Department Office is out of masks!**  We will continue with our current course masking policy for now, so please be sure you bring a mask with you for Tuesday's class: none are available from the Classics Department.
 - Please be familiar with [deadlines in October and November for a longer project](./deadlines/)
 - Revised [due dates](../deadlines/) for collaborative assignments:

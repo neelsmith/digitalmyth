@@ -40,7 +40,7 @@ end
 
 
 # ╔═╡ 852147da-b8e1-40cc-b89b-cfae3e3f3680
-nbversion = "3.1.0";
+nbversion = "3.1.1";
 
 # ╔═╡ bbb12a20-6245-42c6-98e8-a9b486fe7674
 md""" ## Topic modelling of a citable corpus with LDA
@@ -55,6 +55,7 @@ md"""*See release notes* $(@bind release_history CheckBox())"""
 # ╔═╡ 71a1bf81-cb9f-4b36-b144-1dbd512c366c
 if release_history
 md"""
+- **3.1.1**: tweaked notebook layout
 - **3.1.0**: adds color coding to plot of documents in topic space
 - **3.0.0**: update packages to do topic modelling directly through the `lda_tm` function of the `CitableCorpusAnalysis` package.
 - **2.1.0**: add UMAP for dimensionality reduction; improve variable names and documentation of functions looking up LDA data values; improve UI with labelling of topics by top terms.
@@ -98,6 +99,11 @@ md"""*Height of plot (pixels)* """
 # ╔═╡ e980c59d-b077-42bb-94b3-83c1349fb2c4
 @bind height3d confirm(Slider(300:50:1000, default=500, show_value=true))
 
+# ╔═╡ 164fdf43-2149-4bc4-a762-ba3063192cad
+md"""
+!!! note "View details for a given passage (\"document\")"
+"""
+
 # ╔═╡ 9f247ffd-b68a-4e78-8081-932ffe9123c3
 md"""
 !!! note "Review results: highest term scores for each topic"
@@ -116,14 +122,6 @@ md"""
 
 # ╔═╡ d1af6c74-074c-4655-bd96-f470de8dd4df
 md"""*View highest scoring passages (documents) for each topic* $(@bind topdocscount confirm(Slider(1:30, default = 8, show_value = true)))"""
-
-# ╔═╡ 164fdf43-2149-4bc4-a762-ba3063192cad
-md"""
-!!! note "View details for a given passage (\"document\")"
-"""
-
-# ╔═╡ c4e06ce5-4ea9-427c-b6fc-95cc8b850fbd
-md"""*Select a passage*:"""
 
 # ╔═╡ a17ced36-577e-4812-b34f-2bc6cc322dde
 html"""
@@ -293,15 +291,18 @@ topdoclabel = topdocs(tm, topicdetail, n = 1)[1][1]
 topdocindex = documentindex(tm, topdoclabel)
 
 # ╔═╡ b9d4b933-e3ee-4eef-854f-e0f392041c22
-if isnothing(c) 
+if isnothing(tm) 
 	@bind docidx Select([""])
 else
 	indexedpsgs = Pair{Int, String}[]
 	for (i, p) in enumerate(labels)
 		push!(indexedpsgs, i => p)
 	end
-	@bind docidx Select(indexedpsgs, default = topdocindex)
+	md"""*Select a passage*: $(@bind docidx Select(indexedpsgs, default = topdocindex))"""
 end
+
+# ╔═╡ 56d6a6b8-8779-4a0b-b45f-f98ea364c46b
+isnothing(tm) ? nothing : string("*Text of* **", labels[docidx], "**: ", c.passages[docidx].text) |> Markdown.parse
 
 # ╔═╡ 55e8e4a6-60d9-41b0-972b-e24e982ed6dc
 if isnothing(tm)
@@ -315,8 +316,19 @@ else
 	Plot(bar(y=reverse(docys), x = reverse(docxs), orientation = "h"), Layout(title = "Topic scores for passage (document) $(labels[docidx])", height = 400))
 end
 
-# ╔═╡ 56d6a6b8-8779-4a0b-b45f-f98ea364c46b
-isnothing(c) ? nothing : string("*Text of* **", labels[docidx], "**: ", c.passages[docidx].text) |> Markdown.parse
+# ╔═╡ a6dacb4e-1632-4e2f-9c1a-721481916011
+toplabel = topicfordoc(tm, docidx)[1]
+
+# ╔═╡ 9482d8e4-bcde-4833-8e5f-e0cd9c435eec
+toptopic = topicindex(tm, toplabel)
+
+# ╔═╡ 1e02b346-ec19-4bbb-9af7-1c2b8f55668d
+if isnothing(tm) nothing 
+else
+	curr_ref = labels[docidx]
+	curr_topic = topiclabels(tm)[toptopic]
+	md"""*Color key for* **$(curr_ref)** *and its lead topic* **$(curr_topic)**: """
+end
 
 # ╔═╡ 55398956-05a9-4e02-96ea-07f0221ca736
 md"""> **Markdown formatting**
@@ -430,6 +442,9 @@ end
 
 # ╔═╡ e55902f5-54a5-4785-9bd9-2647ae8e4088
 colorvals = isnothing(tm) ? [] : doc_colors(tm, palette, labels)
+
+# ╔═╡ 33048b01-ac41-41e0-b2af-774ac813bd50
+isnothing(tm) ? nothing : [ colorvals[docidx], palette[toptopic]]
 
 # ╔═╡ 81b3f1a1-d8f1-4685-80e8-89029e808170
 """Create a 3D scatter plot for documents in the topic-document  matrix."""
@@ -2283,6 +2298,12 @@ version = "17.4.0+0"
 # ╟─e980c59d-b077-42bb-94b3-83c1349fb2c4
 # ╟─456b8623-6b7f-4c5e-87e4-ed204980fdd0
 # ╟─213665be-d224-4553-8634-5dec9c63fd9a
+# ╟─164fdf43-2149-4bc4-a762-ba3063192cad
+# ╟─1e02b346-ec19-4bbb-9af7-1c2b8f55668d
+# ╟─33048b01-ac41-41e0-b2af-774ac813bd50
+# ╟─b9d4b933-e3ee-4eef-854f-e0f392041c22
+# ╟─56d6a6b8-8779-4a0b-b45f-f98ea364c46b
+# ╟─55e8e4a6-60d9-41b0-972b-e24e982ed6dc
 # ╟─9f247ffd-b68a-4e78-8081-932ffe9123c3
 # ╟─83af2891-bfca-41da-86ef-5c590a7a2353
 # ╟─ba8753a8-07c4-4ee2-8fe7-d70500a78a0b
@@ -2293,11 +2314,6 @@ version = "17.4.0+0"
 # ╟─d1af6c74-074c-4655-bd96-f470de8dd4df
 # ╟─31a6f7eb-f618-4e59-88b4-a53b7b8cb7ce
 # ╟─4149aeb6-1857-46e0-afe9-776f550ed98a
-# ╟─164fdf43-2149-4bc4-a762-ba3063192cad
-# ╟─c4e06ce5-4ea9-427c-b6fc-95cc8b850fbd
-# ╟─b9d4b933-e3ee-4eef-854f-e0f392041c22
-# ╟─55e8e4a6-60d9-41b0-972b-e24e982ed6dc
-# ╟─56d6a6b8-8779-4a0b-b45f-f98ea364c46b
 # ╟─a17ced36-577e-4812-b34f-2bc6cc322dde
 # ╟─187f5780-9611-41ed-82ba-ec1cd0c576f9
 # ╟─7e4e9921-238b-4a15-84bc-dd7b28678061
@@ -2322,8 +2338,10 @@ version = "17.4.0+0"
 # ╟─db98086a-ee1a-4252-a1d9-402e58f4321a
 # ╟─360f2e77-34e2-48bb-bced-41eec778cf06
 # ╟─f4c5261f-6cf5-435b-a199-29420ff298b8
-# ╠═295cdfb5-fd89-4b6a-ac65-cf175fefdad4
-# ╠═461ba6ab-e540-445d-ada4-1f55f52df67b
+# ╟─295cdfb5-fd89-4b6a-ac65-cf175fefdad4
+# ╟─461ba6ab-e540-445d-ada4-1f55f52df67b
+# ╠═9482d8e4-bcde-4833-8e5f-e0cd9c435eec
+# ╠═a6dacb4e-1632-4e2f-9c1a-721481916011
 # ╟─55398956-05a9-4e02-96ea-07f0221ca736
 # ╟─3daf5f5d-888f-44fe-b80b-59389e06192c
 # ╟─c9727ef1-5c39-43b3-9d73-51973813a590

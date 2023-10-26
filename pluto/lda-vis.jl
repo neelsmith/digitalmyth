@@ -318,6 +318,15 @@ end
 # ╔═╡ 56d6a6b8-8779-4a0b-b45f-f98ea364c46b
 isnothing(c) ? nothing : string("*Text of* **", labels[docidx], "**: ", c.passages[docidx].text) |> Markdown.parse
 
+# ╔═╡ a6dacb4e-1632-4e2f-9c1a-721481916011
+toplabel = topicfordoc(tm, docidx)[1]
+
+# ╔═╡ 9482d8e4-bcde-4833-8e5f-e0cd9c435eec
+toptopic = topicindex(tm, toplabel)
+
+# ╔═╡ 1e02b346-ec19-4bbb-9af7-1c2b8f55668d
+isnothing(tm) ? nothing : md"""*Color key for document $(docidx) and its lead topic $(toptopic)*: """
+
 # ╔═╡ 55398956-05a9-4e02-96ea-07f0221ca736
 md"""> **Markdown formatting**
 """
@@ -430,6 +439,9 @@ end
 
 # ╔═╡ e55902f5-54a5-4785-9bd9-2647ae8e4088
 colorvals = isnothing(tm) ? [] : doc_colors(tm, palette, labels)
+
+# ╔═╡ 33048b01-ac41-41e0-b2af-774ac813bd50
+isnothing(tm) ? nothing : [palette[toptopic], colorvals[docidx], ]
 
 # ╔═╡ 81b3f1a1-d8f1-4685-80e8-89029e808170
 """Create a 3D scatter plot for documents in the topic-document  matrix."""
@@ -2296,6 +2308,8 @@ version = "17.4.0+0"
 # ╟─164fdf43-2149-4bc4-a762-ba3063192cad
 # ╟─c4e06ce5-4ea9-427c-b6fc-95cc8b850fbd
 # ╟─b9d4b933-e3ee-4eef-854f-e0f392041c22
+# ╟─1e02b346-ec19-4bbb-9af7-1c2b8f55668d
+# ╟─33048b01-ac41-41e0-b2af-774ac813bd50
 # ╟─55e8e4a6-60d9-41b0-972b-e24e982ed6dc
 # ╟─56d6a6b8-8779-4a0b-b45f-f98ea364c46b
 # ╟─a17ced36-577e-4812-b34f-2bc6cc322dde
@@ -2322,8 +2336,10 @@ version = "17.4.0+0"
 # ╟─db98086a-ee1a-4252-a1d9-402e58f4321a
 # ╟─360f2e77-34e2-48bb-bced-41eec778cf06
 # ╟─f4c5261f-6cf5-435b-a199-29420ff298b8
-# ╠═295cdfb5-fd89-4b6a-ac65-cf175fefdad4
-# ╠═461ba6ab-e540-445d-ada4-1f55f52df67b
+# ╟─295cdfb5-fd89-4b6a-ac65-cf175fefdad4
+# ╟─461ba6ab-e540-445d-ada4-1f55f52df67b
+# ╠═9482d8e4-bcde-4833-8e5f-e0cd9c435eec
+# ╠═a6dacb4e-1632-4e2f-9c1a-721481916011
 # ╟─55398956-05a9-4e02-96ea-07f0221ca736
 # ╟─3daf5f5d-888f-44fe-b80b-59389e06192c
 # ╟─c9727ef1-5c39-43b3-9d73-51973813a590

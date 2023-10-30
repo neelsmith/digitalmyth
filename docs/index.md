@@ -37,6 +37,7 @@ Reminder for oral presentations:
     - Google books and its n-gram viewer (Liam, Michael C.)
     - fuzzy matching using edit-distance metrics (Luke, Chris,  Michael P.)
     - measuring importance of terms using TF-IDF (Zach)
+    - try [one of these](./classes/sprint1/)!
 - Thursday:  
     - visualizing and interpreting a social network with Gephi (Sean, Sully, Truc)
     - managing text and references (Al)

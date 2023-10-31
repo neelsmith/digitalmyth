@@ -26,6 +26,9 @@ end
 # ╔═╡ 2a232bf1-6c0b-4bfd-b930-df374d408d82
 nbversion = "1.0.0";
 
+# ╔═╡ 70b0146d-1e0d-4905-b31b-ea43bbef46b9
+md"""*Notebook version* **$(nbversion)**"""
+
 # ╔═╡ e98513ae-d7b2-4cd3-8860-4618d72dd590
 md"""*See version notes*: $(@bind showversions CheckBox())"""
 
@@ -40,9 +43,6 @@ end
 
 # ╔═╡ 66e54b5e-7806-11ee-0f71-27d1777493b7
 md"""# Google books ngrams"""
-
-# ╔═╡ 70b0146d-1e0d-4905-b31b-ea43bbef46b9
-md"""*Notebook version* **$(nbversion)**"""
 
 # ╔═╡ dd2c23a1-89cd-4617-9d3c-120b8ba15e20
 md"""> *An interactive notebook to visualize results of queries to Google Books' ngram data set.  See [documentation of the interface to Google ngrams](https://books.google.com/ngrams/info)*.

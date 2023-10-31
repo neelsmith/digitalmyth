@@ -38,7 +38,7 @@ md"""!!! tip "Plot results of ngram query in Google books"
 md"""*Enter a comma-delimited series of ngrams* $(@bind grams TextField())"""
 
 # ╔═╡ 0df6668d-d0af-4fc6-baff-6c7ea7ceabc6
-md"""*Starting from year:* $(@bind startfrom Slider(1800:10:2020, default = 1800, show_value = true)) *ending with year*: $(@bind endwith Slider(1800:10:2020, default = 2020, show_value = true))"""
+md"""*Starting from year:* $(@bind startfrom Slider(1800:10:2019, default = 1800, show_value = true)) *ending with year*: $(@bind endwith Slider(1800:2019, default = 2019, show_value = true))"""
 
 # ╔═╡ 4b8da657-a1a5-481d-a90f-b272ad27f5e6
 html"""
@@ -71,28 +71,6 @@ md"""!!! note "UI and forming the query URL"
 # ╔═╡ d99d561c-1cef-40da-81ab-c6aff10f8af2
 endpoint = "https://books.google.com/ngrams/json?content="
 
-# ╔═╡ f95e1165-7b2d-40b9-9cfe-202948a41ebe
-smoothmenu = ["0", "1", "2", "3", "4", "5", "6", "7","8", "9", "10",
-"20", "30", "40", "50"]
-
-# ╔═╡ 3cc8bcff-468e-49c4-98c3-f327bb2485a3
-md"""*Case insensitive* $(@bind caseless CheckBox(default = true)) *Smoothing* $(@bind smoothing Select(smoothmenu, default = "3"))"""
-
-# ╔═╡ a97f83b5-77ea-4f20-891d-4a1f05b1d5fd
-caseusage = caseless ? "&case_insensitive=true" : ""
-
-# ╔═╡ c69c0a9b-6a30-4f94-b642-c0fdf2103636
-"""Download a Google ngram query specified as a URL with query parameters,
-and parse the resulting JSON data into Julia `Dict`s
-"""
-function googlegram(u)
-	f = Downloads.download(u)
-	jsonparse = JSON.parsefile(f)
-	rm(f)
-	jsonparse
-end
-	
-
 # ╔═╡ 84bb5eb1-4739-4f9b-85ae-76ef79954de3
 corpora = [
 	"zh-Hans-2019" => "Chinese 2019",
@@ -111,8 +89,30 @@ corpora = [
 # ╔═╡ 72d2d376-9511-437f-9465-33056c8ab9ef
 md"""*Select a corpus* $(@bind corpus Select(corpora, default = "en-2019"))"""
 
+# ╔═╡ f95e1165-7b2d-40b9-9cfe-202948a41ebe
+smoothmenu = ["0", "1", "2", "3", "4", "5", "6", "7","8", "9", "10",
+"20", "30", "40", "50"]
+
+# ╔═╡ 3cc8bcff-468e-49c4-98c3-f327bb2485a3
+md"""*Case insensitive* $(@bind caseless CheckBox(default = true)) *Smoothing* $(@bind smoothing Select(smoothmenu, default = "3"))"""
+
+# ╔═╡ a97f83b5-77ea-4f20-891d-4a1f05b1d5fd
+caseusage = caseless ? "&case_insensitive=true" : ""
+
 # ╔═╡ 078692d8-f785-4ace-82ee-cf8ec6835d1f
 u = isnothing(grams) ? nothing : string(endpoint, escapeuri(grams),  caseusage, "&year_start=", startfrom,"&year_end=", endwith, "&smoothing=", smoothing, "&corpus=", corpus)
+
+# ╔═╡ c69c0a9b-6a30-4f94-b642-c0fdf2103636
+"""Download a Google ngram query specified as a URL with query parameters,
+and parse the resulting JSON data into Julia `Dict`s
+"""
+function googlegram(u)
+	f = Downloads.download(u)
+	jsonparse = JSON.parsefile(f)
+	rm(f)
+	jsonparse
+end
+	
 
 # ╔═╡ e0189af9-0685-41ad-bbe1-733686dabc06
 answerdicts = googlegram(u)

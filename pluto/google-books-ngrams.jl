@@ -23,8 +23,26 @@ begin
 	using PlotlyJS
 end
 
+# ╔═╡ 2a232bf1-6c0b-4bfd-b930-df374d408d82
+nbversion = "1.0.0";
+
+# ╔═╡ e98513ae-d7b2-4cd3-8860-4618d72dd590
+md"""*See version notes*: $(@bind showversions CheckBox())"""
+
+# ╔═╡ 3b941fd1-2ca7-4055-93c9-5124fb90f2d1
+if showversions 
+	"""
+- **1.0.0**: initial release	
+"""	 |> Markdown.parse
+else
+	nothing
+end
+
 # ╔═╡ 66e54b5e-7806-11ee-0f71-27d1777493b7
 md"""# Google books ngrams"""
+
+# ╔═╡ 70b0146d-1e0d-4905-b31b-ea43bbef46b9
+md"""*Notebook version* **$(nbversion)**"""
 
 # ╔═╡ dd2c23a1-89cd-4617-9d3c-120b8ba15e20
 md"""> *An interactive notebook to visualize results of queries to Google Books' ngram data set.  See [documentation of the interface to Google ngrams](https://books.google.com/ngrams/info)*.
@@ -687,6 +705,10 @@ version = "17.4.0+0"
 
 # ╔═╡ Cell order:
 # ╟─f1c5c893-a87b-4915-b4f8-dce54d8cf356
+# ╟─2a232bf1-6c0b-4bfd-b930-df374d408d82
+# ╟─70b0146d-1e0d-4905-b31b-ea43bbef46b9
+# ╟─e98513ae-d7b2-4cd3-8860-4618d72dd590
+# ╟─3b941fd1-2ca7-4055-93c9-5124fb90f2d1
 # ╟─66e54b5e-7806-11ee-0f71-27d1777493b7
 # ╟─dd2c23a1-89cd-4617-9d3c-120b8ba15e20
 # ╟─d415351f-9232-4887-8c62-88a6ca7130b9

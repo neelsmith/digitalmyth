@@ -10,6 +10,12 @@ has_children: true
 
 
 
+Reminder for oral presentations:
+ 
+1. meet with me to plan and rehearse
+2. submit materials (slides, Julia notebooks) in your course Google drive for inclusion in shared collection
+
+
 - Some **helpful code**:
     - Resources from [extending previous assignments](../julia/extending/) (now including [topic modeling Pluto notebook](../julia/extending/lda-textanalysis.html))
     - A [template Pluto notebook](../text_template_nb.html) with just the code you need to select the URL for a text of Apollodorus or Hyginus from a menu.

@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.29
+# v0.19.32
 
 using Markdown
 using InteractiveUtils
@@ -33,6 +33,9 @@ md"""*Case-insensitive*: $(@bind case_insensitive CheckBox(default = true))"""
 # ╔═╡ e48347c2-46ab-46b5-b672-75906cea7f99
 md"""> **Calculations on term**
 """
+
+# ╔═╡ b3d45eab-4949-4fa3-8ed9-a0bf2b69ac18
+#ta_corpus.documents[20] |> text
 
 # ╔═╡ dd679822-39da-45f7-8937-22395fb1b399
 md"""> **Building structures from the `TextAnalysis` package**"""
@@ -90,7 +93,7 @@ menu = ["" => "Choose a text", hyginus_url => "Hyginus", apollodorus_url => "Apo
 @bind text_url Select(menu)
 
 # ╔═╡ 9ca6298d-3477-4599-98a5-e44b0b50fdc3
-(ta_corpus, lex,  dtmatrix) = isempty(text_url) ? nothing : ta_structs_from_url(text_url; lc = case_insensitive)
+(ta_corpus, lex,  dtmatrix) = isempty(text_url) ? (nothing, nothing, nothing) : ta_structs_from_url(text_url; lc = case_insensitive)
 
 # ╔═╡ dd4ad87d-7920-4c9b-8b91-19ee0005fd63
 begin
@@ -107,16 +110,13 @@ end
 
 # ╔═╡ 1467a135-09eb-4a86-a692-9e91b63bbb25
 # Find index of term within document matrix
-termidx = findfirst(t -> t == term, dtmatrix.terms)
+termidx =  isnothing(dtmatrix) ? nothing : findfirst(t -> t == term, dtmatrix.terms)
 
 # ╔═╡ e652a1d6-d062-400c-9545-67046cb0be3b
-docindices = ta_corpus[term]
+docindices = isnothing(ta_corpus) ? nothing : ta_corpus[term]
 
 # ╔═╡ aa31d440-72a0-4cf8-a17a-a0509c821165
-matchcount = length(docindices)
-
-# ╔═╡ b3d45eab-4949-4fa3-8ed9-a0bf2b69ac18
-ta_corpus.documents[20] |> text
+matchcount = isnothing(docindices) ? 0 : length(docindices)
 
 # ╔═╡ c87e708f-6a31-45f0-b3ee-b572938dd58a
 tfidf = isempty(text_url) ? nothing : tf_idf(dtmatrix)
@@ -135,7 +135,7 @@ md"""
 end
 
 # ╔═╡ bd2d1d93-f7f3-40ae-bcb7-37e2a9566488
-txtlines = isnothing(text_url) ? nothing : Downloads.download(text_url) |> readlines
+txtlines = isempty(text_url) ? nothing : Downloads.download(text_url) |> readlines
 
 # ╔═╡ 223eea90-18e3-4b27-8b79-bcc7f2869b26
 """Add to string `s` an HTML span to hilight occurrences of substring `hilite`."""
@@ -146,7 +146,9 @@ function format(s, hilite)
 end
 
 # ╔═╡ d4add6e6-228b-4001-a553-12c522f85a64
-begin
+if isnothing(docindices)
+	md""
+else
 	hdr = length(docindices) == 1 ? "<b>1</b> matching passage:" : "<b>$(length(docindices))</b> matching passages:"
 	disp = [hdr, "<ol>"]
 	for i in docindices
@@ -718,9 +720,9 @@ version = "17.4.0+0"
 # ╟─bd2d1d93-f7f3-40ae-bcb7-37e2a9566488
 # ╟─e227e324-653a-4c10-bc66-dac95459f78f
 # ╟─80e4ec59-f9df-40b0-883b-6c0d929bc16a
-# ╠═bd5149e2-814c-441a-a97a-6594bceac276
-# ╠═0a1b7c78-5670-4661-8eeb-d9cfd4b67fdf
-# ╠═f07527b5-9643-4363-a845-081763ff60e8
+# ╟─bd5149e2-814c-441a-a97a-6594bceac276
+# ╟─0a1b7c78-5670-4661-8eeb-d9cfd4b67fdf
+# ╟─f07527b5-9643-4363-a845-081763ff60e8
 # ╟─223eea90-18e3-4b27-8b79-bcc7f2869b26
 # ╟─847b2530-0e01-4bbc-8b16-2b2934a514fb
 # ╟─00000000-0000-0000-0000-000000000001

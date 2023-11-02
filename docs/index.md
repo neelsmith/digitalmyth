@@ -37,11 +37,11 @@ has_children: true
 
 ## Week of Nov. 7 - Nov. 9
 
-- Tuesday:
-- Thursday:
+- Tuesday: Resolve any remaining questions from project proposals
+- Thursday: Complete draft of project code due
 
 ## Week of Nov. 14 - Nov. 16
     
 
-- Tuesday:
-- Thursday:
+- Tuesday: workshop presentations
+- Thursday: present completed first draft for response from Prof. John Laudun, Univ. of Louisiana

@@ -286,10 +286,10 @@ end
 isempty(topicmenu) ? nothing : @bind topicdetail Select(topicmenu)
 
 # ╔═╡ 295cdfb5-fd89-4b6a-ac65-cf175fefdad4
-topdoclabel = topdocs(tm, topicdetail, n = 1)[1][1]
+topdoclabel = isnothing(tm) ? nothing : topdocs(tm, topicdetail, n = 1)[1][1]
 
 # ╔═╡ 461ba6ab-e540-445d-ada4-1f55f52df67b
-topdocindex = documentindex(tm, topdoclabel)
+topdocindex = isnothing(tm) ? nothing : documentindex(tm, topdoclabel) 
 
 # ╔═╡ b9d4b933-e3ee-4eef-854f-e0f392041c22
 if isnothing(tm) 
@@ -318,10 +318,10 @@ else
 end
 
 # ╔═╡ a6dacb4e-1632-4e2f-9c1a-721481916011
-toplabel = topicfordoc(tm, docidx)[1]
+toplabel = isnothing(tm) ? nothing : topicfordoc(tm, docidx)[1]
 
 # ╔═╡ 9482d8e4-bcde-4833-8e5f-e0cd9c435eec
-toptopic = topicindex(tm, toplabel)
+toptopic = isnothing(tm) ? nothing : topicindex(tm, toplabel)
 
 # ╔═╡ 55398956-05a9-4e02-96ea-07f0221ca736
 md"""> **Markdown formatting**
@@ -403,9 +403,6 @@ else
 	md"""*Color key for* **$(label3d(tm, docidx))**: """
 end
 
-# ╔═╡ e95f4022-0022-428f-966c-4b93c1d19c28
-label3d(tm, 1)
-
 # ╔═╡ 36b3c216-a18e-4c2d-ae00-41dc3819b32f
 md"""> **Dimensionality reduction and plotting**"""
 
@@ -479,7 +476,7 @@ $(colorkey(topiclabels(tm), palette))
 """))
 
 # ╔═╡ 0e02cb77-2fa5-457b-89e7-b7c88a56c9cb
-plotlabels = map(i -> label3d(tm,i), collect(1:length(c.passages)))
+plotlabels = isnothing(tm) ? [] :  map(i -> label3d(tm,i), collect(1:length(c.passages)))
 
 # ╔═╡ 81b3f1a1-d8f1-4685-80e8-89029e808170
 """Create a 3D scatter plot for documents in the topic-document  matrix."""
@@ -2295,7 +2292,7 @@ version = "17.4.0+0"
 
 # ╔═╡ Cell order:
 # ╟─852147da-b8e1-40cc-b89b-cfae3e3f3680
-# ╠═5f8972a0-7035-11ee-3002-53a5c348568d
+# ╟─5f8972a0-7035-11ee-3002-53a5c348568d
 # ╟─bbb12a20-6245-42c6-98e8-a9b486fe7674
 # ╟─c1873e3e-d906-4bc5-ae35-b7c11335298e
 # ╟─71a1bf81-cb9f-4b36-b144-1dbd512c366c
@@ -2331,7 +2328,7 @@ version = "17.4.0+0"
 # ╟─46f76684-0ee6-41bf-9c68-c6f52c180916
 # ╟─d1af6c74-074c-4655-bd96-f470de8dd4df
 # ╟─31a6f7eb-f618-4e59-88b4-a53b7b8cb7ce
-# ╠═4149aeb6-1857-46e0-afe9-776f550ed98a
+# ╟─4149aeb6-1857-46e0-afe9-776f550ed98a
 # ╟─a17ced36-577e-4812-b34f-2bc6cc322dde
 # ╟─187f5780-9611-41ed-82ba-ec1cd0c576f9
 # ╟─7e4e9921-238b-4a15-84bc-dd7b28678061
@@ -2340,27 +2337,26 @@ version = "17.4.0+0"
 # ╟─6ec473ee-7565-4164-a73f-58b42e541529
 # ╟─6fe28a6d-d8a6-4ed5-aa12-c56a0146d418
 # ╟─ea54c399-3ad4-4f8b-8370-446d366ab7be
-# ╠═5bd76ff8-63a4-4ff1-99d5-37fa3cb32fc7
+# ╟─5bd76ff8-63a4-4ff1-99d5-37fa3cb32fc7
 # ╟─a48551ee-5c10-4a36-b819-7941644cf02d
 # ╟─75fe8c72-3ac9-434e-a202-7a60f54ac98b
 # ╟─fecde438-27d9-4658-b170-445b3cb29c81
 # ╟─7bebc3bf-21fa-42c5-8ae9-420b6d5200a6
 # ╟─c5b1be33-ecab-4337-9e49-40347ada1acc
-# ╠═f61cfe04-1444-41c7-9c5c-813ba790e6d2
-# ╠═6ac955e3-2a37-413b-b065-0ae84995febb
+# ╟─f61cfe04-1444-41c7-9c5c-813ba790e6d2
+# ╟─6ac955e3-2a37-413b-b065-0ae84995febb
 # ╟─b2271a55-396c-4348-839d-301940a6c5b6
-# ╠═3e887443-e24c-460e-bb29-266b80fd8105
-# ╠═028c61e1-88b6-4db0-a2dc-a4bdda35268f
+# ╟─3e887443-e24c-460e-bb29-266b80fd8105
+# ╟─028c61e1-88b6-4db0-a2dc-a4bdda35268f
 # ╟─6407abf2-e664-4574-b7b9-5ed5bb4fff4b
 # ╟─14564857-1b56-4710-9d7e-cadd82a5032d
 # ╟─db98086a-ee1a-4252-a1d9-402e58f4321a
 # ╟─360f2e77-34e2-48bb-bced-41eec778cf06
-# ╠═f4c5261f-6cf5-435b-a199-29420ff298b8
+# ╟─f4c5261f-6cf5-435b-a199-29420ff298b8
 # ╟─295cdfb5-fd89-4b6a-ac65-cf175fefdad4
 # ╟─461ba6ab-e540-445d-ada4-1f55f52df67b
-# ╠═9482d8e4-bcde-4833-8e5f-e0cd9c435eec
-# ╠═a6dacb4e-1632-4e2f-9c1a-721481916011
-# ╠═e95f4022-0022-428f-966c-4b93c1d19c28
+# ╟─9482d8e4-bcde-4833-8e5f-e0cd9c435eec
+# ╟─a6dacb4e-1632-4e2f-9c1a-721481916011
 # ╟─55398956-05a9-4e02-96ea-07f0221ca736
 # ╟─3daf5f5d-888f-44fe-b80b-59389e06192c
 # ╟─c9727ef1-5c39-43b3-9d73-51973813a590

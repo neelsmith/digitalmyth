@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.29
+# v0.19.32
 
 using Markdown
 using InteractiveUtils
@@ -40,7 +40,7 @@ end
 
 
 # ╔═╡ 852147da-b8e1-40cc-b89b-cfae3e3f3680
-nbversion = "3.1.1";
+nbversion = "3.1.2";
 
 # ╔═╡ bbb12a20-6245-42c6-98e8-a9b486fe7674
 md""" ## Topic modelling of a citable corpus with LDA
@@ -55,6 +55,7 @@ md"""*See release notes* $(@bind release_history CheckBox())"""
 # ╔═╡ 71a1bf81-cb9f-4b36-b144-1dbd512c366c
 if release_history
 md"""
+- **3.1.2**: added top topic to document label in 3D plot; removed alpha channel in 3D plotting.
 - **3.1.1**: tweaked notebook layout
 - **3.1.0**: adds color coding to plot of documents in topic space
 - **3.0.0**: update packages to do topic modelling directly through the `lda_tm` function of the `CitableCorpusAnalysis` package.
@@ -88,7 +89,7 @@ md"""
 md"""*Compute topic model* $(@bind stopwordsok CheckBox())"""
 
 # ╔═╡ 6eb13aa6-7fce-4c63-9d46-33280c3a8b90
-md"""*Number of topics (`k`)* $(@bind k confirm(Slider(2:40, default = 12, show_value = true)))"""
+md"""*Number of topics (`k`)* $(@bind k confirm(Slider(2:80, default = 12, show_value = true)))"""
 
 # ╔═╡ b3267b0d-53df-4364-bba3-eda46bf972c0
 md"""*Number of iterations*: $( @bind iters confirm(Slider(100:100:2500, default =1000, show_value = true)))"""
@@ -285,10 +286,10 @@ end
 isempty(topicmenu) ? nothing : @bind topicdetail Select(topicmenu)
 
 # ╔═╡ 295cdfb5-fd89-4b6a-ac65-cf175fefdad4
-topdoclabel = topdocs(tm, topicdetail, n = 1)[1][1]
+topdoclabel = isnothing(tm) ? nothing : topdocs(tm, topicdetail, n = 1)[1][1]
 
 # ╔═╡ 461ba6ab-e540-445d-ada4-1f55f52df67b
-topdocindex = documentindex(tm, topdoclabel)
+topdocindex = isnothing(tm) ? nothing : documentindex(tm, topdoclabel) 
 
 # ╔═╡ b9d4b933-e3ee-4eef-854f-e0f392041c22
 if isnothing(tm) 
@@ -317,18 +318,10 @@ else
 end
 
 # ╔═╡ a6dacb4e-1632-4e2f-9c1a-721481916011
-toplabel = topicfordoc(tm, docidx)[1]
+toplabel = isnothing(tm) ? nothing : topicfordoc(tm, docidx)[1]
 
 # ╔═╡ 9482d8e4-bcde-4833-8e5f-e0cd9c435eec
-toptopic = topicindex(tm, toplabel)
-
-# ╔═╡ 1e02b346-ec19-4bbb-9af7-1c2b8f55668d
-if isnothing(tm) nothing 
-else
-	curr_ref = labels[docidx]
-	curr_topic = topiclabels(tm)[toptopic]
-	md"""*Color key for* **$(curr_ref)** *and its lead topic* **$(curr_topic)**: """
-end
+toptopic = isnothing(tm) ? nothing : topicindex(tm, toplabel)
 
 # ╔═╡ 55398956-05a9-4e02-96ea-07f0221ca736
 md"""> **Markdown formatting**
@@ -392,6 +385,24 @@ end
 # ╔═╡ 4149aeb6-1857-46e0-afe9-776f550ed98a
 isnothing(tm) ? nothing : tophits(tm,topicdetail, topdocscount)
 
+# ╔═╡ cba72454-ae33-4e26-9f15-abec2393af6d
+"""For 3-D plot, label a document with both its passage
+reference and its highest-scoring topic.
+"""
+function label3d(themodel, docid)
+	topiclbl = topicfordoc(themodel, docid)[1]
+	
+	string(labels[docid], " (", topiclbl, ")")
+
+
+end
+
+# ╔═╡ 1e02b346-ec19-4bbb-9af7-1c2b8f55668d
+if isnothing(tm) nothing 
+else
+	md"""*Color key for* **$(label3d(tm, docidx))**: """
+end
+
 # ╔═╡ 36b3c216-a18e-4c2d-ae00-41dc3819b32f
 md"""> **Dimensionality reduction and plotting**"""
 
@@ -435,7 +446,8 @@ function doc_colors(tm, sourcepalette, labellist)
 	for i in 1:size(tm.topic_docs)[2]
 		pr = topicfordoc(tm, i)
 		topicidx = findfirst(lbl -> lbl == pr[1], lbls)
-		push!(colorvals, RGBA(sourcepalette[topicidx], pr[2]))
+		#push!(colorvals, RGBA(sourcepalette[topicidx], pr[2]))
+		push!(colorvals, sourcepalette[topicidx])
 	end
 	colorvals
 end
@@ -444,19 +456,7 @@ end
 colorvals = isnothing(tm) ? [] : doc_colors(tm, palette, labels)
 
 # ╔═╡ 33048b01-ac41-41e0-b2af-774ac813bd50
-isnothing(tm) ? nothing : [ colorvals[docidx], palette[toptopic]]
-
-# ╔═╡ 81b3f1a1-d8f1-4685-80e8-89029e808170
-"""Create a 3D scatter plot for documents in the topic-document  matrix."""
-function plottopics(data3d, colorvals; ht = 500)
-	lyt = Layout(title = "Documents in topics space reduced to 3 dimensions",
-	height  = ht)
-	plot3 = scatter(x = data3d[1,:], y = data3d[2,:], z = data3d[3,:], mode = "markers", type = "scatter3d", text = labels, marker_color = colorvals )
-	Plot(plot3, lyt)
-end
-
-# ╔═╡ 213665be-d224-4553-8634-5dec9c63fd9a
-isnothing(tm) ? nothing : plottopics(reduced, colorvals; ht = height3d)
+isnothing(tm) ? nothing : [ colorvals[docidx]]
 
 # ╔═╡ cd303dd2-07a1-484d-93dc-55667dd18c79
 """Compose HTML color key for display"""
@@ -474,6 +474,21 @@ isnothing(tm) ? nothing : aside(HTML("""<p><b>Color key</b></p>
 
 $(colorkey(topiclabels(tm), palette))
 """))
+
+# ╔═╡ 0e02cb77-2fa5-457b-89e7-b7c88a56c9cb
+plotlabels = isnothing(tm) ? [] :  map(i -> label3d(tm,i), collect(1:length(c.passages)))
+
+# ╔═╡ 81b3f1a1-d8f1-4685-80e8-89029e808170
+"""Create a 3D scatter plot for documents in the topic-document  matrix."""
+function plottopics(data3d, colorvals; ht = 500)
+	lyt = Layout(title = "Documents in topics space reduced to 3 dimensions",
+	height  = ht)
+	plot3 = scatter(x = data3d[1,:], y = data3d[2,:], z = data3d[3,:], mode = "markers", type = "scatter3d", text = plotlabels, marker_color = colorvals )
+	Plot(plot3, lyt)
+end
+
+# ╔═╡ 213665be-d224-4553-8634-5dec9c63fd9a
+isnothing(tm) ? nothing : plottopics(reduced, colorvals; ht = height3d)
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -2340,20 +2355,22 @@ version = "17.4.0+0"
 # ╟─f4c5261f-6cf5-435b-a199-29420ff298b8
 # ╟─295cdfb5-fd89-4b6a-ac65-cf175fefdad4
 # ╟─461ba6ab-e540-445d-ada4-1f55f52df67b
-# ╠═9482d8e4-bcde-4833-8e5f-e0cd9c435eec
-# ╠═a6dacb4e-1632-4e2f-9c1a-721481916011
+# ╟─9482d8e4-bcde-4833-8e5f-e0cd9c435eec
+# ╟─a6dacb4e-1632-4e2f-9c1a-721481916011
 # ╟─55398956-05a9-4e02-96ea-07f0221ca736
 # ╟─3daf5f5d-888f-44fe-b80b-59389e06192c
 # ╟─c9727ef1-5c39-43b3-9d73-51973813a590
 # ╟─954f9b09-6d40-4c99-97c1-0a76493acbb4
 # ╟─c91aecb1-f632-4c68-9b96-7cc3d4fbee34
+# ╟─cba72454-ae33-4e26-9f15-abec2393af6d
 # ╟─36b3c216-a18e-4c2d-ae00-41dc3819b32f
 # ╟─908ff965-9dbd-40cc-b6f4-8c228a1a7757
 # ╟─05db8829-3e34-4ff0-acf3-88e60fceced4
-# ╟─02a7a052-b917-4b7f-9db1-eacac17151c1
+# ╠═02a7a052-b917-4b7f-9db1-eacac17151c1
 # ╟─e55902f5-54a5-4785-9bd9-2647ae8e4088
 # ╟─2429e607-e3a2-412b-909f-686152cfc5e5
-# ╟─81b3f1a1-d8f1-4685-80e8-89029e808170
 # ╟─cd303dd2-07a1-484d-93dc-55667dd18c79
+# ╟─0e02cb77-2fa5-457b-89e7-b7c88a56c9cb
+# ╟─81b3f1a1-d8f1-4685-80e8-89029e808170
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

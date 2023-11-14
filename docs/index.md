@@ -14,8 +14,7 @@ has_children: true
 
 
 - For class on Nov. 14:  download [this Pluto notebook](https://raw.githubusercontent.com/neelsmith/digitalmyth/main/pluto/assign3-workshop.jl)
-
-
+- Pluto notebook with notes on [presentations](https://raw.githubusercontent.com/neelsmith/digitalmyth/main/pluto/presentation-notes.jl)
 
 - **Due dates**:
     - **Fri. Nov. 3**: slides or Julia notebooks from your 5-minute presentation submitted for inclusion in shared collection of resources.  (Add to your folder on the course Google drive if you don't already find yours [listed here](./julia/extending/).)

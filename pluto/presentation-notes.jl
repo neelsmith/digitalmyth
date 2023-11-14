@@ -85,7 +85,7 @@ md"""Easily create bar charts, scatter plots and many others with `PlotlyJS`:
 1. create a "trace"
 - get an array of x values
 - get an array of y values
-2. create a layout oboject
+2. create a layout object
 3. use both trace and layout to `Plot` 
 
 """
@@ -95,6 +95,7 @@ namecountstrace = bar(x = ["Zeus", "Hera", "Athena"], y = [20,5,12])
 
 # ╔═╡ 2243b006-e48a-44e3-b7c3-727457bc63a4
 layout = Layout(
+	
 	title = "Frequencies of names (made up data)",
 	height = 200
 )
@@ -114,6 +115,9 @@ md"""#### Highlighted **boxes for notes**."""
 # ╔═╡ c3a54a22-da1d-4b5f-b8ee-aa1ec4ccbe19
 tip(md"**☞ Hey! Pay attention to this!**")
 
+# ╔═╡ b836aaeb-9a21-4320-95e3-818e228afd61
+md"**☞ Hey! Pay attention to this!**"
+
 # ╔═╡ 72be0c13-4884-414f-8503-ec32761d3017
 md"""#### "Foldable" content you can show or hide"""
 
@@ -125,6 +129,9 @@ md"""### Asides"""
 
 # ╔═╡ 25aed4b3-4d99-48b7-a7b5-30010aa11cb4
 aside(tip(md"A reference to keep at hand.")) 
+
+# ╔═╡ 542295f0-9be8-4238-9277-155fad525878
+md"A reference to keep"
 
 # ╔═╡ e7d4c050-2f53-415a-84a7-42fda66ce29e
 md"""## Interactive widgets with `PlutoUI`"""
@@ -143,9 +150,13 @@ md"""## References"""
 
 # ╔═╡ da577ace-a35f-40e8-96cc-3ec0a6e84580
 md"""
-- a Pluto slides "[how-to](https://www.andreaskroepelin.de/blog/plutoslides/)" from Andreas Kröpelin
+
 - docs for [`PlutoTeachingTools`](https://juliapluto.github.io/PlutoTeachingTools.jl/example.html)
 - sample notebook documentiong [`PlutoUI`](https://featured.plutojl.org/basic/plutoui.jl)
+
+A blog post (from a Pluto notebook!) that is a little dated in some details but some good ideas about using Pluto for slides:
+
+- a Pluto slides "[how-to](https://www.andreaskroepelin.de/blog/plutoslides/)" from Andreas Kröpelin
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -767,12 +778,12 @@ version = "17.4.0+0"
 # ╟─9b72bce2-be39-423c-8c2d-78726d7dea34
 # ╟─295d2506-ee15-4ce2-99da-0d1c7b6f2caf
 # ╠═14bd6ccf-5710-4bd5-ad9f-437fb7cb4ec3
-# ╠═d51d6c65-542e-488e-8892-e9bc378950fe
+# ╟─d51d6c65-542e-488e-8892-e9bc378950fe
 # ╠═b9889377-fb3f-4597-b7be-70f06b353893
 # ╟─9539b0fb-47c4-411c-9cd6-6d95dec8bd51
 # ╟─10a4e987-97e8-4a21-a0eb-875b9c3ba888
-# ╠═c92aa676-e722-4c9e-9903-4e3a1468e5c2
-# ╠═aa7a5d11-cf87-4ffe-b1f6-8b0769779dae
+# ╟─c92aa676-e722-4c9e-9903-4e3a1468e5c2
+# ╟─aa7a5d11-cf87-4ffe-b1f6-8b0769779dae
 # ╟─6411172f-3d34-4302-b9b8-b9b115c90c03
 # ╟─af7aca07-4dd2-4381-a9ac-77ee8244a68b
 # ╠═9185f7e6-4a36-4b68-942a-b7d102c7fe8c
@@ -781,10 +792,12 @@ version = "17.4.0+0"
 # ╟─dda7686b-80fd-4e21-9416-8d8a5f871e72
 # ╟─0cf55818-fd68-4950-939f-060743e118ee
 # ╠═c3a54a22-da1d-4b5f-b8ee-aa1ec4ccbe19
+# ╠═b836aaeb-9a21-4320-95e3-818e228afd61
 # ╟─72be0c13-4884-414f-8503-ec32761d3017
-# ╠═44f116b6-c87b-4d33-8319-3e7dd49f19f7
-# ╠═0f89afcd-49d6-4399-ab75-98a46159932c
+# ╟─44f116b6-c87b-4d33-8319-3e7dd49f19f7
+# ╟─0f89afcd-49d6-4399-ab75-98a46159932c
 # ╠═25aed4b3-4d99-48b7-a7b5-30010aa11cb4
+# ╠═542295f0-9be8-4238-9277-155fad525878
 # ╟─e7d4c050-2f53-415a-84a7-42fda66ce29e
 # ╟─5afd9955-c04a-47fc-8cdb-c59a57847282
 # ╠═c540e521-7e1e-4ca8-868e-6da3ce0ede80

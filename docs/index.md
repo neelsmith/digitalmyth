@@ -12,19 +12,24 @@ has_children: true
 
 ## Some links for working on projects and presentations
 
+> **Note**: *These links are to Pluto notebooks:  download and open in Pluto to use*.
+
 - A *Pluto notebook* with notes on [presentations](https://raw.githubusercontent.com/neelsmith/digitalmyth/main/pluto/presentation-notes.jl) (so download it and open in Pluto)
 - A challenge: [rework a notebook for a presentation](./julia/rework-nb.jl) (Pluto notebook format, so download it and open in Pluto)
 
 ## Links from presentations extending initial group work
 
-- using Julia [`Set`s to compare collections](./julia/extending/compare-sets.html)  (an HTML file you can open in a Web browser)
-- using optional parameters to improve functions (tokenizing)
+> **Note**: *These links are HTML files you can open in a Web browser: you'll have to save them as a  Pluto notebook if you want to run them in Pluto*.
+
+
+- using Julia [`Set`s to compare collections](./julia/extending/compare-sets.html) 
+- using [optional parameters](./julia/extending/optional-parameters.html) to improve functions (tokenizing)
 - reading and writing data: [file I/O](./julia/extending/fileio.html) (an HTML file you can open in a Web browser)
-- getting n-gram data from Google books
+- getting [n-gram data from Google books](./julia/extending/google-books-ngrams.html)
 - filtering text using `occursin`
 - filtering lists with `in`
 - managing parallel lists of text citations and text contents
-
+- fuzzy matching [with edit distance](./julia/extending/fuzzy-matching.html)
 
 ## Week of Nov. 21, 24
 

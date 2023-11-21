@@ -44,6 +44,7 @@ has_children: true
 - [filtering lists with `in`](./julia/extending/filtering_with_in.jl)
 - managing parallel lists of [text citations and text contents](./julia/extending/citable-text.html)
 - fuzzy matching [with edit distance](./julia/extending/fuzzy-matching.html)
+- [topic modeling with Latent Dirichlet Analysis](./julia/extending/lda-textanalysis.html)
 
 ## Week of Nov. 21, 24
 

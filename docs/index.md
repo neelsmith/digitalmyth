@@ -13,6 +13,7 @@ has_children: true
 ## Some links for working on projects and presentations
 
 - A *Pluto notebook* with notes on [presentations](https://raw.githubusercontent.com/neelsmith/digitalmyth/main/pluto/presentation-notes.jl) (so download it and open in Pluto)
+- A challenge: [rework a notebook for a presentation](./julia/rework-nb.jl) (Pluto notebook format, so download it and open in Pluto)
 
 ## Links from presentations extending initial group work
 

@@ -40,9 +40,9 @@ has_children: true
 - using [optional parameters](./julia/extending/optional-parameters.html) to improve functions (tokenizing)
 - reading and writing data: [file I/O](./julia/extending/fileio.html) (an HTML file you can open in a Web browser)
 - getting [n-gram data from Google books](./julia/extending/google-books-ngrams.html)
-- filtering text using `occursin`
-- filtering lists with `in`
-- managing parallel lists of text citations and text contents
+- [filtering text using `occursin`](./julia/extending/matchtext.html)
+- [filtering lists with `in`](./julia/extending/filtering_with_in.jl)
+- managing parallel lists of [text citations and text contents](./julia/extending/citable-text.html)
 - fuzzy matching [with edit distance](./julia/extending/fuzzy-matching.html)
 
 ## Week of Nov. 21, 24

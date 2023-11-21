@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.29
+# v0.19.32
 
 using Markdown
 using InteractiveUtils
@@ -119,6 +119,18 @@ caseusage = caseless ? "&case_insensitive=true" : ""
 
 # ╔═╡ 078692d8-f785-4ace-82ee-cf8ec6835d1f
 u = isnothing(grams) ? nothing : string(endpoint, escapeuri(grams),  caseusage, "&year_start=", startfrom,"&year_end=", endwith, "&smoothing=", smoothing, "&corpus=", corpus)
+
+# ╔═╡ 5fa66618-ffb3-42dd-98f8-7181b02a6afd
+u
+
+# ╔═╡ 2f3839aa-af3c-4a7e-8d7a-6a5fe834b6ed
+answerfile = Downloads.download(u)
+
+# ╔═╡ e6f1f990-4ff9-4758-9766-bcb26053998c
+resultsdict = JSON.parsefile(answerfile)
+
+# ╔═╡ 83fb78a3-5714-4ba4-86d2-522c1040e30f
+resultsdict[1]["timeseries"]
 
 # ╔═╡ c69c0a9b-6a30-4f94-b642-c0fdf2103636
 """Download a Google ngram query specified as a URL with query parameters,
@@ -709,6 +721,10 @@ version = "17.4.0+0"
 # ╟─70b0146d-1e0d-4905-b31b-ea43bbef46b9
 # ╟─e98513ae-d7b2-4cd3-8860-4618d72dd590
 # ╟─3b941fd1-2ca7-4055-93c9-5124fb90f2d1
+# ╠═5fa66618-ffb3-42dd-98f8-7181b02a6afd
+# ╠═2f3839aa-af3c-4a7e-8d7a-6a5fe834b6ed
+# ╠═e6f1f990-4ff9-4758-9766-bcb26053998c
+# ╠═83fb78a3-5714-4ba4-86d2-522c1040e30f
 # ╟─66e54b5e-7806-11ee-0f71-27d1777493b7
 # ╟─dd2c23a1-89cd-4617-9d3c-120b8ba15e20
 # ╟─d415351f-9232-4887-8c62-88a6ca7130b9
@@ -717,10 +733,10 @@ version = "17.4.0+0"
 # ╟─0df6668d-d0af-4fc6-baff-6c7ea7ceabc6
 # ╟─3cc8bcff-468e-49c4-98c3-f327bb2485a3
 # ╟─c6019aba-6102-41cf-bb9e-77818aae2e48
-# ╟─35a69b80-9da3-4045-8c5e-8c164057f7d5
+# ╠═35a69b80-9da3-4045-8c5e-8c164057f7d5
 # ╟─4b8da657-a1a5-481d-a90f-b272ad27f5e6
 # ╟─5d8e938d-152d-48ac-8874-cc1497e5214a
-# ╟─a6362013-e1e4-43c2-b15e-192e8bcb2dc9
+# ╠═a6362013-e1e4-43c2-b15e-192e8bcb2dc9
 # ╟─4cd45e81-2560-498f-898b-8a07875eae7b
 # ╟─e0189af9-0685-41ad-bbe1-733686dabc06
 # ╟─69007b16-321e-4bf9-ab63-cd5b9e821d7c
@@ -729,6 +745,6 @@ version = "17.4.0+0"
 # ╟─84bb5eb1-4739-4f9b-85ae-76ef79954de3
 # ╟─f95e1165-7b2d-40b9-9cfe-202948a41ebe
 # ╟─a97f83b5-77ea-4f20-891d-4a1f05b1d5fd
-# ╟─c69c0a9b-6a30-4f94-b642-c0fdf2103636
+# ╠═c69c0a9b-6a30-4f94-b642-c0fdf2103636
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

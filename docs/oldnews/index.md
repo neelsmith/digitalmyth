@@ -9,6 +9,14 @@ has_children: true
 # Older announcements
 
 
+- For class on Nov. 14:  download [this Pluto notebook](https://raw.githubusercontent.com/neelsmith/digitalmyth/main/pluto/assign3-workshop.jl)
+- **Due dates**:
+    - **Fri. Nov. 3**: slides or Julia notebooks from your 5-minute presentation submitted for inclusion in shared collection of resources.  (Add to your folder on the course Google drive if you don't already find yours [listed here](./julia/extending/).)
+    - **Fri. Nov. 3**:  complete [the project proposal form](./assignments/multistep/proposal/), and save as a PDF in your folder on the course Google drive
+    - **Thurs. Nov. 9**: complete first draft of your project code
+    - **Thurs. Nov. 16**: presentation of first draft of your project
+
+
 
 Reminder for oral presentations:
  

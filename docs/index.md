@@ -10,12 +10,26 @@ has_children: true
 
 > ***Reading Greek mythology using data science*** *and/or* ***A first encounter with data science through Greek mythology***
 
+
+## Submitting final project work
+
+- oral presentation in class
+- written submission in two formats:
+    - a format where can code be executed live (e.g., a Pluto notebook)
+    - a format where text can be printed (e.g., a PDF)
+
+## Challenges you can try
+
+- A challenge: [rework a notebook for a presentation](./julia/rework-nb.jl) (Pluto notebook format, so download it and open in Pluto)
+- [Try some ideas from 5-minute presentations](./classes/sprint1/)
+
+
 ## Some links for working on projects and presentations
 
-> **Note**: *These links are to Pluto notebooks:  download and open in Pluto to use*.
+> **Note**: *This is a Pluto notebook, so download and open in Pluto to use it*.
 
-- A *Pluto notebook* with notes on [presentations](https://raw.githubusercontent.com/neelsmith/digitalmyth/main/pluto/presentation-notes.jl) (so download it and open in Pluto)
-- A challenge: [rework a notebook for a presentation](./julia/rework-nb.jl) (Pluto notebook format, so download it and open in Pluto)
+
+- A *Pluto notebook* with notes on [presentations](https://raw.githubusercontent.com/neelsmith/digitalmyth/main/pluto/presentation-notes.jl)
 
 ## Links from presentations extending initial group work
 

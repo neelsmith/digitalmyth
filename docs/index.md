@@ -14,7 +14,15 @@ has_children: true
 
 - A *Pluto notebook* with notes on [presentations](https://raw.githubusercontent.com/neelsmith/digitalmyth/main/pluto/presentation-notes.jl) (so download it and open in Pluto)
 
+## Links from presentations extending initial group work
 
+- using Julia [`Set`s to compare collections](./julia/extending/compare-sets.html)  (an HTML file you can open in a Web browser)
+- using optional parameters to improve functions (tokenizing)
+- reading and writing data: [file I/O](./julia/extending/fileio.html) (an HTML file you can open in a Web browser)
+- getting n-gram data from Google books
+- filtering text using `occursin`
+- filtering lists with `in`
+- managing parallel lists of text citations and text contents
 
 
 ## Week of Nov. 21, 24

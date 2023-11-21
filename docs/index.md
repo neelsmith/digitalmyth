@@ -10,42 +10,28 @@ has_children: true
 
 > ***Reading Greek mythology using data science*** *and/or* ***A first encounter with data science through Greek mythology***
 
-## Announcements
+## Some links for working on projects and presentations
+
+> **Note**: *These links are to Pluto notebooks:  download and open in Pluto to use*.
+
+- A *Pluto notebook* with notes on [presentations](https://raw.githubusercontent.com/neelsmith/digitalmyth/main/pluto/presentation-notes.jl) (so download it and open in Pluto)
+- A challenge: [rework a notebook for a presentation](./julia/rework-nb.jl) (Pluto notebook format, so download it and open in Pluto)
+
+## Links from presentations extending initial group work
+
+> **Note**: *These links are HTML files you can open in a Web browser: you'll have to save them as a  Pluto notebook if you want to run them in Pluto*.
 
 
-- For class on Nov. 14:  download [this Pluto notebook](https://raw.githubusercontent.com/neelsmith/digitalmyth/main/pluto/assign3-workshop.jl)
-- Pluto notebook with notes on [presentations](https://raw.githubusercontent.com/neelsmith/digitalmyth/main/pluto/presentation-notes.jl)
+- using Julia [`Set`s to compare collections](./julia/extending/compare-sets.html) 
+- using [optional parameters](./julia/extending/optional-parameters.html) to improve functions (tokenizing)
+- reading and writing data: [file I/O](./julia/extending/fileio.html) (an HTML file you can open in a Web browser)
+- getting [n-gram data from Google books](./julia/extending/google-books-ngrams.html)
+- filtering text using `occursin`
+- filtering lists with `in`
+- managing parallel lists of text citations and text contents
+- fuzzy matching [with edit distance](./julia/extending/fuzzy-matching.html)
 
-- **Due dates**:
-    - **Fri. Nov. 3**: slides or Julia notebooks from your 5-minute presentation submitted for inclusion in shared collection of resources.  (Add to your folder on the course Google drive if you don't already find yours [listed here](./julia/extending/).)
-    - **Fri. Nov. 3**:  complete [the project proposal form](./assignments/multistep/proposal/), and save as a PDF in your folder on the course Google drive
-    - **Thurs. Nov. 9**: complete first draft of your project code
-    - **Thurs. Nov. 16**: presentation of first draft of your project
+## Week of Nov. 21, 24
 
-
-
-## Week of Oct. 31 - Nov. 2
-
-- Tuesday:
-    - Google books and its n-gram viewer (Liam, Michael C.)
-    - fuzzy matching using edit-distance metrics (Luke, Chris,  Michael P.)
-    - try [one of these](./classes/sprint1/)!
-- Thursday:  
-    - revisiting Google books
-    - visualizing and interpreting a social network with Gephi (Sean, Sully, Truc)    
-    - filtering text using `occursin`  (Cole, Emmy, Alexa)
-    - filtering lists with `in` (Sarah)
-    - managing text and references (Al)
-
-
-
-## Week of Nov. 7 - Nov. 9
-
-- Tuesday: Resolve any remaining questions from project proposals
-- Thursday: Complete draft of project code due
-
-## Week of Nov. 14 - Nov. 16
-    
-
-- Tuesday: workshop presentations
-- Thursday: present completed first draft for response from Prof. John Laudun, Univ. of Louisiana
+- Tuesday: review proposals and schedule presentations
+- Thursday: *Happy Thanksgiving!*

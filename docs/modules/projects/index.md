@@ -24,3 +24,29 @@ has_children: true
     - better tokenizing using optional parameters (Katie, Shane)
     - reading and writing results of your work: file I/O
 
+
+## Week of Oct. 31 - Nov. 2
+
+- Tuesday:
+    - Google books and its n-gram viewer (Liam, Michael C.)
+    - fuzzy matching using edit-distance metrics (Luke, Chris,  Michael P.)
+    - try [one of these](./classes/sprint1/)!
+- Thursday:  
+    - revisiting Google books
+    - visualizing and interpreting a social network with Gephi (Sean, Sully, Truc)    
+    - filtering text using `occursin`  (Cole, Emmy, Alexa)
+    - filtering lists with `in` (Sarah)
+    - managing text and references (Al)
+
+
+
+## Week of Nov. 7 - Nov. 9
+
+- Tuesday: Resolve any remaining questions from project proposals
+- Thursday: Complete draft of project code due
+
+## Week of Nov. 14 - Nov. 16
+    
+
+- Tuesday: workshop presentations
+- Thursday: present completed first draft for response from Prof. John Laudun, Univ. of Louisiana

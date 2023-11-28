@@ -11,12 +11,41 @@ has_children: true
 > ***Reading Greek mythology using data science*** *and/or* ***A first encounter with data science through Greek mythology***
 
 
-## Submitting final project work
 
-- oral presentation in class
-- written submission in two formats:
-    - a format where can code be executed live (e.g., a Pluto notebook)
-    - a format where text can be printed (e.g., a PDF)
+## Rubric for final written submission
+ 
+### Content
+
+You should explicitly address the following topics:
+
+- what is the question you want to investigate?
+- what source material are you using?
+- how are you analyzing the material? 
+- what conclusions did you reach? Your conclusions should be supported by specific reference to replicable work
+- if you created an analytical tool that can be generally applied to your source material or to other sources, be sure that you illustrate your conclusion with a concrete application of your work
+
+### Format
+ 
+ Your should submit two versions of your final submission:
+ 
+- one in a  a format where can code be executed live (e.g., a Pluto notebook)
+- one in a format where text can be printed (e.g., a PDF)
+
+### Reproducible scholarship
+
+You should identify:
+
+- a legal license for your original work
+- where I can find your source data
+- how I can replicate your work
+
+
+
+## Deadlines for final project work
+
+- oral presentation in class (Thurs. Nov. 30, Tues. Dec. 5)
+- written submission: final version added to your Google course folder before Tues., Dec 12
+
 
 ## Challenges you can try
 
